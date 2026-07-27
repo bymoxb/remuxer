@@ -13,15 +13,6 @@ ApplicationWindow MainWindow {
       orientation: vertical;
       spacing: 18;
 
-      Label {
-        label: "Directorios";
-        xalign: 0;
-
-        styles [
-          "title-3",
-        ]
-      }
-
       Grid {
         column-spacing: 12;
         row-spacing: 12;
@@ -29,7 +20,7 @@ ApplicationWindow MainWindow {
         Entry entry_videos_principales {
           editable: false;
           hexpand: true;
-          placeholder-text: "Selecciona la carpeta de los vídeos principales";
+          placeholder-text: "Video Source";
 
           layout {
             column: "0";
@@ -50,11 +41,11 @@ ApplicationWindow MainWindow {
         Entry entry_videos_audio {
           editable: false;
           hexpand: true;
-          placeholder-text: "Selecciona la carpeta del audio";
+          placeholder-text: "Audio Source";
 
           layout {
-            column: "0";
-            row: "1";
+            column: "2";
+            row: "0";
           }
         }
 
@@ -63,51 +54,25 @@ ApplicationWindow MainWindow {
           tooltip-text: "Seleccionar carpeta";
 
           layout {
-            column: "1";
-            row: "1";
-          }
-        }
-
-        Entry entry_directorio_salida {
-          editable: false;
-          hexpand: true;
-          placeholder-text: "Selecciona el directorio de salida";
-
-          layout {
-            column: "0";
-            row: "2";
-          }
-        }
-
-        Button btn_seleccionar_salida {
-          icon-name: "folder-open-symbolic";
-          tooltip-text: "Seleccionar carpeta";
-
-          layout {
-            column: "1";
-            row: "2";
+            column: "3";
+            row: "0";
           }
         }
       }
     }
 
-    Paned {
-      end-child: Box {
-        orientation: vertical;
-        spacing: 12;
-        width-request: 180;
+    Box {
+      orientation: vertical;
+      spacing: 18;
 
+      Box {
         Box {
-          orientation: vertical;
+          hexpand: true;
+          orientation: horizontal;
           spacing: 12;
 
-          Label {
-            label: "Vídeo principal";
-            xalign: 0;
-
-            styles [
-              "heading",
-            ]
+          Box {
+            hexpand: true;
           }
 
           Button btn_video_subir {
@@ -121,26 +86,26 @@ ApplicationWindow MainWindow {
           }
 
           Button btn_video_eliminar {
+            css-classes: [
+              "destructive-action",
+            ];
+
             icon-name: "user-trash-symbolic";
             tooltip-text: "Eliminar";
           }
-        }
 
-        Separator {
-          orientation: horizontal;
+          Box {
+            hexpand: true;
+          }
         }
 
         Box {
-          orientation: vertical;
+          hexpand: true;
+          orientation: horizontal;
           spacing: 12;
 
-          Label {
-            label: "Audio";
-            xalign: 0;
-
-            styles [
-              "heading",
-            ]
+          Box {
+            hexpand: true;
           }
 
           Button btn_audio_subir {
@@ -154,27 +119,25 @@ ApplicationWindow MainWindow {
           }
 
           Button btn_audio_eliminar {
+            css-classes: [
+              "destructive-action",
+            ];
+
             icon-name: "user-trash-symbolic";
             tooltip-text: "Eliminar";
           }
+
+          Box {
+            hexpand: true;
+          }
         }
-      };
+      }
 
-      hexpand: true;
-      orientation: horizontal;
-
-      start-child: Box {
+      Box {
+        hexpand: true;
         orientation: vertical;
         spacing: 12;
-
-        Label {
-          label: "Emparejamiento de episodios";
-          xalign: 0;
-
-          styles [
-            "title-4",
-          ]
-        }
+        vexpand: true;
 
         ScrolledWindow {
           child: ColumnView view_episodios {
@@ -185,19 +148,38 @@ ApplicationWindow MainWindow {
           hexpand: true;
           vexpand: true;
         }
-      };
-
-      vexpand: true;
-      wide-handle: true;
+      }
     }
 
     Box {
-      halign: end;
+      spacing: 12;
+
+      Box {
+        hexpand: true;
+        spacing: 12;
+
+        Entry entry_directorio_salida {
+          editable: false;
+          enable-undo: false;
+          hexpand: true;
+          placeholder-text: "Destination";
+        }
+
+        Button btn_seleccionar_salida {
+          icon-name: "folder-open-symbolic";
+          tooltip-text: "Seleccionar carpeta";
+        }
+      }
+
+      Button btn_analizar {
+        label: "Analizar";
+        width-request: 180;
+      }
 
       Button btn_procesar {
-        height-request: 42;
         label: "Procesar";
         width-request: 180;
+        sensitive: false;
 
         styles [
           "suggested-action",
@@ -205,4 +187,6 @@ ApplicationWindow MainWindow {
       }
     }
   };
+
+  maximized: true;
 }
