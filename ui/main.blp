@@ -1,248 +1,241 @@
 using Gtk 4.0;
-using Adw 1;
 
-template $MainWindow: Adw.ApplicationWindow {
-  content: Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {
-      show-end-title-buttons: true;
-    }
+ApplicationWindow MainWindow {
+  child: Box {
+    margin-bottom: 24;
+    margin-end: 24;
+    margin-start: 24;
+    margin-top: 24;
+    orientation: vertical;
+    spacing: 24;
 
-    content: Box {
+    Box {
       orientation: vertical;
-      spacing: 24;
-      margin-top: 24;
-      margin-bottom: 24;
-      margin-start: 24;
-      margin-end: 24;
+      spacing: 18;
 
-      Box {
-        orientation: vertical;
-        spacing: 18;
+      Label {
+        label: "Directorios";
+        xalign: 0;
+
+        styles [
+          "title-3",
+        ]
+      }
+
+      Grid {
+        column-spacing: 12;
+        row-spacing: 12;
 
         Label {
-          label: "Directorios";
+          label: "Vídeos principales";
+          valign: center;
           xalign: 0;
 
-          styles [
-            "title-3",
-          ]
+          layout {
+            column: "0";
+            row: "0";
+          }
         }
 
-        Grid {
-          row-spacing: 12;
-          column-spacing: 12;
+        Entry entry_videos_principales {
+          editable: false;
+          hexpand: true;
+          placeholder-text: "Selecciona la carpeta de los vídeos principales";
 
-          Label {
-            label: "Vídeos principales";
-            xalign: 0;
-            valign: center;
-
-            layout {
-              column: "0";
-              row: "0";
-            }
+          layout {
+            column: "1";
+            row: "0";
           }
+        }
 
-          Entry entry_videos_principales {
-            hexpand: true;
-            editable: false;
-            placeholder-text: "Selecciona la carpeta de los vídeos principales";
+        Button btn_seleccionar_videos_principales {
+          icon-name: "folder-open-symbolic";
+          tooltip-text: "Seleccionar carpeta";
 
-            layout {
-              column: "1";
-              row: "0";
-            }
+          layout {
+            column: "2";
+            row: "0";
           }
+        }
 
-          Button btn_seleccionar_videos_principales {
-            icon-name: "folder-open-symbolic";
-            tooltip-text: "Seleccionar carpeta";
+        Label {
+          label: "Vídeos con audio";
+          valign: center;
+          xalign: 0;
 
-            layout {
-              column: "2";
-              row: "0";
-            }
+          layout {
+            column: "0";
+            row: "1";
           }
+        }
 
-          Label {
-            label: "Vídeos con audio";
-            xalign: 0;
-            valign: center;
+        Entry entry_videos_audio {
+          editable: false;
+          hexpand: true;
+          placeholder-text: "Selecciona la carpeta del audio";
 
-            layout {
-              column: "0";
-              row: "1";
-            }
+          layout {
+            column: "1";
+            row: "1";
           }
+        }
 
-          Entry entry_videos_audio {
-            hexpand: true;
-            editable: false;
-            placeholder-text: "Selecciona la carpeta del audio";
+        Button btn_seleccionar_videos_audio {
+          icon-name: "folder-open-symbolic";
+          tooltip-text: "Seleccionar carpeta";
 
-            layout {
-              column: "1";
-              row: "1";
-            }
+          layout {
+            column: "2";
+            row: "1";
           }
+        }
 
-          Button btn_seleccionar_videos_audio {
-            icon-name: "folder-open-symbolic";
-            tooltip-text: "Seleccionar carpeta";
+        Label {
+          label: "Directorio de salida";
+          valign: center;
+          xalign: 0;
 
-            layout {
-              column: "2";
-              row: "1";
-            }
+          layout {
+            column: "0";
+            row: "2";
           }
+        }
 
-          Label {
-            label: "Directorio de salida";
-            xalign: 0;
-            valign: center;
+        Entry entry_directorio_salida {
+          editable: false;
+          hexpand: true;
+          placeholder-text: "Selecciona el directorio de salida";
 
-            layout {
-              column: "0";
-              row: "2";
-            }
+          layout {
+            column: "1";
+            row: "2";
           }
+        }
 
-          Entry entry_directorio_salida {
-            hexpand: true;
-            editable: false;
-            placeholder-text: "Selecciona el directorio de salida";
+        Button btn_seleccionar_salida {
+          icon-name: "folder-open-symbolic";
+          tooltip-text: "Seleccionar carpeta";
 
-            layout {
-              column: "1";
-              row: "2";
-            }
-          }
-
-          Button btn_seleccionar_salida {
-            icon-name: "folder-open-symbolic";
-            tooltip-text: "Seleccionar carpeta";
-
-            layout {
-              column: "2";
-              row: "2";
-            }
+          layout {
+            column: "2";
+            row: "2";
           }
         }
       }
+    }
 
-      Paned {
-        orientation: horizontal;
-        wide-handle: true;
-        hexpand: true;
-        vexpand: true;
+    Paned {
+      end-child: Box {
+        orientation: vertical;
+        spacing: 12;
+        width-request: 180;
 
-        start-child: Box {
+        Box {
           orientation: vertical;
           spacing: 12;
 
           Label {
-            label: "Emparejamiento de episodios";
+            label: "Vídeo principal";
             xalign: 0;
 
             styles [
-              "title-4",
+              "heading",
             ]
           }
 
-          ScrolledWindow {
-            hexpand: true;
-            vexpand: true;
-
-            child: ColumnView view_episodios {
-              hexpand: true;
-              vexpand: true;
-            };
+          Button btn_video_subir {
+            icon-name: "go-up-symbolic";
+            tooltip-text: "Mover arriba";
           }
-        };
 
-        end-child: Box {
+          Button btn_video_bajar {
+            icon-name: "go-down-symbolic";
+            tooltip-text: "Mover abajo";
+          }
+
+          Button btn_video_eliminar {
+            icon-name: "user-trash-symbolic";
+            tooltip-text: "Eliminar";
+          }
+        }
+
+        Separator {
+          orientation: horizontal;
+        }
+
+        Box {
           orientation: vertical;
-          spacing: 24;
-          width-request: 180;
+          spacing: 12;
 
-          Box {
-            orientation: vertical;
-            spacing: 12;
+          Label {
+            label: "Audio";
+            xalign: 0;
 
-            Label {
-              label: "Vídeo principal";
-              xalign: 0;
-
-              styles [
-                "heading",
-              ]
-            }
-
-            Button btn_video_subir {
-              icon-name: "go-up-symbolic";
-              tooltip-text: "Mover arriba";
-            }
-
-            Button btn_video_bajar {
-              icon-name: "go-down-symbolic";
-              tooltip-text: "Mover abajo";
-            }
-
-            Button btn_video_eliminar {
-              icon-name: "user-trash-symbolic";
-              tooltip-text: "Eliminar";
-            }
+            styles [
+              "heading",
+            ]
           }
 
-          Separator {
-            orientation: horizontal;
+          Button btn_audio_subir {
+            icon-name: "go-up-symbolic";
+            tooltip-text: "Mover arriba";
           }
 
-          Box {
-            orientation: vertical;
-            spacing: 12;
-
-            Label {
-              label: "Audio";
-              xalign: 0;
-
-              styles [
-                "heading",
-              ]
-            }
-
-            Button btn_audio_subir {
-              icon-name: "go-up-symbolic";
-              tooltip-text: "Mover arriba";
-            }
-
-            Button btn_audio_bajar {
-              icon-name: "go-down-symbolic";
-              tooltip-text: "Mover abajo";
-            }
-
-            Button btn_audio_eliminar {
-              icon-name: "user-trash-symbolic";
-              tooltip-text: "Eliminar";
-            }
+          Button btn_audio_bajar {
+            icon-name: "go-down-symbolic";
+            tooltip-text: "Mover abajo";
           }
-        };
-      }
 
-      Box {
-        halign: end;
+          Button btn_audio_eliminar {
+            icon-name: "user-trash-symbolic";
+            tooltip-text: "Eliminar";
+          }
+        }
+      };
 
-        Button btn_procesar {
-          label: "Procesar";
-          width-request: 180;
-          height-request: 42;
+      hexpand: true;
+      orientation: horizontal;
+
+      start-child: Box {
+        orientation: vertical;
+        spacing: 12;
+
+        Label {
+          label: "Emparejamiento de episodios";
+          xalign: 0;
 
           styles [
-            "suggested-action",
+            "title-4",
           ]
         }
+
+        ScrolledWindow {
+          child: ColumnView view_episodios {
+            hexpand: true;
+            vexpand: true;
+          };
+
+          hexpand: true;
+          vexpand: true;
+        }
+      };
+
+      vexpand: true;
+      wide-handle: true;
+    }
+
+    Box {
+      halign: end;
+
+      Button btn_procesar {
+        height-request: 42;
+        label: "Procesar";
+        width-request: 180;
+
+        styles [
+          "suggested-action",
+        ]
       }
-    };
+    }
   };
 }
