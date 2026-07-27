@@ -1,0 +1,248 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MainWindow: Adw.ApplicationWindow {
+  content: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      show-end-title-buttons: true;
+    }
+
+    content: Box {
+      orientation: vertical;
+      spacing: 24;
+      margin-top: 24;
+      margin-bottom: 24;
+      margin-start: 24;
+      margin-end: 24;
+
+      Box {
+        orientation: vertical;
+        spacing: 18;
+
+        Label {
+          label: "Directorios";
+          xalign: 0;
+
+          styles [
+            "title-3",
+          ]
+        }
+
+        Grid {
+          row-spacing: 12;
+          column-spacing: 12;
+
+          Label {
+            label: "Vídeos principales";
+            xalign: 0;
+            valign: center;
+
+            layout {
+              column: "0";
+              row: "0";
+            }
+          }
+
+          Entry entry_videos_principales {
+            hexpand: true;
+            editable: false;
+            placeholder-text: "Selecciona la carpeta de los vídeos principales";
+
+            layout {
+              column: "1";
+              row: "0";
+            }
+          }
+
+          Button btn_seleccionar_videos_principales {
+            icon-name: "folder-open-symbolic";
+            tooltip-text: "Seleccionar carpeta";
+
+            layout {
+              column: "2";
+              row: "0";
+            }
+          }
+
+          Label {
+            label: "Vídeos con audio";
+            xalign: 0;
+            valign: center;
+
+            layout {
+              column: "0";
+              row: "1";
+            }
+          }
+
+          Entry entry_videos_audio {
+            hexpand: true;
+            editable: false;
+            placeholder-text: "Selecciona la carpeta del audio";
+
+            layout {
+              column: "1";
+              row: "1";
+            }
+          }
+
+          Button btn_seleccionar_videos_audio {
+            icon-name: "folder-open-symbolic";
+            tooltip-text: "Seleccionar carpeta";
+
+            layout {
+              column: "2";
+              row: "1";
+            }
+          }
+
+          Label {
+            label: "Directorio de salida";
+            xalign: 0;
+            valign: center;
+
+            layout {
+              column: "0";
+              row: "2";
+            }
+          }
+
+          Entry entry_directorio_salida {
+            hexpand: true;
+            editable: false;
+            placeholder-text: "Selecciona el directorio de salida";
+
+            layout {
+              column: "1";
+              row: "2";
+            }
+          }
+
+          Button btn_seleccionar_salida {
+            icon-name: "folder-open-symbolic";
+            tooltip-text: "Seleccionar carpeta";
+
+            layout {
+              column: "2";
+              row: "2";
+            }
+          }
+        }
+      }
+
+      Paned {
+        orientation: horizontal;
+        wide-handle: true;
+        hexpand: true;
+        vexpand: true;
+
+        start-child: Box {
+          orientation: vertical;
+          spacing: 12;
+
+          Label {
+            label: "Emparejamiento de episodios";
+            xalign: 0;
+
+            styles [
+              "title-4",
+            ]
+          }
+
+          ScrolledWindow {
+            hexpand: true;
+            vexpand: true;
+
+            child: ColumnView view_episodios {
+              hexpand: true;
+              vexpand: true;
+            };
+          }
+        };
+
+        end-child: Box {
+          orientation: vertical;
+          spacing: 24;
+          width-request: 180;
+
+          Box {
+            orientation: vertical;
+            spacing: 12;
+
+            Label {
+              label: "Vídeo principal";
+              xalign: 0;
+
+              styles [
+                "heading",
+              ]
+            }
+
+            Button btn_video_subir {
+              icon-name: "go-up-symbolic";
+              tooltip-text: "Mover arriba";
+            }
+
+            Button btn_video_bajar {
+              icon-name: "go-down-symbolic";
+              tooltip-text: "Mover abajo";
+            }
+
+            Button btn_video_eliminar {
+              icon-name: "user-trash-symbolic";
+              tooltip-text: "Eliminar";
+            }
+          }
+
+          Separator {
+            orientation: horizontal;
+          }
+
+          Box {
+            orientation: vertical;
+            spacing: 12;
+
+            Label {
+              label: "Audio";
+              xalign: 0;
+
+              styles [
+                "heading",
+              ]
+            }
+
+            Button btn_audio_subir {
+              icon-name: "go-up-symbolic";
+              tooltip-text: "Mover arriba";
+            }
+
+            Button btn_audio_bajar {
+              icon-name: "go-down-symbolic";
+              tooltip-text: "Mover abajo";
+            }
+
+            Button btn_audio_eliminar {
+              icon-name: "user-trash-symbolic";
+              tooltip-text: "Eliminar";
+            }
+          }
+        };
+      }
+
+      Box {
+        halign: end;
+
+        Button btn_procesar {
+          label: "Procesar";
+          width-request: 180;
+          height-request: 42;
+
+          styles [
+            "suggested-action",
+          ]
+        }
+      }
+    };
+  };
+}
