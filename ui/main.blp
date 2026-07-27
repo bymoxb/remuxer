@@ -26,24 +26,13 @@ ApplicationWindow MainWindow {
         column-spacing: 12;
         row-spacing: 12;
 
-        Label {
-          label: "Vídeos principales";
-          valign: center;
-          xalign: 0;
-
-          layout {
-            column: "0";
-            row: "0";
-          }
-        }
-
         Entry entry_videos_principales {
           editable: false;
           hexpand: true;
           placeholder-text: "Selecciona la carpeta de los vídeos principales";
 
           layout {
-            column: "1";
+            column: "0";
             row: "0";
           }
         }
@@ -53,19 +42,8 @@ ApplicationWindow MainWindow {
           tooltip-text: "Seleccionar carpeta";
 
           layout {
-            column: "2";
+            column: "1";
             row: "0";
-          }
-        }
-
-        Label {
-          label: "Vídeos con audio";
-          valign: center;
-          xalign: 0;
-
-          layout {
-            column: "0";
-            row: "1";
           }
         }
 
@@ -75,7 +53,7 @@ ApplicationWindow MainWindow {
           placeholder-text: "Selecciona la carpeta del audio";
 
           layout {
-            column: "1";
+            column: "0";
             row: "1";
           }
         }
@@ -85,19 +63,8 @@ ApplicationWindow MainWindow {
           tooltip-text: "Seleccionar carpeta";
 
           layout {
-            column: "2";
+            column: "1";
             row: "1";
-          }
-        }
-
-        Label {
-          label: "Directorio de salida";
-          valign: center;
-          xalign: 0;
-
-          layout {
-            column: "0";
-            row: "2";
           }
         }
 
@@ -107,7 +74,7 @@ ApplicationWindow MainWindow {
           placeholder-text: "Selecciona el directorio de salida";
 
           layout {
-            column: "1";
+            column: "0";
             row: "2";
           }
         }
@@ -117,7 +84,7 @@ ApplicationWindow MainWindow {
           tooltip-text: "Seleccionar carpeta";
 
           layout {
-            column: "2";
+            column: "1";
             row: "2";
           }
         }
