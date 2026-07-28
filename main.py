@@ -1,6 +1,6 @@
-from gi.repository import Gtk, Gio, GObject, Pango, Adw, GLib
-from gi.repository import Gtk, Gio, GObject, Pango
 import os
+import gettext
+import locale
 import gi
 from pathlib import Path
 import threading
@@ -8,11 +8,37 @@ import subprocess
 import time
 from pathlib import Path
 
+# 1. Definir el nombre de tu aplicación (App ID o similar)
+APP_NAME = "remuxer"
+APP_ID = "com.github.bymoxb.remuxer"
+
+# 2. Definir la ruta de la carpeta de traducciones
+LOCALE_DIR = os.path.join(os.path.dirname(__file__), 'locale')
+
+# 3. Configurar el sistema de localización
+try:
+    locale.setlocale(locale.LC_ALL, '')
+    locale.bindtextdomain(APP_NAME, LOCALE_DIR)
+    locale.textdomain(APP_NAME)
+except:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')  # Fallback manual si falla
+
+gettext.bindtextdomain(APP_NAME, LOCALE_DIR)
+gettext.textdomain(APP_NAME)
+
+# 4. Definir la función _ globalmente para que Python la reconozca
+_ = gettext.gettext
+
 # Configurar versiones de GTK
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 gi.require_version('Pango', '1.0')
 
+from gi.repository import Gtk, Gio, GObject, Pango, Adw, GLib
+
+print(f"Current language: {os.environ.get('LANGUAGE')}")
+print(f"Translation search path: {LOCALE_DIR}")
+print(f"Test translation (Analyze): {gettext.gettext('Analyze')}")
 
 VIDEO_EXTENSIONS = {".mp4", ".mkv"}
 
@@ -93,7 +119,7 @@ class MainWindow(Adw.ApplicationWindow):
         factory_v = Gtk.SignalListItemFactory()
         factory_v.connect("setup", self._on_factory_setup_label)
         factory_v.connect("bind", self._on_bind_video_column)
-        col_v = Gtk.ColumnViewColumn(title="Source Video", factory=factory_v)
+        col_v = Gtk.ColumnViewColumn(title=_("Source Video"), factory=factory_v)
         col_v.set_expand(True)
         self.view_episodios.append_column(col_v)
 
@@ -101,7 +127,7 @@ class MainWindow(Adw.ApplicationWindow):
         factory_a = Gtk.SignalListItemFactory()
         factory_a.connect("setup", self._on_factory_setup_label)
         factory_a.connect("bind", self._on_bind_audio_column)
-        col_a = Gtk.ColumnViewColumn(title="Source Audio", factory=factory_a)
+        col_a = Gtk.ColumnViewColumn(title=_("Source Audio"), factory=factory_a)
         col_a.set_expand(True)
         self.view_episodios.append_column(col_a)
 
@@ -168,19 +194,19 @@ class MainWindow(Adw.ApplicationWindow):
         def cb(path):
             self.entry_videos_principales.set_text(path)
             self.video_files_data = self.list_videos(path)
-        self.select_folder("Seleccionar Videos", cb)
+        self.select_folder(_("Choose video folder"), cb)
 
     def on_select_audios(self, btn):
         def cb(path):
             self.entry_videos_audio.set_text(path)
             self.audio_files_data = self.list_videos(path)
-        self.select_folder("Seleccionar Audios", cb)
+        self.select_folder(_("Choose audio folder"), cb)
 
     def on_select_output(self, btn):
         def cb(path):
             self.entry_directorio_salida.set_text(path)
             self.output_dir = path
-        self.select_folder("Seleccionar Salida", cb)
+        self.select_folder(_("Choose output folder"), cb)
 
     def list_videos(self, path):
         videos = []
@@ -376,7 +402,7 @@ class MainWindow(Adw.ApplicationWindow):
 
         # 3. Obtener el widget de la barra de progreso
         self.pro_bar.set_fraction(0.0)
-        self.pro_bar.set_text("Iniciando...")
+        self.pro_bar.set_text(_("Starting..."))
 
         # 4. Lanzar el hilo para no congelar la UI
         # Pasamos n_items y el botón como argumentos
@@ -447,14 +473,13 @@ class MainWindow(Adw.ApplicationWindow):
 
             # Calcular el progreso (de 0.0 a 1.0)
             fraction = (i + 1) / n_items
-            text = f"Procesando {i + 1} de {n_items}..."
 
             # ACTUALIZAR UI: Debe hacerse mediante GLib.idle_add
-            GLib.idle_add(self._update_ui_progress, fraction, text)
+            GLib.idle_add(self._update_ui_progress, fraction, "{0}/{1}".format(row.video.name,row.audio.name))
 
         # Al terminar, rehabilitamos el botón y limpiamos el texto
         GLib.idle_add(btn.set_sensitive, True)
-        GLib.idle_add(self._update_ui_progress, 1.0, "¡Proceso Completado!")
+        GLib.idle_add(self._update_ui_progress, 1.0, _("Completed!"))
 
     def _update_ui_progress(self, fraction, text):
         """Esta función corre en el hilo principal (UI)"""
@@ -465,7 +490,7 @@ class MainWindow(Adw.ApplicationWindow):
 
 class AudioRemuxApp(Adw.Application):
     def __init__(self):
-        super().__init__(application_id="com.github.bymoxb.audioremux",
+        super().__init__(application_id=APP_ID,
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
     def do_activate(self):

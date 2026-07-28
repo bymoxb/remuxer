@@ -1,0 +1,137 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Luis Fernando <moxb@outlook.es>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-28 16:29-0500\n"
+"PO-Revision-Date: 2026-07-28 15:37-0500\n"
+"Last-Translator: Luis Fernando <moxb@outlook.es>\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: main.py:41 ui/main.ui:205
+msgid "Analyze"
+msgstr ""
+
+#: main.py:122
+msgid "Source Video"
+msgstr "Source Video"
+
+#: main.py:130
+msgid "Source Audio"
+msgstr "Source Audio"
+
+#: main.py:197
+msgid "Choose video folder"
+msgstr "Choose video folder"
+
+#: main.py:203
+msgid "Choose audio folder"
+msgstr "Choose audio folder"
+
+#: main.py:209
+msgid "Choose output folder"
+msgstr "Choose output folder"
+
+#: main.py:405
+msgid "Starting..."
+msgstr "Starting..."
+
+#: main.py:482
+msgid "Completed!"
+msgstr "Completed!"
+
+#: ui/main.ui:12 ui/main.ui:20
+msgid "Remuxer"
+msgstr "Remuxer"
+
+#: ui/main.ui:19
+msgid "Episode Processor"
+msgstr ""
+
+#: ui/main.ui:35
+msgid "Media Sources"
+msgstr ""
+
+#: ui/main.ui:38
+#, fuzzy
+msgid "Video Folder"
+msgstr "Choose video folder"
+
+#: ui/main.ui:52
+#, fuzzy
+msgid "Audio Folder"
+msgstr "Choose audio folder"
+
+#: ui/main.ui:77
+msgid "Episode Alignment"
+msgstr ""
+
+#: ui/main.ui:91
+msgid "Video:"
+msgstr "Video:"
+
+#: ui/main.ui:105 ui/main.ui:145
+msgid "Move Up"
+msgstr ""
+
+#: ui/main.ui:111 ui/main.ui:151
+msgid "Move Down"
+msgstr ""
+
+#: ui/main.ui:131
+msgid "Audio:"
+msgstr "Audio:"
+
+#: ui/main.ui:185
+#, fuzzy
+msgid "Output Folder"
+msgstr "Choose output folder"
+
+#: ui/main.ui:214
+msgid "Start Processing"
+msgstr ""
+
+#~ msgid "Procesador de Episodios"
+#~ msgstr "Procesador de Episodios"
+
+#~ msgid "Fuentes de medios"
+#~ msgstr "Fuentes de medios"
+
+#~ msgid "Carpeta de Videos"
+#~ msgstr "Carpeta de Videos"
+
+#~ msgid "Carpeta de Audios"
+#~ msgstr "Carpeta de Audios"
+
+#~ msgid "Alineación de Episodios"
+#~ msgstr "Alineación de Episodios"
+
+#~ msgid "Subir Video"
+#~ msgstr "Subir Video"
+
+#~ msgid "Bajar Video"
+#~ msgstr "Bajar Video"
+
+#~ msgid "Subir Audio"
+#~ msgstr "Subir Audio"
+
+#~ msgid "Bajar Audio"
+#~ msgstr "Bajar Audio"
+
+#~ msgid "Destino Final"
+#~ msgstr "Destino Final"
+
+#~ msgid "Analizar Archivos"
+#~ msgstr "Analizar Archivos"
+
+#~ msgid "Iniciar Procesamiento"
+#~ msgstr "Iniciar Procesamiento"
