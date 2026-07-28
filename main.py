@@ -348,6 +348,13 @@ class MainWindow(Adw.ApplicationWindow):
             item.name = f" [ELIMINADO] {item.name}"
 
     def on_process(self, btn):
+
+        if not getattr(self, "output_dir", None):
+            self.entry_directorio_salida.add_css_class("error")
+            return
+        else:
+            self.entry_directorio_salida.remove_css_class("error")
+
         n_items = self.store.get_n_items()
 
         if n_items == 0:
