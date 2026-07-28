@@ -1,15 +1,18 @@
+from gi.repository import Gtk, Gio, GObject, Pango, Adw, GLib
 from gi.repository import Gtk, Gio, GObject, Pango
 import os
 import gi
 from pathlib import Path
 import threading
 import subprocess
-from gi.repository import GLib
+import time
 from pathlib import Path
 
 # Configurar versiones de GTK
 gi.require_version('Gtk', '4.0')
+gi.require_version('Adw', '1')
 gi.require_version('Pango', '1.0')
+
 
 VIDEO_EXTENSIONS = {".mp4", ".mkv"}
 
@@ -43,117 +46,107 @@ class ColumnViewRow(GObject.Object):
         self.audio = audio
 
 
-class AudioRemuxApp(Gtk.Application):
-    def __init__(self):
-        super().__init__(application_id="com.github.bymoxb.audioremux")
-        self.builder = None
-        self.window = None
+@Gtk.Template(filename="ui/main.ui")
+class MainWindow(Adw.ApplicationWindow):
+    # Este nombre DEBE coincidir con el $MainWindow del blueprint
+    __gtype_name__ = "MainWindow"
 
-        # Almacenamiento de datos (Equivalente a FormVideos en tu Go)
-        self.video_files_data = []  # Lista de diccionarios crudos
-        self.audio_files_data = []
-        self.output_dir = ""
+    # Definimos los hijos que queremos usar directamente (Internal children)
+    # Esto reemplaza a builder.get_object()
+    view_episodios = Gtk.Template.Child()
 
-        # El "Store" que alimenta al ColumnView
-        self.store = Gio.ListStore(item_type=VideoItem)
+    btn_seleccionar_videos_principales = Gtk.Template.Child()
+    btn_seleccionar_videos_audio = Gtk.Template.Child()
+    btn_seleccionar_salida = Gtk.Template.Child()
+
+    btn_analizar = Gtk.Template.Child()
+    btn_procesar = Gtk.Template.Child()
+
+    btn_video_subir = Gtk.Template.Child()
+    btn_video_bajar = Gtk.Template.Child()
+    btn_audio_subir = Gtk.Template.Child()
+    btn_audio_bajar = Gtk.Template.Child()
+
+    pro_bar = Gtk.Template.Child()
+
+    # DEBES DECLARAR CADA WIDGET QUE USES CON self.nombre_widget
+    entry_videos_principales = Gtk.Template.Child()
+    entry_videos_audio = Gtk.Template.Child()
+    entry_directorio_salida = Gtk.Template.Child()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Almacenamiento de datos
+        # Cambia a tu tipo de objeto
+        self.store = Gio.ListStore(item_type=GObject.Object)
         self.selection_model = Gtk.SingleSelection(model=self.store)
-
-    def do_activate(self):
-        # Cargar el XML del .ui
-        self.builder = Gtk.Builder()
-        try:
-            self.builder.add_from_file("ui/main.ui")
-        except Exception as e:
-            print(f"Error cargando UI: {e}")
-            return
-
-        self.window = self.builder.get_object("MainWindow")
-        self.window.set_application(self)
 
         self.setup_column_view()
         self.connect_signals()
 
-        self.window.present()
-
     def setup_column_view(self):
-        cv = self.builder.get_object("view_episodios")
-
-        # El Store ahora guarda objetos ColumnViewRow
-        self.store = Gio.ListStore(item_type=ColumnViewRow)
-        self.selection_model = Gtk.SingleSelection(model=self.store)
-        cv.set_model(self.selection_model)
+        # Usamos directamente la referencia self.view_episodios
+        self.view_episodios.set_model(self.selection_model)
 
         # Columna de Video
         factory_v = Gtk.SignalListItemFactory()
         factory_v.connect("setup", self._on_factory_setup_label)
         factory_v.connect("bind", self._on_bind_video_column)
-
         col_v = Gtk.ColumnViewColumn(title="Source Video", factory=factory_v)
         col_v.set_expand(True)
-        cv.append_column(col_v)
+        self.view_episodios.append_column(col_v)
 
         # Columna de Audio
         factory_a = Gtk.SignalListItemFactory()
         factory_a.connect("setup", self._on_factory_setup_label)
         factory_a.connect("bind", self._on_bind_audio_column)
-
         col_a = Gtk.ColumnViewColumn(title="Source Audio", factory=factory_a)
         col_a.set_expand(True)
-        cv.append_column(col_a)
+        self.view_episodios.append_column(col_a)
 
-    # El setup es genérico para cualquier columna que use un Label
     def _on_factory_setup_label(self, factory, list_item):
         label = Gtk.Label(xalign=0)
         label.set_ellipsize(Pango.EllipsizeMode.END)
         list_item.set_child(label)
 
     def _on_bind_video_column(self, factory, list_item):
-        row = list_item.get_item()  # Esto es un ColumnViewRow
+        row = list_item.get_item()
         label = list_item.get_child()
 
-        # Accedemos al objeto video dentro de la fila y bindeamos su nombre
-        if row.video:
-            row.video.bind_property(
-                "name", label, "label", GObject.BindingFlags.SYNC_CREATE)
+        if row and row.video:
+            row.video.bind_property("name", label, "label",
+                                    GObject.BindingFlags.SYNC_CREATE)
         else:
             label.set_text("---")
 
     def _on_bind_audio_column(self, factory, list_item):
-        row = list_item.get_item()  # Esto es un ColumnViewRow
+        row = list_item.get_item()
         label = list_item.get_child()
 
-        # Accedemos al objeto audio dentro de la fila y bindeamos su nombre
-        if row.audio:
-            row.audio.bind_property(
-                "name", label, "label", GObject.BindingFlags.SYNC_CREATE)
+        if row and row.audio:
+            row.audio.bind_property("name", label, "label",
+                                    GObject.BindingFlags.SYNC_CREATE)
         else:
             label.set_text("---")
 
     def connect_signals(self):
-        # Obtener objetos del builder y conectar clicks
-        b = self.builder
-
-        b.get_object("btn_seleccionar_videos_principales").connect(
+        # Ahora conectamos directamente a los atributos de la clase
+        self.btn_seleccionar_videos_principales.connect(
             "clicked", self.on_select_videos)
-        b.get_object("btn_seleccionar_videos_audio").connect(
+        self.btn_seleccionar_videos_audio.connect(
             "clicked", self.on_select_audios)
-        b.get_object("btn_seleccionar_salida").connect(
-            "clicked", self.on_select_output)
+        self.btn_seleccionar_salida.connect("clicked", self.on_select_output)
+        self.btn_analizar.connect("clicked", self.on_analyze)
+        self.btn_procesar.connect("clicked", self.on_process)
 
-        b.get_object("btn_analizar").connect("clicked", self.on_analyze)
-        b.get_object("btn_procesar").connect("clicked", self.on_process)
-
-        # Botones de edición
-        b.get_object("btn_video_subir").connect(
+        self.btn_video_subir.connect(
             "clicked", lambda _: self.handle_selection("VIDEO", "UP"))
-        b.get_object("btn_video_bajar").connect(
+        self.btn_video_bajar.connect(
             "clicked", lambda _: self.handle_selection("VIDEO", "DOWN"))
-        # b.get_object("btn_video_eliminar").connect(
-        #     "clicked", lambda _: self.handle_action_delete())
-
-        b.get_object("btn_audio_subir").connect(
+        self.btn_audio_subir.connect(
             "clicked", lambda _: self.handle_selection("AUDIO", "UP"))
-        b.get_object("btn_audio_bajar").connect(
+        self.btn_audio_bajar.connect(
             "clicked", lambda _: self.handle_selection("AUDIO", "DOWN"))
 
     # --- LÓGICA DE SELECCIÓN DE CARPETAS ---
@@ -161,7 +154,7 @@ class AudioRemuxApp(Gtk.Application):
     def select_folder(self, title, callback):
         dialog = Gtk.FileDialog(title=title)
         dialog.select_folder(
-            self.window, None, self._folder_dialog_callback, callback)
+            self, None, self._folder_dialog_callback, callback)
 
     def _folder_dialog_callback(self, dialog, result, callback):
         try:
@@ -173,19 +166,19 @@ class AudioRemuxApp(Gtk.Application):
 
     def on_select_videos(self, btn):
         def cb(path):
-            self.builder.get_object("entry_videos_principales").set_text(path)
+            self.entry_videos_principales.set_text(path)
             self.video_files_data = self.list_videos(path)
         self.select_folder("Seleccionar Videos", cb)
 
     def on_select_audios(self, btn):
         def cb(path):
-            self.builder.get_object("entry_videos_audio").set_text(path)
+            self.entry_videos_audio.set_text(path)
             self.audio_files_data = self.list_videos(path)
         self.select_folder("Seleccionar Audios", cb)
 
     def on_select_output(self, btn):
         def cb(path):
-            self.builder.get_object("entry_directorio_salida").set_text(path)
+            self.entry_directorio_salida.set_text(path)
             self.output_dir = path
         self.select_folder("Seleccionar Salida", cb)
 
@@ -230,7 +223,7 @@ class AudioRemuxApp(Gtk.Application):
             row = ColumnViewRow(video=v_obj, audio=a_obj)
             self.store.append(row)
 
-        self.builder.get_object("btn_procesar").set_sensitive(True)
+        self.btn_procesar.set_sensitive(True)
 
     def _swap_video_data(self, item1, item2):
         item1.name, item2.name = item2.name, item1.name
@@ -382,9 +375,8 @@ class AudioRemuxApp(Gtk.Application):
         btn.set_sensitive(False)
 
         # 3. Obtener el widget de la barra de progreso
-        progress_bar = self.builder.get_object("pro_bar")
-        progress_bar.set_fraction(0.0)
-        progress_bar.set_text("Iniciando...")
+        self.pro_bar.set_fraction(0.0)
+        self.pro_bar.set_text("Iniciando...")
 
         # 4. Lanzar el hilo para no congelar la UI
         # Pasamos n_items y el botón como argumentos
@@ -434,7 +426,6 @@ class AudioRemuxApp(Gtk.Application):
 
     def _run_heavy_task(self, n_items, btn):
         """Esta función corre en un hilo separado (background)"""
-        # progress_bar = self.builder.get_object("pro_bar")
         destination_path = Path(self.output_dir)
         destination_path.mkdir(parents=True, exist_ok=True)
 
@@ -448,6 +439,7 @@ class AudioRemuxApp(Gtk.Application):
 
             new_file_name = Path(row.video.abs_path)
 
+            # time.sleep(1)
             self._run_append_audio(
                 row.video.abs_path,
                 row.audio.abs_path,
@@ -466,10 +458,20 @@ class AudioRemuxApp(Gtk.Application):
 
     def _update_ui_progress(self, fraction, text):
         """Esta función corre en el hilo principal (UI)"""
-        progress_bar = self.builder.get_object("pro_bar")
-        progress_bar.set_fraction(fraction)
-        progress_bar.set_text(text)
+        self.pro_bar.set_fraction(fraction)
+        self.pro_bar.set_text(text)
         return False  # Importante para que GLib no repita la llamada
+
+
+class AudioRemuxApp(Adw.Application):
+    def __init__(self):
+        super().__init__(application_id="com.github.bymoxb.audioremux",
+                         flags=Gio.ApplicationFlags.FLAGS_NONE)
+
+    def do_activate(self):
+        # Simplemente instanciamos la MainWindow
+        self.window = MainWindow(application=self)
+        self.window.present()
 
 
 if __name__ == "__main__":
