@@ -144,8 +144,13 @@ class AudioRemuxApp(Gtk.Application):
             "clicked", lambda _: self.handle_selection("VIDEO", "UP"))
         b.get_object("btn_video_bajar").connect(
             "clicked", lambda _: self.handle_selection("VIDEO", "DOWN"))
-        b.get_object("btn_video_eliminar").connect(
-            "clicked", lambda _: self.handle_action_delete())
+        # b.get_object("btn_video_eliminar").connect(
+        #     "clicked", lambda _: self.handle_action_delete())
+
+        b.get_object("btn_audio_subir").connect(
+            "clicked", lambda _: self.handle_selection("AUDIO", "UP"))
+        b.get_object("btn_audio_bajar").connect(
+            "clicked", lambda _: self.handle_selection("AUDIO", "DOWN"))
 
     # --- LÓGICA DE SELECCIÓN DE CARPETAS ---
 
@@ -223,52 +228,94 @@ class AudioRemuxApp(Gtk.Application):
 
         self.builder.get_object("btn_procesar").set_sensitive(True)
 
+    def _swap_video_data(self, item1, item2):
+        item1.name, item2.name = item2.name, item1.name
+        item1.path, item2.path = item2.path, item1.path
+        item1.abs_path, item2.abs_path = item2.abs_path, item1.abs_path
+        item1.is_deleted, item2.is_deleted = item2.is_deleted, item1.is_deleted
+        item1.order, item2.order = item2.order, item1.order
+        # Intercambio de Nombre
+        # temp_name = obj_curr.name
+        # obj_curr.name = obj_target.name
+        # obj_target.name = temp_name
+
+        # # Intercambio de Rutas
+        # temp_path = obj_curr.path
+        # obj_curr.path = obj_target.path
+        # obj_target.path = temp_path
+
+        # temp_abs = obj_curr.abs_path
+        # obj_curr.abs_path = obj_target.abs_path
+        # obj_target.abs_path = temp_abs
+
+        # # Intercambio de estado de borrado
+        # temp_del = obj_curr.is_deleted
+        # obj_curr.is_deleted = obj_target.is_deleted
+        # obj_target.is_deleted = temp_del
+
+        # # Intercambio de Orden (opcional, según tu lógica de negocio)
+        # temp_order = obj_curr.order
+        # obj_curr.order = obj_target.order
+        # obj_target.order = temp_order
+
     def handle_selection(self, item_type, action):
-        if item_type == "VIDEO":
-            pos = self.selection_model.get_selected()
-            if pos == Gtk.INVALID_LIST_POSITION:
-                return
-
-            # n_items = self.store.get_n_items()
-
-            if action == "UP" and pos > 0:
-                # Obtenemos las filas completas (que contienen video y audio)
-                current_row = self.store.get_item(pos)
-                prev_row = self.store.get_item(pos - 1)
-
-                print("current_row.audio"+current_row.audio.name)
-                print("prev_row.audio"+prev_row.audio.name)
-
-                temp_curr_audio = (current_row.audio)
-                temp_prev_audio = (prev_row.audio)
-
-                current_row.audio = temp_prev_audio
-                prev_row.audio = temp_curr_audio
-
-                print("="*20)
-                print("current_row.audio"+current_row.audio.name)
-                print("prev_row.audio"+prev_row.audio.name)
-
-                # Intercambiamos las filas completas
-                self.store.splice(pos - 1, 2, [current_row, prev_row])
-                self.selection_model.set_selected(pos - 1)
-
-            elif action == "DOWN" and pos < self.store.get_n_items() - 1:
-                current_row = self.store.get_item(pos)
-                next_row = self.store.get_item(pos + 1)
-
-                temp_curr_audio = current_row.audio
-                temp_next_audio = next_row.audio
-
-                current_row.audio = temp_next_audio
-                next_row.audio = temp_curr_audio
-
-                self.store.splice(pos, 2, [next_row, current_row])
-                self.selection_model.set_selected(pos + 1)
-
+        # 1. Obtener la posición seleccionada
+        pos = self.selection_model.get_selected()
+        if pos == Gtk.INVALID_LIST_POSITION:
+            print("LOG: Intento de acción sin selección.")
             return
 
-        raise Exception(f"not implemented: {item_type} - {action}")
+        n_items = self.store.get_n_items()
+
+        # 2. Determinar el índice objetivo
+        target_pos = -1
+        if action == "UP" and pos > 0:
+            target_pos = pos - 1
+        elif action == "DOWN" and pos < n_items - 1:
+            target_pos = pos + 1
+
+        if target_pos == -1:
+            print(
+                f"LOG: Acción {action} en posición {pos} ignorada (límite de lista).")
+            return
+
+        # 3. Obtener las filas involucradas
+        row_curr = self.store.get_item(pos)
+        row_target = self.store.get_item(target_pos)
+
+        # 4. Seleccionar los sub-objetos según el tipo (Video o Audio)
+        obj_curr = row_curr.video if item_type == "VIDEO" else row_curr.audio
+        obj_target = row_target.video if item_type == "VIDEO" else row_target.audio
+
+        # Validación: Solo procedemos si ambos objetos existen en las filas
+        if obj_curr is None or obj_target is None:
+            print(
+                f"LOG: No se puede intercambiar {item_type} porque una de las celdas está vacía.")
+            return
+
+        # Helper para los logs (limpia el nombre para visualización)
+        def extract_name(item):
+            if not item or not item.name:
+                return "Vacio"
+            # Ajustado para capturar la parte final
+            return item.name.split(" - ")[-1]
+
+        print(f"\n--- ACTION {item_type}: {action} ---")
+        print(f"Propiedades ANTES:")
+        print(f"  [Fila {pos}]: {extract_name(obj_curr)}")
+        print(f"  [Fila {target_pos}]: {extract_name(obj_target)}")
+
+        # 5. INTERCAMBIO DE PROPIEDADES (Property Swap)
+        # Al modificar estas variables, la UI reacciona sola por el bind_property
+        self._swap_video_data(obj_curr, obj_target)
+
+        print(f"Propiedades DESPUÉS:")
+        print(f"  [Fila {pos}]: {extract_name(obj_curr)}")
+        print(f"  [Fila {target_pos}]: {extract_name(obj_target)}")
+        print("-" * 30)
+
+        # 6. Mover la selección para seguir al elemento
+        self.selection_model.set_selected(target_pos)
 
     def handle_action_delete(self):
         pos = self.selection_model.get_selected()
@@ -278,9 +325,54 @@ class AudioRemuxApp(Gtk.Application):
             item.name = f" [ELIMINADO] {item.name}"
 
     def on_process(self, btn):
-        # Ejemplo: Quitar el primer elemento
-        if self.store.get_n_items() > 0:
-            self.store.remove(0)
+        n_items = self.store.get_n_items()
+
+        if n_items == 0:
+            print("LOG: No hay elementos para procesar.")
+            return
+
+        print(
+            f"\n================ COMUENZA EL PROCESO ({n_items} FILAS) ================")
+
+        # Lista donde guardaremos la estructura final para tu proceso (FFmpeg, Remux, etc.)
+        lista_para_procesar = []
+
+        for i in range(n_items):
+            # 1. Obtener la fila actual en el orden visual de la UI
+            row = self.store.get_item(i)
+
+            video = row.video
+            audio = row.audio
+
+            # 2. Filtrar o ignorar si fue marcado como eliminado
+            if video and video.is_deleted:
+                print(
+                    f"Fila {i}: Video '{video.name}' omitido por estar marcado como ELIMINADO.")
+                continue
+
+            # 3. Estructurar la información de la fila
+            # Nota: 'i' representa el nuevo orden final de procesamiento
+            data_fila = {
+                "orden_final": i,
+                "video_name": video.name if video else None,
+                "video_path": video.abs_path if video else None,
+                "audio_name": audio.name if audio else None,
+                "audio_path": audio.abs_path if audio else None,
+            }
+
+            lista_para_procesar.append(data_fila)
+
+        # --- MOSTRAR RESULTADO EN CONSOLA ---
+        print("\nLista final ordenada lista para remuxing/procesar:")
+        for elem in lista_para_procesar:
+            v_info = elem['video_name'] if elem['video_name'] else "SIN VIDEO"
+            a_info = elem['audio_name'] if elem['audio_name'] else "SIN AUDIO"
+            print(f"[{elem['orden_final']}] Video: {v_info} | Audio: {a_info}")
+
+        print("====================================================================\n")
+
+        # Aquí ya tienes 'lista_para_procesar' disponible para pasarla a tu función de FFmpeg
+        # ej: self.ejecutar_remux(lista_para_procesar)
 
 
 if __name__ == "__main__":
