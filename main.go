@@ -25,6 +25,7 @@ type VideoSource struct {
 	AbsPath       string
 	Order         int
 	AudioDuration int
+	IsDeleted     bool
 }
 
 type FormVideos struct {
@@ -34,9 +35,12 @@ type FormVideos struct {
 }
 
 type App struct {
-	app    *gtk.Application
-	window *gtk.ApplicationWindow
-	cv     *gtk.ColumnView
+	app        *gtk.Application
+	window     *gtk.ApplicationWindow
+	cv         *gtk.ColumnView
+	ls         *gio.ListStore
+	btnProcess *gtk.Button
+	sm         *gtk.SingleSelection
 
 	form *FormVideos
 }
@@ -83,18 +87,11 @@ func (a *App) buildUI() {
 	a.window.Present()
 }
 
-type VideoItem struct {
-	glib.Object
-	Data VideoSource
-}
-
-// Función auxiliar para crear el objeto
-func NewVideoItem(data VideoSource) *VideoItem {
-	item := &VideoItem{Data: data}
-	return item
-}
-
 func (a *App) connectSignals(builder *gtk.Builder) {
+
+	btnVUp := builder.GetObject("btn_video_subir").Cast().(*gtk.Button)
+	btnVDown := builder.GetObject("btn_video_bajar").Cast().(*gtk.Button)
+	btnVDelete := builder.GetObject("btn_video_eliminar").Cast().(*gtk.Button)
 
 	entryVideos := builder.GetObject("entry_videos_principales").Cast().(*gtk.Entry)
 	btnVideos := builder.GetObject("btn_seleccionar_videos_principales").Cast().(*gtk.Button)
@@ -104,6 +101,9 @@ func (a *App) connectSignals(builder *gtk.Builder) {
 
 	entryOutput := builder.GetObject("entry_directorio_salida").Cast().(*gtk.Entry)
 	btnOutput := builder.GetObject("btn_seleccionar_salida").Cast().(*gtk.Button)
+
+	btnProcess := builder.GetObject("btn_procesar").Cast().(*gtk.Button)
+	a.btnProcess = btnProcess
 
 	btnAnalize := builder.GetObject("btn_analizar").Cast().(*gtk.Button)
 
@@ -120,6 +120,22 @@ func (a *App) connectSignals(builder *gtk.Builder) {
 	})
 
 	btnAnalize.ConnectClicked(func() {
+		a.analyze()
+	})
+
+	btnVUp.ConnectClicked(func() {
+		a.handleSelection("Video", "UP")
+	})
+
+	btnVDown.ConnectClicked(func() {
+		a.handleSelection("Video", "DOWN")
+	})
+
+	btnVDelete.ConnectClicked(func() {
+		a.handleSelection("Video", "DELETE")
+	})
+
+	btnProcess.ConnectClicked(func() {
 		a.process()
 	})
 
@@ -138,50 +154,59 @@ func (a *App) connectSignals(builder *gtk.Builder) {
 
 	f0.ConnectBind(func(object *glib.Object) {
 		cell := object.Cast().(*gtk.ColumnViewCell)
-		pos := int(cell.Position())
-		if pos < len(a.form.VideoFiles) {
-			data := a.form.VideoFiles[pos]
-			if label, ok := cell.Child().(*gtk.Label); ok {
-				label.SetText(data.Name)
-			}
-		}
-
+		item := cell.Item().Cast().(*gtk.StringObject)
+		label := cell.Child().(*gtk.Label)
+		label.SetText(item.String())
+		// cell := object.Cast().(*gtk.ColumnViewCell)
+		// pos := int(cell.Position())
+		// if pos < len(a.form.VideoFiles) {
+		// 	data := a.form.VideoFiles[pos]
+		// 	if label, ok := cell.Child().(*gtk.Label); ok {
+		// 		label.SetText(data.Name)
+		// 	}
+		// }
 	})
 
 	c0 := gtk.NewColumnViewColumn("Source Video", &f0.ListItemFactory)
 	c0.SetExpand(true)
 	cv.AppendColumn(c0)
 
-	f1 := gtk.NewSignalListItemFactory()
+	// f1 := gtk.NewSignalListItemFactory()
 
-	f1.ConnectSetup(func(object *glib.Object) {
-		cell := object.Cast().(*gtk.ColumnViewCell)
-		label := gtk.NewLabel("")
-		label.SetXAlign(0)
-		label.SetEllipsize(pango.EllipsizeEnd)
-		cell.SetChild(label)
-	})
+	// f1.ConnectSetup(func(object *glib.Object) {
+	// 	cell := object.Cast().(*gtk.ColumnViewCell)
+	// 	label := gtk.NewLabel("")
+	// 	label.SetXAlign(0)
+	// 	label.SetEllipsize(pango.EllipsizeEnd)
+	// 	cell.SetChild(label)
+	// })
 
-	f1.ConnectBind(func(object *glib.Object) {
-		cell := object.Cast().(*gtk.ColumnViewCell)
-		pos := int(cell.Position())
-		if pos < len(a.form.AudioFiles) {
-			data := a.form.AudioFiles[pos]
-			if label, ok := cell.Child().(*gtk.Label); ok {
-				label.SetText(data.Name)
-			}
-		}
+	// f1.ConnectBind(func(object *glib.Object) {
+	// 	cell := object.Cast().(*gtk.ColumnViewCell)
+	// 	pos := int(cell.Position())
+	// 	if pos < len(a.form.AudioFiles) {
+	// 		data := a.form.AudioFiles[pos]
+	// 		if label, ok := cell.Child().(*gtk.Label); ok {
+	// 			label.SetText(data.Name)
+	// 		}
+	// 	}
 
-	})
+	// })
 
-	c1 := gtk.NewColumnViewColumn("Source Audio", &f1.ListItemFactory)
-	c1.SetExpand(true)
-	cv.AppendColumn(c1)
+	// c1 := gtk.NewColumnViewColumn("Source Audio", &f1.ListItemFactory)
+	// c1.SetExpand(true)
+	// cv.AppendColumn(c1)
 
 	a.cv = cv
 }
 
-func (a *App) process() {
+type VideoItem struct {
+	Object *gtk.StringObject
+
+	Data VideoSource
+}
+
+func (a *App) analyze() {
 
 	fmt.Println("========== FORM ==========")
 	fmt.Printf("Videos      : %d\n", len(a.form.VideoFiles))
@@ -200,27 +225,30 @@ func (a *App) process() {
 		fmt.Println(" -", file)
 	}
 
-	// 1. Crear el Store (el modelo de datos)
-	// Especificamos que contendrá objetos de tipo glib.Object
 	store := gio.NewListStore(glib.TypeObject)
 
-	// 2. Llenar el store con tus datos de FormVideos
+	items := make([]*VideoItem, 0)
+
 	for _, v := range a.form.VideoFiles {
-		// Aquí podrías emparejar video con audio según tu lógica
-		// item := &VideoItem{Data: v}
-		// store.Append(item)
-		val := gtk.NewStringObject(v.Path)
-		store.Append(val.Object)
+
+		obj := gtk.NewStringObject(v.Name)
+
+		item := &VideoItem{
+			Object: obj,
+			Data:   v,
+		}
+
+		items = append(items, item)
+
+		store.Append(obj.Object)
 	}
 
-	// 3. Envolver el store en un SelectionModel (obligatorio para ColumnView)
 	selectionModel := gtk.NewSingleSelection(store)
 	a.cv.SetModel(selectionModel)
+	a.ls = store
 
-	// store := gio.NewListStore(gtk.StringObjectGType)
-	// store.Append(gtk.NewStringObject("Alice|Engineer"))
-	// store.Append(gtk.NewStringObject("Bob|Designer"))
-	// store.Append(gtk.NewStringObject("Charlie|Manager"))
+	a.sm = selectionModel
+	a.btnProcess.SetSensitive(true)
 }
 
 func (a *App) selectVideoFolder(entry *gtk.Entry, destination *[]VideoSource) {
@@ -304,6 +332,7 @@ func listVideos(path string) ([]VideoSource, error) {
 				Order:         i,
 				AudioDuration: 0,
 				AbsPath:       filepath.Join(path, entry.Name()),
+				IsDeleted:     false,
 			},
 		)
 	}
@@ -332,3 +361,9 @@ func check(err error) {
 		log.Fatal(err)
 	}
 }
+
+func (a *App) process() {
+	a.ls.Remove(0)
+}
+
+func (a *App) handleSelection(group string, action string) {}
