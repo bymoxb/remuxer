@@ -2,8 +2,8 @@ using Gtk 4.0;
 using Adw 1;
 
 template $MainWindow: Adw.ApplicationWindow {
-  default-width: 900;
-  default-height: 800;
+  default-width: 1000;
+  default-height: 900;
   title: _("Remuxer");
 
   content: Adw.ToolbarView {
@@ -16,198 +16,209 @@ template $MainWindow: Adw.ApplicationWindow {
       }
     }
 
-    content: Gtk.Box {
-      orientation: vertical;
-      spacing: 18;
-      margin-top: 24;
-      margin-bottom: 24;
-      margin-start: 24;
-      margin-end: 24;
-      // --- SECCIÓN 1: SELECCIÓN DE RUTAS ---
-      Adw.PreferencesGroup {
-        title: _("Media Sources");
+    content: Gtk.ScrolledWindow {
+      vexpand: true;
+      hscrollbar-policy: never;
 
-        Adw.EntryRow entry_videos_principales {
-          title: _("Video Folder");
-          editable: false;
+      child: Adw.Clamp {
+        maximum-size: 1400;
+        tightening-threshold: 800;
 
-          [suffix]
-          Button btn_seleccionar_videos_principales {
-            icon-name: "folder-open-symbolic";
+        child: Gtk.Box {
+          orientation: vertical;
+          spacing: 16;
+          margin-top: 24;
+          margin-bottom: 24;
+          margin-start: 24;
+          margin-end: 24;
+          
+          // --- SECCIÓN 1: SELECCIÓN DE RUTAS ---
+          Adw.PreferencesGroup {
+            title: _("Media Sources");
 
-            styles [
-              "flat",
-            ]
-          }
-        }
+            Adw.EntryRow entry_videos_principales {
+              title: _("Video Folder");
+              editable: false;
 
-        Adw.EntryRow entry_videos_audio {
-          title: _("Audio Folder");
-          editable: false;
+              [suffix]
+              Button btn_seleccionar_videos_principales {
+                icon-name: "folder-open-symbolic";
 
-          [suffix]
-          Button btn_seleccionar_videos_audio {
-            icon-name: "folder-open-symbolic";
+                styles [
+                  "flat",
+                ]
+              }
+            }
 
-            styles [
-              "flat",
-            ]
-          }
-        }
-      }
+            Adw.EntryRow entry_videos_audio {
+              title: _("Audio Folder");
+              editable: false;
 
-      // --- SECCIÓN 2: TABLA Y CONTROLES DE ORDEN ---
-      Gtk.Box {
-        orientation: vertical;
-        spacing: 12;
-        vexpand: true;
-        // Barra de herramientas de la lista
-        Gtk.Box {
-          orientation: horizontal;
-          spacing: 12;
+              [suffix]
+              Button btn_seleccionar_videos_audio {
+                icon-name: "folder-open-symbolic";
 
-          Gtk.Label {
-            label: _("Episode Alignment");
-
-            styles [
-              "heading",
-            ]
-
-            hexpand: true;
-            halign: start;
+                styles [
+                  "flat",
+                ]
+              }
+            }
           }
 
-          // Controles para VIDEO
+          // --- SECCIÓN 2: TABLA Y CONTROLES DE ORDEN ---
           Gtk.Box {
-            orientation: horizontal;
-            spacing: 6;
+            orientation: vertical;
+            spacing: 12;
+            vexpand: true;
+            // Barra de herramientas de la lista
+            Gtk.Box {
+              orientation: horizontal;
+              spacing: 12;
 
-            Gtk.Label {
-              label: _("Video:");
+              Gtk.Label {
+                label: _("Episode Alignment");
 
-              styles [
-                "caption",
-              ]
+                styles [
+                  "heading",
+                ]
+
+                hexpand: true;
+                halign: start;
+              }
+
+              // Controles para VIDEO
+              Gtk.Box {
+                orientation: horizontal;
+                spacing: 6;
+
+                Gtk.Label {
+                  label: _("Video:");
+
+                  styles [
+                    "caption",
+                  ]
+                }
+
+                Gtk.Box {
+                  styles [
+                    "linked",
+                  ]
+
+                  Button btn_video_subir {
+                    icon-name: "go-up-symbolic";
+                    tooltip-text: _("Move Up");
+                  }
+
+                  Button btn_video_bajar {
+                    icon-name: "go-down-symbolic";
+                    tooltip-text: _("Move Down");
+                  }
+                }
+              }
+
+              Gtk.Separator {
+                styles [
+                  "spacer",
+                ]
+              }
+
+              // Controles para AUDIO
+              Gtk.Box {
+                orientation: horizontal;
+                spacing: 6;
+
+                Gtk.Label {
+                  label: _("Audio:");
+
+                  styles [
+                    "caption",
+                  ]
+                }
+
+                Gtk.Box {
+                  styles [
+                    "linked",
+                  ]
+
+                  Button btn_audio_subir {
+                    icon-name: "go-up-symbolic";
+                    tooltip-text: _("Move Up");
+                  }
+
+                  Button btn_audio_bajar {
+                    icon-name: "go-down-symbolic";
+                    tooltip-text: _("Move Down");
+                  }
+                }
+              }
+            }
+
+            // El área de la lista
+            Gtk.Frame {
+              child: Gtk.ScrolledWindow {
+                min-content-height: 350;
+
+                child: Gtk.ColumnView view_episodios {
+                  hexpand: true;
+                  vexpand: true;
+                  // Las columnas se definen en el código
+                };
+              };
+            }
+          }
+
+          // --- SECCIÓN 3: SALIDA Y EJECUCIÓN ---
+          Gtk.Box {
+            orientation: vertical;
+            spacing: 12;
+
+            Adw.PreferencesGroup {
+              Adw.EntryRow entry_directorio_salida {
+                title: _("Output Folder");
+                editable: false;
+
+                [suffix]
+                Button btn_seleccionar_salida {
+                  icon-name: "folder-open-symbolic";
+
+                  styles [
+                    "flat",
+                  ]
+                }
+              }
             }
 
             Gtk.Box {
-              styles [
-                "linked",
-              ]
+              halign: center;
+              spacing: 18;
 
-              Button btn_video_subir {
-                icon-name: "go-up-symbolic";
-                tooltip-text: _("Move Up");
+              Button btn_analizar {
+                label: _("Analyze");
+                width-request: 200;
+
+                styles [
+                  "pill",
+                ]
               }
 
-              Button btn_video_bajar {
-                icon-name: "go-down-symbolic";
-                tooltip-text: _("Move Down");
+              Button btn_procesar {
+                label: _("Start Processing");
+                width-request: 200;
+                sensitive: false;
+
+                styles [
+                  "suggested-action",
+                  "pill",
+                ]
               }
             }
-          }
 
-          Gtk.Separator {
-            styles [
-              "spacer",
-            ]
-          }
-
-          // Controles para AUDIO
-          Gtk.Box {
-            orientation: horizontal;
-            spacing: 6;
-
-            Gtk.Label {
-              label: _("Audio:");
-
-              styles [
-                "caption",
-              ]
-            }
-
-            Gtk.Box {
-              styles [
-                "linked",
-              ]
-
-              Button btn_audio_subir {
-                icon-name: "go-up-symbolic";
-                tooltip-text: _("Move Up");
-              }
-
-              Button btn_audio_bajar {
-                icon-name: "go-down-symbolic";
-                tooltip-text: _("Move Down");
-              }
+            Gtk.ProgressBar pro_bar {
+              margin-top: 6;
             }
           }
-        }
-
-        // El área de la lista
-        Gtk.Frame {
-          child: Gtk.ScrolledWindow {
-            min-content-height: 350;
-
-            child: Gtk.ColumnView view_episodios {
-              hexpand: true;
-              vexpand: true;
-              // Las columnas se definen en el código
-            };
-          };
-        }
-      }
-
-      // --- SECCIÓN 3: SALIDA Y EJECUCIÓN ---
-      Gtk.Box {
-        orientation: vertical;
-        spacing: 12;
-
-        Adw.PreferencesGroup {
-          Adw.EntryRow entry_directorio_salida {
-            title: _("Output Folder");
-            editable: false;
-
-            [suffix]
-            Button btn_seleccionar_salida {
-              icon-name: "folder-open-symbolic";
-
-              styles [
-                "flat",
-              ]
-            }
-          }
-        }
-
-        Gtk.Box {
-          halign: center;
-          spacing: 18;
-
-          Button btn_analizar {
-            label: _("Analyze");
-            width-request: 200;
-
-            styles [
-              "pill",
-            ]
-          }
-
-          Button btn_procesar {
-            label: _("Start Processing");
-            width-request: 200;
-            sensitive: false;
-
-            styles [
-              "suggested-action",
-              "pill",
-            ]
-          }
-        }
-
-        Gtk.ProgressBar pro_bar {
-          margin-top: 6;
-        }
-      }
+        };
+      };
     };
   };
 }
