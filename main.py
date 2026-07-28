@@ -2,6 +2,10 @@ from gi.repository import Gtk, Gio, GObject, Pango
 import os
 import gi
 from pathlib import Path
+import threading
+import subprocess
+from gi.repository import GLib
+from pathlib import Path
 
 # Configurar versiones de GTK
 gi.require_version('Gtk', '4.0')
@@ -363,16 +367,109 @@ class AudioRemuxApp(Gtk.Application):
             lista_para_procesar.append(data_fila)
 
         # --- MOSTRAR RESULTADO EN CONSOLA ---
-        print("\nLista final ordenada lista para remuxing/procesar:")
-        for elem in lista_para_procesar:
-            v_info = elem['video_name'] if elem['video_name'] else "SIN VIDEO"
-            a_info = elem['audio_name'] if elem['audio_name'] else "SIN AUDIO"
-            print(f"[{elem['orden_final']}] Video: {v_info} | Audio: {a_info}")
+        # print("\nLista final ordenada lista para remuxing/procesar:")
+        # for elem in lista_para_procesar:
+        #     v_info = elem['video_name'] if elem['video_name'] else "SIN VIDEO"
+        #     a_info = elem['audio_name'] if elem['audio_name'] else "SIN AUDIO"
+        #     print(f"[{elem['orden_final']}] Video: {v_info} | Audio: {a_info}")
 
-        print("====================================================================\n")
+        # print("====================================================================\n")
 
         # Aquí ya tienes 'lista_para_procesar' disponible para pasarla a tu función de FFmpeg
         # ej: self.ejecutar_remux(lista_para_procesar)
+
+            # 2. Desactivar el botón para evitar múltiples clics durante el proceso
+        btn.set_sensitive(False)
+
+        # 3. Obtener el widget de la barra de progreso
+        progress_bar = self.builder.get_object("pro_bar")
+        progress_bar.set_fraction(0.0)
+        progress_bar.set_text("Iniciando...")
+
+        # 4. Lanzar el hilo para no congelar la UI
+        # Pasamos n_items y el botón como argumentos
+        thread = threading.Thread(
+            target=self._run_heavy_task, args=(n_items, btn))
+        thread.start()
+
+    def _run_append_audio(self, video, audio, destination):
+        print("="*50)
+        print("Video: "+video)
+        print("Audio: "+audio)
+        print("Desti: "+destination)
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-nostdin",
+            "-hide_banner",
+            "-loglevel", "error",
+            ##
+            "-i", video,
+            "-i", audio,
+            ##
+            "-map", "0",
+            "-map", "1:a:0",
+            ##
+            "-map_metadata", "0",
+            ##
+            "-c", "copy",
+            ##
+            destination,
+        ]
+
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        if result.returncode != 0:
+            print(f"ffmpeg falló:\n{result.stderr}")
+            # raise RuntimeError(
+            #     f"ffmpeg falló:\n{result.stderr}"
+            # )
+
+        print("="*50)
+
+    def _run_heavy_task(self, n_items, btn):
+        """Esta función corre en un hilo separado (background)"""
+        # progress_bar = self.builder.get_object("pro_bar")
+        destination_path = Path(self.output_dir)
+        destination_path.mkdir(parents=True, exist_ok=True)
+
+        for i in range(n_items):
+            # OBTENER EL ELEMENTO DE LA LISTA
+            # Aquí es donde accedes a tus datos para procesarlos
+            row = self.store.get_item(i)
+            print(f"Procesando: {row.video.name} con audio {row.audio.name}")
+
+            # Simulamos el trabajo (1 segundo)
+
+            new_file_name = Path(row.video.abs_path)
+
+            self._run_append_audio(
+                row.video.abs_path,
+                row.audio.abs_path,
+                str(destination_path/new_file_name.name))
+
+            # Calcular el progreso (de 0.0 a 1.0)
+            fraction = (i + 1) / n_items
+            text = f"Procesando {i + 1} de {n_items}..."
+
+            # ACTUALIZAR UI: Debe hacerse mediante GLib.idle_add
+            GLib.idle_add(self._update_ui_progress, fraction, text)
+
+        # Al terminar, rehabilitamos el botón y limpiamos el texto
+        GLib.idle_add(btn.set_sensitive, True)
+        GLib.idle_add(self._update_ui_progress, 1.0, "¡Proceso Completado!")
+
+    def _update_ui_progress(self, fraction, text):
+        """Esta función corre en el hilo principal (UI)"""
+        progress_bar = self.builder.get_object("pro_bar")
+        progress_bar.set_fraction(fraction)
+        progress_bar.set_text(text)
+        return False  # Importante para que GLib no repita la llamada
 
 
 if __name__ == "__main__":
