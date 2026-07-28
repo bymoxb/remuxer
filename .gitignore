@@ -1,1 +1,33 @@
-*.ui
+### --- Python --- ###
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+build/
+dist/
+
+### --- GTK & Blueprint --- ###
+# Ignoramos el XML generado, ya que nuestra "fuente de verdad" es el .blp
+ui/*.ui
+# Si compilas recursos de GResource (opcional)
+*.gresource
+
+### --- I18N (Traducciones) --- ###
+# Ignoramos los archivos binarios compilados (.mo)
+# Estos se generan a partir de los .po y no deben estar en el repositorio
+locale/**/LC_MESSAGES/*.mo
+
+# Nota: Los archivos .po y .pot SÍ deben subirse al repositorio,
+# ya que son los archivos de texto que los traductores editan.
+
+### --- Sistema / Editores --- ###
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+### --- Logs y Temporales --- ###
+*.log
