@@ -6,6 +6,18 @@
   <img src="screenshots/screenshot-side-by-side.png" alt="Remuxer Screenshot" width="800">
 </p>
 
+## 🎯 Who is this for?
+
+**Remuxer** is designed for users who need to swap or attach audio streams across multiple files in bulk, eliminating the tedious process of doing it file-by-file in complex editors or via manual terminal commands
+
+### 🔄 The Workflow
+
+Instead of spending hours processing files individually, Remuxer reduces the entire job to three simple steps:
+
+1. **Select Video Source:** Pick the folder containing your high-quality target video files.
+2. **Select Audio Source:** Pick the folder containing the replacement or supplementary audio tracks.
+3. **Align & Process:** Use the intuitive table to verify that each video matches its corresponding audio file, hit **Start Processing**, and let FFmpeg stream-copy the entire batch in seconds with **zero quality loss**.
+
 ## 🚀 Key Features (SEO)
 
 - **Batch Media Muxing:** Process entire directories of video and audio simultaneously.
