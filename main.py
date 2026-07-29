@@ -7,12 +7,16 @@ import threading
 import subprocess
 import time
 from pathlib import Path
-import threading
+import requests
+from packaging import version
 
 # 1. Definir el nombre de tu aplicación (App ID o similar)
 APP_NAME = "remuxer"
 APP_ID = "com.github.bymoxb.remuxer"
 APP_VERSION = "0.1.0-dev"
+APP_USERNAME = "bymoxb"
+APP_GITHUB = f"https://github.com/{APP_USERNAME}/{APP_NAME}"
+APP_GITHUB_RELEASES = f"https://api.github.com/repos/{APP_USERNAME}/{APP_NAME}/releases/latest"
 
 # 2. Definir la ruta de la carpeta de traducciones
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), 'locale')
@@ -106,6 +110,8 @@ class MainWindow(Adw.ApplicationWindow):
 
     btn_menu = Gtk.Template.Child()
 
+    updates_banner = Gtk.Template.Child()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -120,6 +126,57 @@ class MainWindow(Adw.ApplicationWindow):
         self.setup_column_view()
         self.connect_signals()
         self.setup_actions()
+        self.check_for_update()
+
+    def on_updates_banner_button_clicked(self, banner):
+        banner.set_revealed(False)
+
+    def get_latest_release(self):
+
+        try:
+            response = requests.get(APP_GITHUB_RELEASES, timeout=1)
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            tag = data.get("tag_name")
+
+            if not tag:
+                return None
+
+            return tag.lstrip("v")
+
+        except requests.RequestException as error:
+
+            print(
+                f"No se pudo consultar GitHub: {error}"
+            )
+
+            return None
+
+    def check_for_update(self):
+
+        latest_version = self.get_latest_release()
+
+        print(f"Latest version: {latest_version}")
+
+        if latest_version is None:
+            return
+
+        current = version.parse(APP_VERSION)
+        latest = version.parse(latest_version)
+
+        if latest > current:
+            self.updates_banner.set_title(
+                self.updates_banner.get_title().format(latest_version))
+            self.updates_banner.set_revealed(True)
+
+        self.updates_banner.connect(
+            "button-clicked",
+            self.on_updates_banner_button_clicked
+        )
+
 
     def setup_column_view(self):
         # Usamos directamente la referencia self.view_episodios
@@ -205,7 +262,7 @@ class MainWindow(Adw.ApplicationWindow):
             version=APP_VERSION,
             application_icon=APP_ID,
             comments=_("A batch media muxing tool powered by FFmpeg"),
-            website="https://github.com/bymoxb/remuxer",
+            website=APP_GITHUB,
             license_type=Gtk.License.GPL_3_0,
         )
         about.present()

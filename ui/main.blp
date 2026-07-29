@@ -23,163 +23,54 @@ template $MainWindow: Adw.ApplicationWindow {
       }
     }
 
-    content: Gtk.ScrolledWindow {
-      vexpand: true;
-      hscrollbar-policy: never;
+    content: Gtk.Box {
+      orientation: vertical;
 
-      child: Adw.Clamp {
-        maximum-size: 1400;
-        tightening-threshold: 800;
+      Adw.Banner updates_banner {
+        revealed: false;
+        title: _("A new version {0} is available");
+        button-label: _("Close");
+      }
 
-        child: Gtk.Box {
-          orientation: vertical;
-          spacing: 16;
-          margin-top: 24;
-          margin-bottom: 24;
-          margin-start: 24;
-          margin-end: 24;
+      Gtk.ScrolledWindow {
+        vexpand: true;
+        hscrollbar-policy: never;
 
-          Adw.PreferencesGroup {
-            title: _("Media Sources");
+        child: Adw.Clamp {
+          maximum-size: 1400;
+          tightening-threshold: 800;
 
-            Adw.EntryRow entry_videos_principales {
-              title: _("Video Folder");
-              editable: false;
-
-              [suffix]
-              Button btn_seleccionar_videos_principales {
-                icon-name: "folder-open-symbolic";
-
-                styles [
-                  "flat",
-                ]
-              }
-            }
-
-            Adw.EntryRow entry_videos_audio {
-              title: _("Audio Folder");
-              editable: false;
-
-              [suffix]
-              Button btn_seleccionar_videos_audio {
-                icon-name: "folder-open-symbolic";
-
-                styles [
-                  "flat",
-                ]
-              }
-            }
-          }
-
-
-          Gtk.Box {
+          child: Gtk.Box {
             orientation: vertical;
-            spacing: 12;
-            vexpand: true;
-
-            Gtk.Box {
-              orientation: horizontal;
-              spacing: 12;
-
-              Gtk.Label {
-                label: _("Episode Alignment");
-
-                styles [
-                  "heading",
-                ]
-
-                hexpand: true;
-                halign: start;
-              }
-
-              Gtk.Box {
-                orientation: horizontal;
-                spacing: 6;
-
-                Gtk.Label {
-                  label: _("Video:");
-
-                  styles [
-                    "caption",
-                  ]
-                }
-
-                Gtk.Box {
-                  styles [
-                    "linked",
-                  ]
-
-                  Button btn_video_subir {
-                    icon-name: "go-up-symbolic";
-                    tooltip-text: _("Move Up");
-                  }
-
-                  Button btn_video_bajar {
-                    icon-name: "go-down-symbolic";
-                    tooltip-text: _("Move Down");
-                  }
-                }
-              }
-
-              Gtk.Separator {
-                styles [
-                  "spacer",
-                ]
-              }
-
-              Gtk.Box {
-                orientation: horizontal;
-                spacing: 6;
-
-                Gtk.Label {
-                  label: _("Audio:");
-
-                  styles [
-                    "caption",
-                  ]
-                }
-
-                Gtk.Box {
-                  styles [
-                    "linked",
-                  ]
-
-                  Button btn_audio_subir {
-                    icon-name: "go-up-symbolic";
-                    tooltip-text: _("Move Up");
-                  }
-
-                  Button btn_audio_bajar {
-                    icon-name: "go-down-symbolic";
-                    tooltip-text: _("Move Down");
-                  }
-                }
-              }
-            }
-
-            Gtk.Frame {
-              child: Gtk.ScrolledWindow {
-                min-content-height: 350;
-
-                child: Gtk.ColumnView view_episodios {
-                  hexpand: true;
-                  vexpand: true;
-                };
-              };
-            }
-          }
-
-          Gtk.Box {
-            orientation: vertical;
-            spacing: 12;
+            spacing: 16;
+            margin-top: 24;
+            margin-bottom: 24;
+            margin-start: 24;
+            margin-end: 24;
 
             Adw.PreferencesGroup {
-              Adw.EntryRow entry_directorio_salida {
-                title: _("Output Folder");
+              title: _("Media Sources");
+
+              Adw.EntryRow entry_videos_principales {
+                title: _("Video Folder");
                 editable: false;
 
                 [suffix]
-                Button btn_seleccionar_salida {
+                Button btn_seleccionar_videos_principales {
+                  icon-name: "folder-open-symbolic";
+
+                  styles [
+                    "flat",
+                  ]
+                }
+              }
+
+              Adw.EntryRow entry_videos_audio {
+                title: _("Audio Folder");
+                editable: false;
+
+                [suffix]
+                Button btn_seleccionar_videos_audio {
                   icon-name: "folder-open-symbolic";
 
                   styles [
@@ -189,91 +80,209 @@ template $MainWindow: Adw.ApplicationWindow {
               }
             }
 
-            Adw.PreferencesGroup {
-              Adw.ExpanderRow {
-                title: _("Output Naming");
+            Gtk.Box {
+              orientation: vertical;
+              spacing: 12;
+              vexpand: true;
 
-                Adw.ActionRow row_keep_source_name {
-                  title: _("Keep Source Name");
-                  subtitle: _("The output file will use the original source filename.");
-                  activatable-widget: radio_keep_source_name;
+              Gtk.Box {
+                orientation: horizontal;
+                spacing: 12;
 
-                  [prefix]
-                  CheckButton radio_keep_source_name {
-                    active: true;
+                Gtk.Label {
+                  label: _("Episode Alignment");
+
+                  styles [
+                    "heading",
+                  ]
+
+                  hexpand: true;
+                  halign: start;
+                }
+
+                Gtk.Box {
+                  orientation: horizontal;
+                  spacing: 6;
+
+                  Gtk.Label {
+                    label: _("Video:");
+
+                    styles [
+                      "caption",
+                    ]
+                  }
+
+                  Gtk.Box {
+                    styles [
+                      "linked",
+                    ]
+
+                    Button btn_video_subir {
+                      icon-name: "go-up-symbolic";
+                      tooltip-text: _("Move Up");
+                    }
+
+                    Button btn_video_bajar {
+                      icon-name: "go-down-symbolic";
+                      tooltip-text: _("Move Down");
+                    }
                   }
                 }
 
-                Adw.ActionRow row_keep_destination_name {
-                  title: _("Keep Destination Name");
-                  subtitle: _("The output file will use the destination filename.");
-                  activatable-widget: radio_keep_destination_name;
+                Gtk.Separator {
+                  styles [
+                    "spacer",
+                  ]
+                }
 
-                  [prefix]
-                  CheckButton radio_keep_destination_name {
-                    group: radio_keep_source_name;
+                Gtk.Box {
+                  orientation: horizontal;
+                  spacing: 6;
+
+                  Gtk.Label {
+                    label: _("Audio:");
+
+                    styles [
+                      "caption",
+                    ]
+                  }
+
+                  Gtk.Box {
+                    styles [
+                      "linked",
+                    ]
+
+                    Button btn_audio_subir {
+                      icon-name: "go-up-symbolic";
+                      tooltip-text: _("Move Up");
+                    }
+
+                    Button btn_audio_bajar {
+                      icon-name: "go-down-symbolic";
+                      tooltip-text: _("Move Down");
+                    }
                   }
                 }
+              }
+
+              Gtk.Frame {
+                child: Gtk.ScrolledWindow {
+                  min-content-height: 350;
+
+                  child: Gtk.ColumnView view_episodios {
+                    hexpand: true;
+                    vexpand: true;
+                  };
+                };
               }
             }
 
             Gtk.Box {
-              halign: center;
-              spacing: 18;
+              orientation: vertical;
+              spacing: 12;
 
-              Button btn_analizar {
-                label: _("Analyze");
-                width-request: 200;
+              Adw.PreferencesGroup {
+                Adw.EntryRow entry_directorio_salida {
+                  title: _("Output Folder");
+                  editable: false;
 
-                styles [
-                  "pill",
-                ]
-              }
-
-              Gtk.Stack action_stack {
-                transition-type: crossfade;
-
-                Gtk.StackPage {
-                  name: "process";
-                  visible: true;
-
-                  child: Gtk.Button btn_procesar {
-                    label: _("Start Processing");
-                    width-request: 200;
-                    sensitive: false;
+                  [suffix]
+                  Button btn_seleccionar_salida {
+                    icon-name: "folder-open-symbolic";
 
                     styles [
-                      "suggested-action",
-                      "pill",
+                      "flat",
                     ]
-                  };
-                }
-
-                Gtk.StackPage {
-                  name: "cancel";
-                  visible: false;
-
-                  child: Gtk.Button btn_cancelar {
-                    label: _("Cancel");
-                    width-request: 200;
-
-                    styles [
-                      "destructive-action",
-                      "pill",
-                    ]
-                  };
+                  }
                 }
               }
-            }
 
-            Gtk.ProgressBar pro_bar {
-              text: _("");
-              show-text: true;
-              margin-top: 6;
+              Adw.PreferencesGroup {
+                Adw.ExpanderRow {
+                  title: _("Output Naming");
+
+                  Adw.ActionRow row_keep_source_name {
+                    title: _("Keep Source Video Name");
+                    subtitle: _("The output file will use the original source video filename.");
+                    activatable-widget: radio_keep_source_name;
+
+                    [prefix]
+                    CheckButton radio_keep_source_name {
+                      active: true;
+                    }
+                  }
+
+                  Adw.ActionRow row_keep_destination_name {
+                    title: _("Keep Source Audio Name");
+                    subtitle: _("The output file will use the original source audio filename.");
+                    activatable-widget: radio_keep_destination_name;
+
+                    [prefix]
+                    CheckButton radio_keep_destination_name {
+                      group: radio_keep_source_name;
+                    }
+                  }
+                }
+              }
+
+              Gtk.Box {
+                halign: center;
+                spacing: 18;
+
+                Button btn_analizar {
+                  label: _("Analyze");
+                  width-request: 200;
+
+                  styles [
+                    "pill",
+                  ]
+                }
+
+                Gtk.Stack action_stack {
+                  transition-type: crossfade;
+
+                  Gtk.StackPage {
+                    name: "process";
+                    visible: true;
+
+                    child: Gtk.Button btn_procesar {
+                      label: _("Start Processing");
+                      width-request: 200;
+                      sensitive: false;
+
+                      styles [
+                        "suggested-action",
+                        "pill",
+                      ]
+                    };
+                  }
+
+                  Gtk.StackPage {
+                    name: "cancel";
+                    visible: false;
+
+                    child: Gtk.Button btn_cancelar {
+                      label: _("Cancel");
+                      width-request: 200;
+
+                      styles [
+                        "destructive-action",
+                        "pill",
+                      ]
+                    };
+                  }
+                }
+              }
+
+              Gtk.ProgressBar pro_bar {
+                text: _("");
+                show-text: true;
+                margin-top: 6;
+              }
             }
-          }
+          };
         };
-      };
+      }
     };
   };
 }
