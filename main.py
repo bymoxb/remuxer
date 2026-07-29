@@ -12,6 +12,7 @@ import threading
 # 1. Definir el nombre de tu aplicación (App ID o similar)
 APP_NAME = "remuxer"
 APP_ID = "com.github.bymoxb.remuxer"
+APP_VERSION = "0.1-dev"
 
 # 2. Definir la ruta de la carpeta de traducciones
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), 'locale')
@@ -103,6 +104,8 @@ class MainWindow(Adw.ApplicationWindow):
     radio_keep_source_name = Gtk.Template.Child()
     radio_keep_destination_name = Gtk.Template.Child()
 
+    btn_menu = Gtk.Template.Child()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -116,6 +119,7 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.setup_column_view()
         self.connect_signals()
+        self.setup_actions()
 
     def setup_column_view(self):
         # Usamos directamente la referencia self.view_episodios
@@ -182,6 +186,29 @@ class MainWindow(Adw.ApplicationWindow):
             "clicked", lambda _: self.handle_selection("AUDIO", "UP"))
         self.btn_audio_bajar.connect(
             "clicked", lambda _: self.handle_selection("AUDIO", "DOWN"))
+
+    def setup_actions(self):
+        menu = Gio.Menu.new()
+        menu.append(_("About Remuxer"), "win.about")
+
+        self.btn_menu.set_menu_model(menu)
+
+        action = Gio.SimpleAction.new("about", None)
+        action.connect("activate", self.on_about_clicked)
+        self.add_action(action)
+
+    def on_about_clicked(self, action, param):
+        about = Adw.AboutWindow(
+            transient_for=self,
+            modal=True,
+            application_name=APP_NAME,
+            version=APP_VERSION,
+            application_icon=APP_ID,
+            comments=_("A batch media muxing tool powered by FFmpeg"),
+            website="https://github.com/bymoxb/remuxer",
+            license_type=Gtk.License.GPL_3_0,
+        )
+        about.present()
 
     # --- LÓGICA DE SELECCIÓN DE CARPETAS ---
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 21:53-0500\n"
+"POT-Creation-Date: 2026-07-28 23:45-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,43 +17,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:42 ui/main.ui:246
+#: main.py:43 ui/main.ui:253
 msgid "Analyze"
 msgstr ""
 
-#: main.py:128
+#: main.py:132
 msgid "Source Video"
 msgstr ""
 
-#: main.py:136
+#: main.py:140
 msgid "Source Audio"
 msgstr ""
 
-#: main.py:205
+#: main.py:192
+msgid "About Remuxer"
+msgstr ""
+
+#: main.py:207
+msgid "A batch media muxing tool powered by FFmpeg"
+msgstr ""
+
+#: main.py:232
 msgid "Choose video folder"
 msgstr ""
 
-#: main.py:211
+#: main.py:238
 msgid "Choose audio folder"
 msgstr ""
 
-#: main.py:217
+#: main.py:244
 msgid "Choose output folder"
 msgstr ""
 
-#: main.py:366
+#: main.py:393
 msgid "Cancelling..."
 msgstr ""
 
-#: main.py:428
+#: main.py:455
 msgid "Starting..."
 msgstr ""
 
-#: main.py:557
+#: main.py:584
 msgid "Cancelled"
 msgstr ""
 
-#: main.py:559
+#: main.py:586
 msgid "Completed!"
 msgstr ""
 
@@ -65,66 +73,70 @@ msgstr ""
 msgid "Episode Processor"
 msgstr ""
 
-#: ui/main.ui:43
+#: ui/main.ui:27
+msgid "Main Menu"
+msgstr ""
+
+#: ui/main.ui:50
 msgid "Media Sources"
 msgstr ""
 
-#: ui/main.ui:46
+#: ui/main.ui:53
 msgid "Video Folder"
 msgstr ""
 
-#: ui/main.ui:60
+#: ui/main.ui:67
 msgid "Audio Folder"
 msgstr ""
 
-#: ui/main.ui:85
+#: ui/main.ui:92
 msgid "Episode Alignment"
 msgstr ""
 
-#: ui/main.ui:99
+#: ui/main.ui:106
 msgid "Video:"
 msgstr ""
 
-#: ui/main.ui:113 ui/main.ui:153
+#: ui/main.ui:120 ui/main.ui:160
 msgid "Move Up"
 msgstr ""
 
-#: ui/main.ui:119 ui/main.ui:159
+#: ui/main.ui:126 ui/main.ui:166
 msgid "Move Down"
 msgstr ""
 
-#: ui/main.ui:139
+#: ui/main.ui:146
 msgid "Audio:"
 msgstr ""
 
-#: ui/main.ui:193
+#: ui/main.ui:200
 msgid "Output Folder"
 msgstr ""
 
-#: ui/main.ui:211
+#: ui/main.ui:218
 msgid "Output Naming"
 msgstr ""
 
-#: ui/main.ui:214
+#: ui/main.ui:221
 msgid "Keep Source Name"
 msgstr ""
 
-#: ui/main.ui:215
+#: ui/main.ui:222
 msgid "The output file will use the original source filename."
 msgstr ""
 
-#: ui/main.ui:226
+#: ui/main.ui:233
 msgid "Keep Destination Name"
 msgstr ""
 
-#: ui/main.ui:227
+#: ui/main.ui:234
 msgid "The output file will use the destination filename."
 msgstr ""
 
-#: ui/main.ui:262
+#: ui/main.ui:269
 msgid "Start Processing"
 msgstr ""
 
-#: ui/main.ui:279
+#: ui/main.ui:286
 msgid "Cancel"
 msgstr ""
