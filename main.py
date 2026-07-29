@@ -74,11 +74,8 @@ class ColumnViewRow(GObject.Object):
 
 @Gtk.Template(filename="ui/main.ui")
 class MainWindow(Adw.ApplicationWindow):
-    # Este nombre DEBE coincidir con el $MainWindow del blueprint
     __gtype_name__ = "MainWindow"
 
-    # Definimos los hijos que queremos usar directamente (Internal children)
-    # Esto reemplaza a builder.get_object()
     view_episodios = Gtk.Template.Child()
 
     btn_seleccionar_videos_principales = Gtk.Template.Child()
@@ -95,10 +92,12 @@ class MainWindow(Adw.ApplicationWindow):
 
     pro_bar = Gtk.Template.Child()
 
-    # DEBES DECLARAR CADA WIDGET QUE USES CON self.nombre_widget
     entry_videos_principales = Gtk.Template.Child()
     entry_videos_audio = Gtk.Template.Child()
     entry_directorio_salida = Gtk.Template.Child()
+
+    radio_keep_source_name = Gtk.Template.Child()
+    radio_keep_destination_name = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -457,6 +456,23 @@ class MainWindow(Adw.ApplicationWindow):
 
         print("="*50)
 
+    def get_output_naming(self):
+        if self.radio_keep_source_name.get_active():
+            return "source"
+
+        return "destination"
+
+    def _resolve_final_filename(self, video_abs_path: str, audio_abs_path: str, destination_path: Path) -> str:
+
+        file_name: Path = None
+
+        if self.get_output_naming() == "source":
+            file_name = Path(video_abs_path)
+        else:
+            file_name = Path(audio_abs_path)
+
+        return str(destination_path / file_name.name)
+
     def _run_heavy_task(self, n_items, btn):
         """Esta función corre en un hilo separado (background)"""
         destination_path = Path(self.output_dir)
@@ -468,21 +484,24 @@ class MainWindow(Adw.ApplicationWindow):
             row = self.store.get_item(i)
             print(f"Procesando: {row.video.name} con audio {row.audio.name}")
 
-            # Simulamos el trabajo (1 segundo)
+            # Calcular el progreso (de 0.0 a 1.0)
+            fraction = i / n_items
 
-            new_file_name = Path(row.video.abs_path)
+            # ACTUALIZAR UI: Debe hacerse mediante GLib.idle_add
+            GLib.idle_add(
+                self._update_ui_progress,
+                fraction, f"{i + 1}/{n_items}")
+
+            new_file_name = self._resolve_final_filename(
+                row.video.abs_path,
+                row.audio.abs_path,
+                destination_path)
 
             # time.sleep(1)
             self._run_append_audio(
                 row.video.abs_path,
                 row.audio.abs_path,
-                str(destination_path/new_file_name.name))
-
-            # Calcular el progreso (de 0.0 a 1.0)
-            fraction = (i + 1) / n_items
-
-            # ACTUALIZAR UI: Debe hacerse mediante GLib.idle_add
-            GLib.idle_add(self._update_ui_progress, fraction, "{0}/{1}".format(row.video.name,row.audio.name))
+                new_file_name)
 
         # Al terminar, rehabilitamos el botón y limpiamos el texto
         GLib.idle_add(btn.set_sensitive, True)

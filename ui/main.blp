@@ -188,6 +188,34 @@ template $MainWindow: Adw.ApplicationWindow {
               }
             }
 
+            Adw.PreferencesGroup {
+              Adw.ExpanderRow {
+                title: _("Output Naming");
+
+                Adw.ActionRow row_keep_source_name {
+                  title: _("Keep Source Name");
+                  subtitle: _("The output file will use the original source filename.");
+                  activatable-widget: radio_keep_source_name;
+
+                  [prefix]
+                  CheckButton radio_keep_source_name {
+                    active: true;
+                  }
+                }
+
+                Adw.ActionRow row_keep_destination_name {
+                  title: _("Keep Destination Name");
+                  subtitle: _("The output file will use the destination filename.");
+                  activatable-widget: radio_keep_destination_name;
+
+                  [prefix]
+                  CheckButton radio_keep_destination_name {
+                    group: radio_keep_source_name;
+                  }
+                }
+              }
+            }
+
             Gtk.Box {
               halign: center;
               spacing: 18;
@@ -214,6 +242,8 @@ template $MainWindow: Adw.ApplicationWindow {
             }
 
             Gtk.ProgressBar pro_bar {
+              text: _("");
+              show-text: true;
               margin-top: 6;
             }
           }
