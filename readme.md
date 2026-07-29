@@ -34,7 +34,7 @@ Follow these steps to clone the repository and run the application in a local en
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/remuxer.git
+git clone https://github.com/bymoxb/remuxer.git
 cd remuxer
 ```
 
