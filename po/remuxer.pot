@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 02:01-0500\n"
+"POT-Creation-Date: 2026-07-29 02:16-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,19 +126,19 @@ msgid "Output Naming"
 msgstr ""
 
 #: ui/main.ui:231
-msgid "Keep Source Name"
+msgid "Keep Source Video Name"
 msgstr ""
 
 #: ui/main.ui:232
-msgid "The output file will use the original source filename."
+msgid "The output file will use the original source video filename."
 msgstr ""
 
 #: ui/main.ui:243
-msgid "Keep Destination Name"
+msgid "Keep Source Audio Name"
 msgstr ""
 
 #: ui/main.ui:244
-msgid "The output file will use the destination filename."
+msgid "The output file will use the original source audio filename."
 msgstr ""
 
 #: ui/main.ui:279

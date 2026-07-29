@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 02:01-0500\n"
+"POT-Creation-Date: 2026-07-29 02:06-0500\n"
 "PO-Revision-Date: 2026-07-28 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -50,7 +50,6 @@ msgid "Choose output folder"
 msgstr "Seleccionar carpeta de salida"
 
 #: main.py:450
-#, fuzzy
 msgid "Cancelling..."
 msgstr "Cancelando..."
 
@@ -59,7 +58,6 @@ msgid "Starting..."
 msgstr "Iniciando..."
 
 #: main.py:641
-#, fuzzy
 msgid "Cancelled"
 msgstr "Cancelar"
 
@@ -128,21 +126,20 @@ msgid "Output Naming"
 msgstr "Nombre del archivo de salida"
 
 #: ui/main.ui:231
-msgid "Keep Source Name"
-msgstr "Conservar el nombre del archivo de origen"
+msgid "Keep Source Video Name"
+msgstr "Conservar el nombre del video de origen"
 
 #: ui/main.ui:232
-msgid "The output file will use the original source filename."
-msgstr ""
-"El archivo de salida utilizará el nombre original del archivo de origen."
+msgid "The output file will use the original source video filename."
+msgstr "El archivo de salida utilizará el nombre original del archivo de video de origen."
 
 #: ui/main.ui:243
-msgid "Keep Destination Name"
-msgstr "Conservar el nombre del archivo de destino"
+msgid "Keep Source Audio Name"
+msgstr "Conservar el nombre del audio de origen"
 
 #: ui/main.ui:244
-msgid "The output file will use the destination filename."
-msgstr "El archivo de salida utilizará el nombre del archivo de destino."
+msgid "The output file will use the original source audio filename."
+msgstr "El archivo de salida utilizará el nombre original del archivo de audio de origen."
 
 #: ui/main.ui:279
 msgid "Start Processing"
@@ -151,3 +148,9 @@ msgstr "Iniciar procesamiento"
 #: ui/main.ui:296
 msgid "Cancel"
 msgstr "Cancelar"
+
+#~ msgid "Keep Destination Name"
+#~ msgstr "Conservar el nombre del archivo de destino"
+
+#~ msgid "The output file will use the destination filename."
+#~ msgstr "El archivo de salida utilizará el nombre del archivo de destino."
