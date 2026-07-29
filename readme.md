@@ -2,6 +2,10 @@
 
 **Remuxer** is a high-performance batch media muxing tool for Linux. It allows you to effortlessly copy audio tracks from one source to another set of high-quality video files. Built with **GTK4** and **Libadwaita**, it provides a modern interface to manage mass media processing using the power of **FFmpeg** without quality loss (no recoding).
 
+<p align="center">
+  <img src="screenshots/screenshot-side-by-side.png" alt="Remuxer Screenshot" width="800">
+</p>
+
 ## 🚀 Key Features (SEO)
 
 - **Batch Media Muxing:** Process entire directories of video and audio simultaneously.
