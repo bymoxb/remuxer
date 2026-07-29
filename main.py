@@ -7,6 +7,7 @@ import threading
 import subprocess
 import time
 from pathlib import Path
+import threading
 
 # 1. Definir el nombre de tu aplicación (App ID o similar)
 APP_NAME = "remuxer"
@@ -82,8 +83,11 @@ class MainWindow(Adw.ApplicationWindow):
     btn_seleccionar_videos_audio = Gtk.Template.Child()
     btn_seleccionar_salida = Gtk.Template.Child()
 
+    action_stack = Gtk.Template.Child()
+
     btn_analizar = Gtk.Template.Child()
     btn_procesar = Gtk.Template.Child()
+    btn_cancelar = Gtk.Template.Child()
 
     btn_video_subir = Gtk.Template.Child()
     btn_video_bajar = Gtk.Template.Child()
@@ -101,6 +105,9 @@ class MainWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.cancel_event = threading.Event()
+        self.current_process = None
 
         # Almacenamiento de datos
         # Cambia a tu tipo de objeto
@@ -162,8 +169,10 @@ class MainWindow(Adw.ApplicationWindow):
         self.btn_seleccionar_videos_audio.connect(
             "clicked", self.on_select_audios)
         self.btn_seleccionar_salida.connect("clicked", self.on_select_output)
+
         self.btn_analizar.connect("clicked", self.on_analyze)
         self.btn_procesar.connect("clicked", self.on_process)
+        self.btn_cancelar.connect("clicked", self.on_cancel)
 
         self.btn_video_subir.connect(
             "clicked", lambda _: self.handle_selection("VIDEO", "UP"))
@@ -346,6 +355,21 @@ class MainWindow(Adw.ApplicationWindow):
             item.is_deleted = True
             item.name = f" [ELIMINADO] {item.name}"
 
+    def on_cancel(self, btn):
+        self.action_stack.set_visible_child_name("process")
+        self.btn_procesar.set_sensitive(True)
+
+        self.cancel_event.set()
+        btn.set_sensitive(False)
+        print("LOG: Solicitando cancelación del proceso...")
+
+        self.pro_bar.set_text(_("Cancelling..."))
+
+        # Si FFmpeg está corriendo, lo matamos inmediatamente
+        if self.current_process:
+            print("LOG: Terminando FFmpeg...")
+            self.current_process.terminate()
+
     def on_process(self, btn):
 
         if not getattr(self, "output_dir", None):
@@ -359,6 +383,9 @@ class MainWindow(Adw.ApplicationWindow):
         if n_items == 0:
             print("LOG: No hay elementos para procesar.")
             return
+
+        # Limpiamos el evento de cancelación por si se usó antes
+        self.cancel_event.clear()
 
         print(
             f"\n================ COMUENZA EL PROCESO ({n_items} FILAS) ================")
@@ -391,19 +418,9 @@ class MainWindow(Adw.ApplicationWindow):
 
             lista_para_procesar.append(data_fila)
 
-        # --- MOSTRAR RESULTADO EN CONSOLA ---
-        # print("\nLista final ordenada lista para remuxing/procesar:")
-        # for elem in lista_para_procesar:
-        #     v_info = elem['video_name'] if elem['video_name'] else "SIN VIDEO"
-        #     a_info = elem['audio_name'] if elem['audio_name'] else "SIN AUDIO"
-        #     print(f"[{elem['orden_final']}] Video: {v_info} | Audio: {a_info}")
+        self.action_stack.set_visible_child_name("cancel")
 
-        # print("====================================================================\n")
-
-        # Aquí ya tienes 'lista_para_procesar' disponible para pasarla a tu función de FFmpeg
-        # ej: self.ejecutar_remux(lista_para_procesar)
-
-            # 2. Desactivar el botón para evitar múltiples clics durante el proceso
+        # 2. Desactivar el botón para evitar múltiples clics durante el proceso
         btn.set_sensitive(False)
 
         # 3. Obtener el widget de la barra de progreso
@@ -413,7 +430,9 @@ class MainWindow(Adw.ApplicationWindow):
         # 4. Lanzar el hilo para no congelar la UI
         # Pasamos n_items y el botón como argumentos
         thread = threading.Thread(
-            target=self._run_heavy_task, args=(n_items, btn))
+            target=self._run_heavy_task,
+            args=(n_items, btn))
+
         thread.start()
 
     def _run_append_audio(self, video, audio, destination):
@@ -441,20 +460,41 @@ class MainWindow(Adw.ApplicationWindow):
             destination,
         ]
 
-        result = subprocess.run(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
+        try:
+            # Usamos Popen en lugar de run para tener control
+            self.current_process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
 
-        if result.returncode != 0:
-            print(f"ffmpeg falló:\n{result.stderr}")
-            # raise RuntimeError(
-            #     f"ffmpeg falló:\n{result.stderr}"
-            # )
+            # Bucle de espera activa: vigilamos el proceso y el evento de cancelación
+            while self.current_process.poll() is None:
+                if self.cancel_event.is_set():
+                    self.current_process.terminate()
+                    print("LOG: FFmpeg terminado por cancelación.")
+                    return False  # Indica que fue cancelado
 
-        print("="*50)
+                # Pequeña espera para no saturar el CPU mientras FFmpeg trabaja
+                time.sleep(0.5)
+
+            # Verificar si terminó con error
+            if self.current_process.returncode != 0:
+                _, stderr = self.current_process.communicate()
+                print(f"ffmpeg falló:\n{stderr}")
+
+            print("="*50)
+
+            # Terminó correctamente (o con error de ffmpeg, pero no cancelado)
+            return True
+
+        except Exception as e:
+            print(f"Error ejecutando ffmpeg: {e}")
+            return False
+        finally:
+            self.current_process = None
+
 
     def get_output_naming(self):
         if self.radio_keep_source_name.get_active():
@@ -479,6 +519,10 @@ class MainWindow(Adw.ApplicationWindow):
         destination_path.mkdir(parents=True, exist_ok=True)
 
         for i in range(n_items):
+
+            if self.cancel_event.is_set():
+                break
+
             # OBTENER EL ELEMENTO DE LA LISTA
             # Aquí es donde accedes a tus datos para procesarlos
             row = self.store.get_item(i)
@@ -503,9 +547,18 @@ class MainWindow(Adw.ApplicationWindow):
                 row.audio.abs_path,
                 new_file_name)
 
-        # Al terminar, rehabilitamos el botón y limpiamos el texto
-        GLib.idle_add(btn.set_sensitive, True)
-        GLib.idle_add(self._update_ui_progress, 1.0, _("Completed!"))
+        # --- FINALIZACIÓN ---
+        def reset_ui():
+            btn.set_sensitive(True)
+            # Regresamos al stack de botones original si usas uno
+            self.action_stack.set_visible_child_name("process")
+
+            if self.cancel_event.is_set():
+                self._update_ui_progress(0.0, _("Cancelled"))
+            else:
+                self._update_ui_progress(1.0, _("Completed!"))
+
+        GLib.idle_add(reset_ui)
 
     def _update_ui_progress(self, fraction, text):
         """Esta función corre en el hilo principal (UI)"""

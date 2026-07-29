@@ -31,8 +31,7 @@ template $MainWindow: Adw.ApplicationWindow {
           margin-bottom: 24;
           margin-start: 24;
           margin-end: 24;
-          
-          // --- SECCIÓN 1: SELECCIÓN DE RUTAS ---
+
           Adw.PreferencesGroup {
             title: _("Media Sources");
 
@@ -65,12 +64,12 @@ template $MainWindow: Adw.ApplicationWindow {
             }
           }
 
-          // --- SECCIÓN 2: TABLA Y CONTROLES DE ORDEN ---
+
           Gtk.Box {
             orientation: vertical;
             spacing: 12;
             vexpand: true;
-            // Barra de herramientas de la lista
+
             Gtk.Box {
               orientation: horizontal;
               spacing: 12;
@@ -86,7 +85,6 @@ template $MainWindow: Adw.ApplicationWindow {
                 halign: start;
               }
 
-              // Controles para VIDEO
               Gtk.Box {
                 orientation: horizontal;
                 spacing: 6;
@@ -122,7 +120,6 @@ template $MainWindow: Adw.ApplicationWindow {
                 ]
               }
 
-              // Controles para AUDIO
               Gtk.Box {
                 orientation: horizontal;
                 spacing: 6;
@@ -153,7 +150,6 @@ template $MainWindow: Adw.ApplicationWindow {
               }
             }
 
-            // El área de la lista
             Gtk.Frame {
               child: Gtk.ScrolledWindow {
                 min-content-height: 350;
@@ -161,13 +157,11 @@ template $MainWindow: Adw.ApplicationWindow {
                 child: Gtk.ColumnView view_episodios {
                   hexpand: true;
                   vexpand: true;
-                  // Las columnas se definen en el código
                 };
               };
             }
           }
 
-          // --- SECCIÓN 3: SALIDA Y EJECUCIÓN ---
           Gtk.Box {
             orientation: vertical;
             spacing: 12;
@@ -229,15 +223,39 @@ template $MainWindow: Adw.ApplicationWindow {
                 ]
               }
 
-              Button btn_procesar {
-                label: _("Start Processing");
-                width-request: 200;
-                sensitive: false;
+              Gtk.Stack action_stack {
+                transition-type: crossfade;
 
-                styles [
-                  "suggested-action",
-                  "pill",
-                ]
+                Gtk.StackPage {
+                  name: "process";
+                  visible: true;
+
+                  child: Gtk.Button btn_procesar {
+                    label: _("Start Processing");
+                    width-request: 200;
+                    sensitive: false;
+
+                    styles [
+                      "suggested-action",
+                      "pill",
+                    ]
+                  };
+                }
+
+                Gtk.StackPage {
+                  name: "cancel";
+                  visible: false;
+
+                  child: Gtk.Button btn_cancelar {
+                    label: _("Cancel");
+                    width-request: 200;
+
+                    styles [
+                      "destructive-action",
+                      "pill",
+                    ]
+                  };
+                }
               }
             }
 

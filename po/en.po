@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 19:26-0500\n"
+"POT-Creation-Date: 2026-07-28 21:49-0500\n"
 "PO-Revision-Date: 2026-07-28 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: English\n"
@@ -17,35 +17,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: main.py:41 ui/main.ui:246
+#: main.py:42 ui/main.ui:246
 msgid "Analyze"
 msgstr ""
 
-#: main.py:121
+#: main.py:128
 msgid "Source Video"
 msgstr "Source Video"
 
-#: main.py:129
+#: main.py:136
 msgid "Source Audio"
 msgstr "Source Audio"
 
-#: main.py:196
+#: main.py:205
 msgid "Choose video folder"
 msgstr "Choose video folder"
 
-#: main.py:202
+#: main.py:211
 msgid "Choose audio folder"
 msgstr "Choose audio folder"
 
-#: main.py:208
+#: main.py:217
 msgid "Choose output folder"
 msgstr "Choose output folder"
 
-#: main.py:411
+#: main.py:366
+msgid "Cancelling..."
+msgstr ""
+
+#: main.py:428
 msgid "Starting..."
 msgstr "Starting..."
 
-#: main.py:508
+#: main.py:557
+msgid "Cancelled"
+msgstr ""
+
+#: main.py:559
 msgid "Completed!"
 msgstr "Completed!"
 
@@ -116,8 +124,12 @@ msgstr ""
 msgid "The output file will use the destination filename."
 msgstr ""
 
-#: ui/main.ui:255
+#: ui/main.ui:262
 msgid "Start Processing"
+msgstr ""
+
+#: ui/main.ui:279
+msgid "Cancel"
 msgstr ""
 
 #~ msgid "Procesador de Episodios"
