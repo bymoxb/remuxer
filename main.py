@@ -12,7 +12,7 @@ import threading
 # 1. Definir el nombre de tu aplicación (App ID o similar)
 APP_NAME = "remuxer"
 APP_ID = "com.github.bymoxb.remuxer"
-APP_VERSION = "0.1-dev"
+APP_VERSION = "0.1.0-dev"
 
 # 2. Definir la ruta de la carpeta de traducciones
 LOCALE_DIR = os.path.join(os.path.dirname(__file__), 'locale')
