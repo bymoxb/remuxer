@@ -237,6 +237,7 @@ class MainWindow(Adw.ApplicationWindow):
     radio_keep_source_name = Gtk.Template.Child()
     btn_menu = Gtk.Template.Child()
     updates_banner = Gtk.Template.Child()
+    dialog_confirmar_cancelacion = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -437,9 +438,18 @@ class MainWindow(Adw.ApplicationWindow):
         self._update_progress(1.0 if "Comp" in status else 0.0, status)
 
     def on_cancel_clicked(self, btn):
-        self.remux_service.cancel()
-        self.logger.info("Cancelling...")
-        self.pro_bar.set_text(_("Cancelling..."))
+        self.dialog_confirmar_cancelacion.choose(
+            self,
+            None,
+            self.on_cancel_approved)
+
+    def on_cancel_approved(self, dialog, result):
+        response = dialog.choose_finish(result)
+
+        if response == "confirm":
+            self.remux_service.cancel()
+            self.logger.info("Cancelling...")
+            self.pro_bar.set_text(_(""))
 
     def setup_actions(self):
         # Acciones de menú (About, etc)

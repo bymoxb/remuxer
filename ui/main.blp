@@ -1,6 +1,18 @@
 using Gtk 4.0;
 using Adw 1;
 
+Adw.AlertDialog dialog_confirmar_cancelacion {
+  heading: _("Cancel process?");
+  body: _("If you cancel now, the current progress will be lost and the file may be left incomplete.");
+  default-response: "cancel";
+  close-response: "cancel";
+
+  responses [
+    cancel: _("Continue processing"),
+    confirm: _("Stop processing") destructive,
+  ]
+}
+
 template $MainWindow: Adw.ApplicationWindow {
   default-width: 1000;
   default-height: 900;
