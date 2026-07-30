@@ -386,6 +386,15 @@ class MainWindow(Adw.ApplicationWindow):
         a.abs_path, b.abs_path = b.abs_path, a.abs_path
         # ... puedes swappear más si es necesario
 
+    def _change_button_status(self, disabled: bool = True):
+        self.btn_analizar.set_sensitive(disabled is not True)
+
+        self.btn_video_subir.set_sensitive(disabled is not True)
+        self.btn_video_bajar.set_sensitive(disabled is not True)
+        self.btn_audio_subir.set_sensitive(disabled is not True)
+        self.btn_audio_bajar.set_sensitive(disabled is not True)
+        self.btn_procesar.set_sensitive(disabled is not True)
+
     def on_process_clicked(self, btn):
         out_dir = self.entry_directorio_salida.get_text()
         if not out_dir:
@@ -394,8 +403,8 @@ class MainWindow(Adw.ApplicationWindow):
             return
 
         self.entry_directorio_salida.remove_css_class("error")
-        btn.set_sensitive(False)
         self.action_stack.set_visible_child_name("cancel")
+        self._change_button_status(disabled=True)
 
         threading.Thread(target=self._worker_thread,
                          args=(out_dir,), daemon=True).start()
@@ -431,7 +440,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.pro_bar.set_text(text)
 
     def _on_process_finished(self):
-        self.btn_procesar.set_sensitive(True)
+        self._change_button_status(disabled=False)
         self.action_stack.set_visible_child_name("process")
         status = _("Cancelled") if self.remux_service.cancel_event.is_set() else _(
             "Completed!")
@@ -449,7 +458,6 @@ class MainWindow(Adw.ApplicationWindow):
         if response == "confirm":
             self.remux_service.cancel()
             self.logger.info("Cancelling...")
-            self.pro_bar.set_text(_(""))
 
     def setup_actions(self):
         # Acciones de menú (About, etc)
