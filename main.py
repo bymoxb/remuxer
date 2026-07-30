@@ -9,6 +9,7 @@ from pathlib import Path
 import requests
 from packaging import version
 import logging
+from abc import ABC, abstractmethod
 
 # Configuración profesional del logger
 logging.basicConfig(
@@ -55,6 +56,16 @@ logger.info(f"Translation search path: {LOCALE_DIR}")
 
 
 # --- 1. MODELOS DE DATOS ---
+class CommandRunner(ABC):
+
+    @abstractmethod
+    def start(
+        self,
+        video: str,
+        audio: str,
+        destination: str
+    ) -> subprocess.Popen:
+        ...
 
 
 class VideoItem(GObject.Object):
@@ -129,10 +140,36 @@ class FileService:
         return videos
 
 
+class FFmpegRunner(CommandRunner):
+    def start(self, video, audio, destination):
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-nostdin",
+            "-hide_banner",
+            "-loglevel", "error",
+            "-i", video,
+            "-i", audio,
+            "-map", "0",
+            "-map", "1:a:0",
+            "-map_metadata", "0",
+            "-c", "copy",
+            destination,
+        ]
+
+        return subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+
 class RemuxService:
     """Encargado de la lógica pesada de FFmpeg y procesos"""
 
-    def __init__(self):
+    def __init__(self, runner: CommandRunner):
+        self.runner = runner
         self.current_process = None
         self.cancel_event = threading.Event()
         self.logger = logging.getLogger("RemuxerApp.RemuxService")
@@ -150,29 +187,25 @@ class RemuxService:
             video_path) if naming_mode == "source" else Path(audio_path)
         return str(dest_path / file_ref.name)
 
-    def run_ffmpeg(self, video, audio, destination):
-        cmd = [
-            "ffmpeg", "-y", "-nostdin", "-hide_banner", "-loglevel", "error",
-            "-i", video, "-i", audio,
-            "-map", "0", "-map", "1:a:0",
-            "-map_metadata", "0", "-c", "copy", destination,
-        ]
+    def execute(self, video, audio, destination):
         try:
             new_file = Path(destination)
-            self.logger.debug(f"Running command for: {new_file.name}")
-            self.current_process = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            self.logger.debug(f"Running process for: {new_file.name}")
+            self.current_process = self.runner.start(
+                video,
+                audio,
+                destination,
             )
             while self.current_process.poll() is None:
                 if self.cancel_event.is_set():
                     self.logger.warning(
-                        f"Command was canelled when on: {new_file.name}")
+                        f"Process canelled on: {new_file.name}")
                     self.current_process.terminate()
                     return False
                 time.sleep(1)
             return self.current_process.returncode == 0
         except Exception as e:
-            self.logger.error(f"FFmpeg Error: {e}")
+            self.logger.error(f"Execution failed: {e}")
             return False
         finally:
             self.current_process = None
@@ -211,7 +244,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.logger = logging.getLogger("RemuxerApp.MainWindow")
 
         # Inicializar Servicios
-        self.remux_service = RemuxService()
+        self.remux_service = RemuxService(FFmpegRunner())
         self.update_service = UpdateService()
         self.file_service = FileService()
         self.video_data_cache = {"videos": [], "audios": []}
@@ -386,7 +419,7 @@ class MainWindow(Adw.ApplicationWindow):
                 row.video.abs_path, row.audio.abs_path, out_dir, mode
             )
 
-            self.remux_service.run_ffmpeg(
+            self.remux_service.execute(
                 row.video.abs_path, row.audio.abs_path, output_file)
 
         self.logger.info("Processing finished")
