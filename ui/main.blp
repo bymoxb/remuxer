@@ -1,6 +1,18 @@
 using Gtk 4.0;
 using Adw 1;
 
+Adw.AlertDialog dialog_confirmar_cancelacion {
+  heading: _("Cancel process?");
+  body: _("If you cancel now, the current progress will be lost and the file may be left incomplete.");
+  default-response: "cancel";
+  close-response: "cancel";
+
+  responses [
+    cancel: _("Continue processing"),
+    confirm: _("Stop processing") destructive,
+  ]
+}
+
 template $MainWindow: Adw.ApplicationWindow {
   default-width: 1000;
   default-height: 900;
@@ -21,6 +33,16 @@ template $MainWindow: Adw.ApplicationWindow {
         icon-name: "open-menu-symbolic";
         tooltip-text: _("Main Menu");
       }
+    }
+
+    [top]
+    Gtk.ProgressBar pro_bar {
+      visible: false;
+      valign: start;
+
+      styles [
+        "osd",
+      ]
     }
 
     content: Gtk.Box {
@@ -51,13 +73,38 @@ template $MainWindow: Adw.ApplicationWindow {
             Adw.PreferencesGroup {
               title: _("Media Sources");
 
-              Adw.EntryRow entry_videos_principales {
+              Adw.ActionRow row_video_folder {
                 title: _("Video Folder");
-                editable: false;
+                tooltip-text: _("");
+                activatable-widget: btn_seleccionar_videos_principales;
+
+                [prefix]
+                Gtk.Image {
+                  icon-name: "folder-open-symbolic";
+                }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  valign: center;
+                  hexpand: true;
+
+                  Gtk.Label entry_videos_principales {
+                    label: _("");
+                    halign: start;
+                    ellipsize: start;
+                    xalign: 0;
+
+                    styles [
+                      "caption",
+                      "dim-label",
+                    ]
+                  }
+                }
 
                 [suffix]
                 Button btn_seleccionar_videos_principales {
-                  icon-name: "folder-open-symbolic";
+                  icon-name: "document-edit-symbolic";
+                  valign: center;
 
                   styles [
                     "flat",
@@ -65,13 +112,38 @@ template $MainWindow: Adw.ApplicationWindow {
                 }
               }
 
-              Adw.EntryRow entry_videos_audio {
+              Adw.ActionRow row_audio_folder {
                 title: _("Audio Folder");
-                editable: false;
+                tooltip-text: _("");
+                activatable-widget: btn_seleccionar_videos_audio;
+
+                [prefix]
+                Gtk.Image {
+                  icon-name: "folder-open-symbolic";
+                }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  valign: center;
+                  hexpand: true;
+
+                  Gtk.Label entry_videos_audio {
+                    label: _("");
+                    halign: start;
+                    ellipsize: start;
+                    xalign: 0;
+
+                    styles [
+                      "caption",
+                      "dim-label",
+                    ]
+                  }
+                }
 
                 [suffix]
                 Button btn_seleccionar_videos_audio {
-                  icon-name: "folder-open-symbolic";
+                  icon-name: "document-edit-symbolic";
+                  valign: center;
 
                   styles [
                     "flat",
@@ -169,7 +241,7 @@ template $MainWindow: Adw.ApplicationWindow {
                 child: Gtk.ScrolledWindow {
                   min-content-height: 350;
 
-                  child: Gtk.ColumnView view_episodios {
+                  child: Gtk.ColumnView cv_files {
                     hexpand: true;
                     vexpand: true;
                   };
@@ -177,112 +249,129 @@ template $MainWindow: Adw.ApplicationWindow {
               }
             }
 
-            Gtk.Box {
-              orientation: vertical;
-              spacing: 12;
+            Adw.PreferencesGroup {
+              title: _("Output Settings");
 
-              Adw.PreferencesGroup {
-                Adw.EntryRow entry_directorio_salida {
-                  title: _("Output Folder");
-                  editable: false;
+              Adw.ActionRow row_output_folder {
+                title: _("Output Folder");
+                tooltip-text: _("");
+                activatable-widget: btn_seleccionar_salida;
 
-                  [suffix]
-                  Button btn_seleccionar_salida {
-                    icon-name: "folder-open-symbolic";
+                [prefix]
+                Gtk.Image {
+                  icon-name: "folder-open-symbolic";
+                }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  valign: center;
+                  hexpand: true;
+
+                  Gtk.Label entry_directorio_salida {
+                    label: _("");
+                    halign: start;
+                    ellipsize: start;
+                    xalign: 0;
 
                     styles [
-                      "flat",
+                      "caption",
+                      "dim-label",
                     ]
                   }
                 }
-              }
 
-              Adw.PreferencesGroup {
-                Adw.ExpanderRow {
-                  title: _("Output Naming");
-
-                  Adw.ActionRow row_keep_source_name {
-                    title: _("Keep Source Video Name");
-                    subtitle: _("The output file will use the original source video filename.");
-                    activatable-widget: radio_keep_source_name;
-
-                    [prefix]
-                    CheckButton radio_keep_source_name {
-                      active: true;
-                    }
-                  }
-
-                  Adw.ActionRow row_keep_destination_name {
-                    title: _("Keep Source Audio Name");
-                    subtitle: _("The output file will use the original source audio filename.");
-                    activatable-widget: radio_keep_destination_name;
-
-                    [prefix]
-                    CheckButton radio_keep_destination_name {
-                      group: radio_keep_source_name;
-                    }
-                  }
-                }
-              }
-
-              Gtk.Box {
-                halign: center;
-                spacing: 18;
-
-                Button btn_analizar {
-                  label: _("Analyze");
-                  width-request: 200;
+                [suffix]
+                Button btn_seleccionar_salida {
+                  icon-name: "document-edit-symbolic";
+                  valign: center;
 
                   styles [
-                    "pill",
+                    "flat",
                   ]
-                }
-
-                Gtk.Stack action_stack {
-                  transition-type: crossfade;
-
-                  Gtk.StackPage {
-                    name: "process";
-                    visible: true;
-
-                    child: Gtk.Button btn_procesar {
-                      label: _("Start Processing");
-                      width-request: 200;
-                      sensitive: false;
-
-                      styles [
-                        "suggested-action",
-                        "pill",
-                      ]
-                    };
-                  }
-
-                  Gtk.StackPage {
-                    name: "cancel";
-                    visible: false;
-
-                    child: Gtk.Button btn_cancelar {
-                      label: _("Cancel");
-                      width-request: 200;
-
-                      styles [
-                        "destructive-action",
-                        "pill",
-                      ]
-                    };
-                  }
                 }
               }
 
-              Gtk.ProgressBar pro_bar {
-                text: _("");
-                show-text: true;
-                margin-top: 6;
+              Adw.ExpanderRow {
+                title: _("Output Naming");
+
+                Adw.ActionRow row_keep_source_name {
+                  title: _("Keep Source Video Name");
+                  subtitle: _("The output file will use the original source video filename.");
+                  activatable-widget: radio_keep_source_name;
+
+                  [prefix]
+                  CheckButton radio_keep_source_name {
+                    active: true;
+                  }
+                }
+
+                Adw.ActionRow row_keep_destination_name {
+                  title: _("Keep Source Audio Name");
+                  subtitle: _("The output file will use the original source audio filename.");
+                  activatable-widget: radio_keep_destination_name;
+
+                  [prefix]
+                  CheckButton radio_keep_destination_name {
+                    group: radio_keep_source_name;
+                  }
+                }
               }
             }
           };
         };
       }
     };
+
+    [bottom]
+    Gtk.Box {
+      margin-top: 12;
+      margin-bottom: 12;
+      spacing: 18;
+      halign: center;
+
+      Button btn_analizar {
+        label: _("Analyze");
+        width-request: 200;
+
+        styles [
+          "pill",
+        ]
+      }
+
+      Gtk.Stack action_stack {
+        transition-type: crossfade;
+
+        Gtk.StackPage {
+          name: "process";
+          visible: true;
+
+          child: Gtk.Button btn_procesar {
+            label: _("Start Processing");
+            width-request: 200;
+            sensitive: false;
+
+            styles [
+              "suggested-action",
+              "pill",
+            ]
+          };
+        }
+
+        Gtk.StackPage {
+          name: "cancel";
+          visible: false;
+
+          child: Gtk.Button btn_cancelar {
+            label: _("Cancel");
+            width-request: 200;
+
+            styles [
+              "destructive-action",
+              "pill",
+            ]
+          };
+        }
+      }
+    }
   };
 }

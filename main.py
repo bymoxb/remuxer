@@ -86,6 +86,8 @@ class VideoItem(GObject.Object):
 class ColumnViewRow(GObject.Object):
     video = GObject.Property(type=VideoItem)
     audio = GObject.Property(type=VideoItem)
+    status = GObject.Property(type=str, default="pending")
+    selected = GObject.Property(type=bool, default=True)
 
     def __init__(self, video, audio):
         super().__init__()
@@ -218,9 +220,12 @@ class MainWindow(Adw.ApplicationWindow):
     __gtype_name__ = "MainWindow"
 
     # Widgets de la plantilla
-    view_episodios = Gtk.Template.Child()
+    cv_files = Gtk.Template.Child()
     btn_seleccionar_videos_principales = Gtk.Template.Child()
     btn_seleccionar_videos_audio = Gtk.Template.Child()
+    row_video_folder = Gtk.Template.Child()
+    row_audio_folder = Gtk.Template.Child()
+    row_output_folder = Gtk.Template.Child()
     btn_seleccionar_salida = Gtk.Template.Child()
     action_stack = Gtk.Template.Child()
     btn_analizar = Gtk.Template.Child()
@@ -237,6 +242,7 @@ class MainWindow(Adw.ApplicationWindow):
     radio_keep_source_name = Gtk.Template.Child()
     btn_menu = Gtk.Template.Child()
     updates_banner = Gtk.Template.Child()
+    dialog_confirmar_cancelacion = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -256,14 +262,174 @@ class MainWindow(Adw.ApplicationWindow):
         self.setup_ui()
         self.connect_signals()
         self.setup_actions()
+        self.setup_cv_actions()
 
         # Tarea de red en segundo plano
         threading.Thread(target=self._check_updates_async, daemon=True).start()
 
     def setup_ui(self):
-        self.view_episodios.set_model(self.selection_model)
+        self.cv_files.set_model(self.selection_model)
+        self._add_selection_column()
         self._add_column(_("Source Video"), self._on_bind_video_column)
         self._add_column(_("Source Audio"), self._on_bind_audio_column)
+        self._add_status_column()
+
+    def _add_selection_column(self):
+        factory = Gtk.SignalListItemFactory()
+        factory.connect("setup", self._on_setup_selection_column)
+        factory.connect("bind", self._on_bind_selection_column)
+        factory.connect("unbind", self._on_unbind_selection_column)
+
+        col = Gtk.ColumnViewColumn(title=_("Sel"), factory=factory)
+        col.set_fixed_width(50)
+
+        # --- NUEVO: Checkbox en la cabecera ---
+
+        # --- CREAR EL MENÚ ---
+        menu = Gio.Menu.new()
+        menu.append(_("Select All"), "win.select_all")
+        menu.append(_("Deselect All"), "win.unselect_all")
+
+        # Asignar el menú al encabezado
+        col.set_header_menu(menu)
+
+        # --------------------------------------
+
+        self.cv_files.append_column(col)
+
+    def setup_cv_actions(self):
+        action_select_all = Gio.SimpleAction.new("select_all", None)
+        action_select_all.connect("activate", self._on_select_all_activated)
+        self.add_action(action_select_all)
+
+        action_unselect_all = Gio.SimpleAction.new("unselect_all", None)
+        action_unselect_all.connect(
+            "activate", self._on_unselect_all_activated)
+        self.add_action(action_unselect_all)
+
+    def _on_select_all_activated(self, action, parameter):
+        for i in range(self.store.get_n_items()):
+            self.store.get_item(i).selected = True
+
+    def _on_unselect_all_activated(self, action, parameter):
+        for i in range(self.store.get_n_items()):
+            self.store.get_item(i).selected = False
+
+    def _on_header_check_toggled(self, check_button):
+        """Activa o desactiva todos los elementos del store."""
+        is_active = check_button.get_active()
+
+        for i in range(self.store.get_n_items()):
+            item = self.store.get_item(i)
+            item.selected = is_active
+
+    def _on_setup_selection_column(self, factory, list_item):
+        check = Gtk.CheckButton()
+        check.set_halign(Gtk.Align.CENTER)
+        check.set_valign(Gtk.Align.CENTER)
+        list_item.set_child(check)
+
+    def _on_bind_selection_column(self, factory, list_item):
+        row = list_item.get_item()
+        check = list_item.get_child()
+
+        # Creamos un binding bidireccional entre la propiedad 'selected' del objeto
+        # y la propiedad 'active' del CheckButton
+        # GObject.BindingFlags.BIDIRECTIONAL: si uno cambia, el otro también
+        # GObject.BindingFlags.SYNC_CREATE: sincroniza el valor inmediatamente al crear el vínculo
+        bind = row.bind_property(
+            "selected",
+            check,
+            "active",
+            GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
+        )
+
+        # Guardamos la referencia del binding para poder desvincularlo luego
+        list_item.selection_binding = bind
+
+    def _on_unbind_selection_column(self, factory, list_item):
+        # Limpiar el binding al reciclar el widget
+        # bind = getattr(list_item, "selection_binding", None)
+        bind = list_item.get_data("selection-binding")
+        if bind:
+            bind.unbind()
+
+        list_item.set_data("selection-binding", None)
+
+    def _add_status_column(self):
+        factory = Gtk.SignalListItemFactory()
+        factory.connect("setup", self._on_setup_status_column)
+        factory.connect("bind", self._on_bind_status_column)
+        factory.connect("unbind", self._on_unbind_status_column)
+
+        col = Gtk.ColumnViewColumn(title=_("Status"), factory=factory)
+        col.set_fixed_width(150)
+        self.cv_files.append_column(col)
+
+    def _on_setup_status_column(self, factory, list_item):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+
+        stack = Gtk.Stack()
+        stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        stack.set_transition_duration(250)
+
+        icon = Gtk.Image()
+        spinner = Gtk.Spinner()
+
+        stack.add_named(icon, "icon")
+        stack.add_named(spinner, "spinner")
+
+        label = Gtk.Label(xalign=0)
+        label.set_ellipsize(Pango.EllipsizeMode.END)
+
+        box.append(stack)
+        box.append(label)
+
+        list_item.set_child(box)
+
+    def _on_bind_status_column(self, factory, list_item):
+        row = list_item.get_item()
+        box = list_item.get_child()
+        stack = box.get_first_child()
+        icon = stack.get_child_by_name("icon")
+        spinner = stack.get_child_by_name("spinner")
+        label = stack.get_next_sibling()
+
+        def update_ui(*args):
+            status = row.status
+
+            for cls in ["success", "error", "accent"]:
+                icon.remove_css_class(cls)
+
+            label.remove_css_class("dim-label")
+
+            if status == "processing":
+                stack.set_visible_child_name("spinner")
+                spinner.start()
+                label.set_text(_("Processing…"))
+            else:
+                spinner.stop()
+                stack.set_visible_child_name("icon")
+
+                if status == "completed":
+                    icon.set_from_icon_name("object-select-symbolic")
+                    icon.add_css_class("success")
+                    label.set_text(_("Done"))
+                elif status == "error":
+                    icon.set_from_icon_name("dialog-error-symbolic")
+                    icon.add_css_class("error")
+                    label.set_text(_("Error"))
+
+        list_item.handler_id = row.connect("notify::status", update_ui)
+
+        update_ui()
+
+    def _on_unbind_status_column(self, factory, list_item):
+        row = list_item.get_item()
+        handler_id = list_item.get_data("handler-id")
+        if row and handler_id:
+            row.disconnect(handler_id)
+            list_item.handler_id = None
 
     def _add_column(self, title, bind_callback):
         factory = Gtk.SignalListItemFactory()
@@ -271,7 +437,7 @@ class MainWindow(Adw.ApplicationWindow):
         factory.connect("bind", bind_callback)
         col = Gtk.ColumnViewColumn(title=title, factory=factory)
         col.set_expand(True)
-        self.view_episodios.append_column(col)
+        self.cv_files.append_column(col)
 
     # --- Handlers de UI ---
 
@@ -338,14 +504,17 @@ class MainWindow(Adw.ApplicationWindow):
 
             if target == "videos":
                 self.entry_videos_principales.set_text(path)
+                self.row_video_folder.set_tooltip_text(path)
                 self.video_data_cache["videos"] = self.file_service.list_videos(
                     path)
             elif target == "audios":
                 self.entry_videos_audio.set_text(path)
+                self.row_audio_folder.set_tooltip_text(path)
                 self.video_data_cache["audios"] = self.file_service.list_videos(
                     path)
             else:
                 self.entry_directorio_salida.set_text(path)
+                self.row_output_folder.set_tooltip_text(path)
         except Exception:
             pass
 
@@ -385,6 +554,15 @@ class MainWindow(Adw.ApplicationWindow):
         a.abs_path, b.abs_path = b.abs_path, a.abs_path
         # ... puedes swappear más si es necesario
 
+    def _change_button_status(self, disabled: bool = True):
+        self.btn_analizar.set_sensitive(disabled is not True)
+
+        self.btn_video_subir.set_sensitive(disabled is not True)
+        self.btn_video_bajar.set_sensitive(disabled is not True)
+        self.btn_audio_subir.set_sensitive(disabled is not True)
+        self.btn_audio_bajar.set_sensitive(disabled is not True)
+        self.btn_procesar.set_sensitive(disabled is not True)
+
     def on_process_clicked(self, btn):
         out_dir = self.entry_directorio_salida.get_text()
         if not out_dir:
@@ -393,8 +571,9 @@ class MainWindow(Adw.ApplicationWindow):
             return
 
         self.entry_directorio_salida.remove_css_class("error")
-        btn.set_sensitive(False)
         self.action_stack.set_visible_child_name("cancel")
+        self.pro_bar.set_visible(True)
+        self._change_button_status(disabled=True)
 
         threading.Thread(target=self._worker_thread,
                          args=(out_dir,), daemon=True).start()
@@ -410,8 +589,10 @@ class MainWindow(Adw.ApplicationWindow):
                 break
 
             row = self.store.get_item(i)
-            if not row.video or not row.audio:
+            if not row.video or not row.audio or not row.selected:
                 continue
+
+            row.status = "processing"
 
             GLib.idle_add(self._update_progress, i/n, f"{i+1}/{n}")
 
@@ -419,27 +600,37 @@ class MainWindow(Adw.ApplicationWindow):
                 row.video.abs_path, row.audio.abs_path, out_dir, mode
             )
 
-            self.remux_service.execute(
+            finish_status = self.remux_service.execute(
                 row.video.abs_path, row.audio.abs_path, output_file)
+
+            row.status = "completed" if finish_status == True else "error"
 
         self.logger.info("Processing finished")
         GLib.idle_add(self._on_process_finished)
 
     def _update_progress(self, fraction, text):
         self.pro_bar.set_fraction(fraction)
-        self.pro_bar.set_text(text)
 
     def _on_process_finished(self):
-        self.btn_procesar.set_sensitive(True)
+        self.pro_bar.set_visible(False)
+        self._change_button_status(disabled=False)
         self.action_stack.set_visible_child_name("process")
         status = _("Cancelled") if self.remux_service.cancel_event.is_set() else _(
             "Completed!")
         self._update_progress(1.0 if "Comp" in status else 0.0, status)
 
     def on_cancel_clicked(self, btn):
-        self.remux_service.cancel()
-        self.logger.info("Cancelling...")
-        self.pro_bar.set_text(_("Cancelling..."))
+        self.dialog_confirmar_cancelacion.choose(
+            self,
+            None,
+            self.on_cancel_approved)
+
+    def on_cancel_approved(self, dialog, result):
+        response = dialog.choose_finish(result)
+
+        if response == "confirm":
+            self.remux_service.cancel()
+            self.logger.info("Cancelling...")
 
     def setup_actions(self):
         # Acciones de menú (About, etc)

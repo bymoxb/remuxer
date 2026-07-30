@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 02:06-0500\n"
+"POT-Creation-Date: 2026-07-30 16:55-0500\n"
 "PO-Revision-Date: 2026-07-28 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: English\n"
@@ -17,143 +17,187 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: main.py:47 ui/main.ui:263
-msgid "Analyze"
-msgstr ""
-
-#: main.py:189
+#: main.py:271
 msgid "Source Video"
 msgstr "Source Video"
 
-#: main.py:197
+#: main.py:272
 msgid "Source Audio"
 msgstr "Source Audio"
 
-#: main.py:249
+#: main.py:281
+msgid "Sel"
+msgstr ""
+
+#: main.py:288
+#, fuzzy
+msgid "Select All"
+msgstr "Choose video folder"
+
+#: main.py:289
+msgid "Deselect All"
+msgstr ""
+
+#: main.py:363
+msgid "Status"
+msgstr ""
+
+#: main.py:407
+msgid "Processing…"
+msgstr ""
+
+#: main.py:415
+msgid "Done"
+msgstr ""
+
+#: main.py:419
+msgid "Error"
+msgstr ""
+
+#: main.py:493
+#, fuzzy
+msgid "Select Folder"
+msgstr "Choose video folder"
+
+#: main.py:616
+msgid "Cancelled"
+msgstr ""
+
+#: main.py:617
+msgid "Completed!"
+msgstr "Completed!"
+
+#: main.py:640
 #, fuzzy
 msgid "About Remuxer"
 msgstr "Remuxer"
 
-#: main.py:264
-msgid "A batch media muxing tool powered by FFmpeg"
+#: ui/main.ui:10
+msgid "Cancel process?"
 msgstr ""
 
-#: main.py:289
-msgid "Choose video folder"
-msgstr "Choose video folder"
-
-#: main.py:295
-msgid "Choose audio folder"
-msgstr "Choose audio folder"
-
-#: main.py:301
-msgid "Choose output folder"
-msgstr "Choose output folder"
-
-#: main.py:450
-msgid "Cancelling..."
+#: ui/main.ui:11
+msgid ""
+"If you cancel now, the current progress will be lost and the file may be "
+"left incomplete."
 msgstr ""
 
-#: main.py:512
-msgid "Starting..."
-msgstr "Starting..."
-
-#: main.py:641
-msgid "Cancelled"
+#: ui/main.ui:15
+msgid "Continue processing"
 msgstr ""
 
-#: main.py:643
-msgid "Completed!"
-msgstr "Completed!"
+#: ui/main.ui:16
+msgid "Stop processing"
+msgstr ""
 
-#: ui/main.ui:12 ui/main.ui:20
+#: ui/main.ui:22 ui/main.ui:30
 msgid "Remuxer"
 msgstr "Remuxer"
 
-#: ui/main.ui:19
+#: ui/main.ui:29
 msgid "Episode Processor"
 msgstr ""
 
-#: ui/main.ui:27
+#: ui/main.ui:37
 msgid "Main Menu"
 msgstr ""
 
-#: ui/main.ui:38
+#: ui/main.ui:57
 msgid "A new version {0} is available"
 msgstr ""
 
-#: ui/main.ui:39
+#: ui/main.ui:58
 msgid "Close"
 msgstr ""
 
-#: ui/main.ui:60
+#: ui/main.ui:79
 msgid "Media Sources"
 msgstr ""
 
-#: ui/main.ui:63
+#: ui/main.ui:82
 #, fuzzy
 msgid "Video Folder"
 msgstr "Choose video folder"
 
-#: ui/main.ui:77
+#: ui/main.ui:122
 #, fuzzy
 msgid "Audio Folder"
 msgstr "Choose audio folder"
 
-#: ui/main.ui:102
+#: ui/main.ui:173
 msgid "Episode Alignment"
 msgstr ""
 
-#: ui/main.ui:116
+#: ui/main.ui:187
 msgid "Video:"
 msgstr "Video:"
 
-#: ui/main.ui:130 ui/main.ui:170
+#: ui/main.ui:201 ui/main.ui:241
 msgid "Move Up"
 msgstr ""
 
-#: ui/main.ui:136 ui/main.ui:176
+#: ui/main.ui:207 ui/main.ui:247
 msgid "Move Down"
 msgstr ""
 
-#: ui/main.ui:156
+#: ui/main.ui:227
 msgid "Audio:"
 msgstr "Audio:"
 
-#: ui/main.ui:210
+#: ui/main.ui:275
+msgid "Output Settings"
+msgstr ""
+
+#: ui/main.ui:278
 #, fuzzy
 msgid "Output Folder"
 msgstr "Choose output folder"
 
-#: ui/main.ui:228
+#: ui/main.ui:318
 msgid "Output Naming"
 msgstr ""
 
-#: ui/main.ui:231
+#: ui/main.ui:321
 #, fuzzy
 msgid "Keep Source Video Name"
 msgstr "Source Video"
 
-#: ui/main.ui:232
+#: ui/main.ui:322
 msgid "The output file will use the original source video filename."
 msgstr ""
 
-#: ui/main.ui:243
+#: ui/main.ui:333
 #, fuzzy
 msgid "Keep Source Audio Name"
 msgstr "Source Audio"
 
-#: ui/main.ui:244
+#: ui/main.ui:334
 msgid "The output file will use the original source audio filename."
 msgstr ""
 
-#: ui/main.ui:279
+#: ui/main.ui:363
+msgid "Analyze"
+msgstr ""
+
+#: ui/main.ui:379
 msgid "Start Processing"
 msgstr ""
 
-#: ui/main.ui:296
+#: ui/main.ui:396
 msgid "Cancel"
 msgstr ""
+
+#~ msgid "Choose video folder"
+#~ msgstr "Choose video folder"
+
+#~ msgid "Choose audio folder"
+#~ msgstr "Choose audio folder"
+
+#~ msgid "Choose output folder"
+#~ msgstr "Choose output folder"
+
+#~ msgid "Starting..."
+#~ msgstr "Starting..."
 
 #~ msgid "Procesador de Episodios"
 #~ msgstr "Procesador de Episodios"
