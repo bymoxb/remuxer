@@ -73,13 +73,38 @@ template $MainWindow: Adw.ApplicationWindow {
             Adw.PreferencesGroup {
               title: _("Media Sources");
 
-              Adw.EntryRow entry_videos_principales {
+              Adw.ActionRow row_video_folder {
                 title: _("Video Folder");
-                editable: false;
+                tooltip-text: _("");
+                activatable-widget: btn_seleccionar_videos_principales;
+
+                [prefix]
+                Gtk.Image {
+                  icon-name: "folder-open-symbolic";
+                }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  valign: center;
+                  hexpand: true;
+
+                  Gtk.Label entry_videos_principales {
+                    label: _("");
+                    halign: start;
+                    ellipsize: start;
+                    xalign: 0;
+
+                    styles [
+                      "caption",
+                      "dim-label",
+                    ]
+                  }
+                }
 
                 [suffix]
                 Button btn_seleccionar_videos_principales {
-                  icon-name: "folder-open-symbolic";
+                  icon-name: "document-edit-symbolic";
+                  valign: center;
 
                   styles [
                     "flat",
@@ -87,13 +112,38 @@ template $MainWindow: Adw.ApplicationWindow {
                 }
               }
 
-              Adw.EntryRow entry_videos_audio {
+              Adw.ActionRow row_audio_folder {
                 title: _("Audio Folder");
-                editable: false;
+                tooltip-text: _("");
+                activatable-widget: btn_seleccionar_videos_audio;
+
+                [prefix]
+                Gtk.Image {
+                  icon-name: "folder-open-symbolic";
+                }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  valign: center;
+                  hexpand: true;
+
+                  Gtk.Label entry_videos_audio {
+                    label: _("");
+                    halign: start;
+                    ellipsize: start;
+                    xalign: 0;
+
+                    styles [
+                      "caption",
+                      "dim-label",
+                    ]
+                  }
+                }
 
                 [suffix]
                 Button btn_seleccionar_videos_audio {
-                  icon-name: "folder-open-symbolic";
+                  icon-name: "document-edit-symbolic";
+                  valign: center;
 
                   styles [
                     "flat",
@@ -202,13 +252,38 @@ template $MainWindow: Adw.ApplicationWindow {
             Adw.PreferencesGroup {
               title: _("Output Settings");
 
-              Adw.EntryRow entry_directorio_salida {
+              Adw.ActionRow row_output_folder {
                 title: _("Output Folder");
-                editable: false;
+                tooltip-text: _("");
+                activatable-widget: btn_seleccionar_salida;
+
+                [prefix]
+                Gtk.Image {
+                  icon-name: "folder-open-symbolic";
+                }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  valign: center;
+                  hexpand: true;
+
+                  Gtk.Label entry_directorio_salida {
+                    label: _("");
+                    halign: start;
+                    ellipsize: start;
+                    xalign: 0;
+
+                    styles [
+                      "caption",
+                      "dim-label",
+                    ]
+                  }
+                }
 
                 [suffix]
                 Button btn_seleccionar_salida {
-                  icon-name: "folder-open-symbolic";
+                  icon-name: "document-edit-symbolic";
+                  valign: center;
 
                   styles [
                     "flat",

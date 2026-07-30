@@ -221,6 +221,9 @@ class MainWindow(Adw.ApplicationWindow):
     view_episodios = Gtk.Template.Child()
     btn_seleccionar_videos_principales = Gtk.Template.Child()
     btn_seleccionar_videos_audio = Gtk.Template.Child()
+    row_video_folder = Gtk.Template.Child()
+    row_audio_folder = Gtk.Template.Child()
+    row_output_folder = Gtk.Template.Child()
     btn_seleccionar_salida = Gtk.Template.Child()
     action_stack = Gtk.Template.Child()
     btn_analizar = Gtk.Template.Child()
@@ -339,14 +342,17 @@ class MainWindow(Adw.ApplicationWindow):
 
             if target == "videos":
                 self.entry_videos_principales.set_text(path)
+                self.row_video_folder.set_tooltip_text(path)
                 self.video_data_cache["videos"] = self.file_service.list_videos(
                     path)
             elif target == "audios":
                 self.entry_videos_audio.set_text(path)
+                self.row_audio_folder.set_tooltip_text(path)
                 self.video_data_cache["audios"] = self.file_service.list_videos(
                     path)
             else:
                 self.entry_directorio_salida.set_text(path)
+                self.row_output_folder.set_tooltip_text(path)
         except Exception:
             pass
 

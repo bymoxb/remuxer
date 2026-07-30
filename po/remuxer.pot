@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 13:33-0500\n"
+"POT-Creation-Date: 2026-07-30 14:02-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,27 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:266
+#: main.py:269
 msgid "Source Video"
 msgstr ""
 
-#: main.py:267
+#: main.py:270
 msgid "Source Audio"
 msgstr ""
 
-#: main.py:330
+#: main.py:333
 msgid "Select Folder"
 msgstr ""
 
-#: main.py:447
+#: main.py:452
 msgid "Cancelled"
 msgstr ""
 
-#: main.py:448
+#: main.py:453
 msgid "Completed!"
 msgstr ""
 
-#: main.py:471
+#: main.py:476
 msgid "About Remuxer"
 msgstr ""
 
@@ -87,66 +87,66 @@ msgstr ""
 msgid "Video Folder"
 msgstr ""
 
-#: ui/main.ui:96
+#: ui/main.ui:122
 msgid "Audio Folder"
 msgstr ""
 
-#: ui/main.ui:121
+#: ui/main.ui:173
 msgid "Episode Alignment"
 msgstr ""
 
-#: ui/main.ui:135
+#: ui/main.ui:187
 msgid "Video:"
 msgstr ""
 
-#: ui/main.ui:149 ui/main.ui:189
+#: ui/main.ui:201 ui/main.ui:241
 msgid "Move Up"
 msgstr ""
 
-#: ui/main.ui:155 ui/main.ui:195
+#: ui/main.ui:207 ui/main.ui:247
 msgid "Move Down"
 msgstr ""
 
-#: ui/main.ui:175
+#: ui/main.ui:227
 msgid "Audio:"
 msgstr ""
 
-#: ui/main.ui:223
+#: ui/main.ui:275
 msgid "Output Settings"
 msgstr ""
 
-#: ui/main.ui:226
+#: ui/main.ui:278
 msgid "Output Folder"
 msgstr ""
 
-#: ui/main.ui:240
+#: ui/main.ui:318
 msgid "Output Naming"
 msgstr ""
 
-#: ui/main.ui:243
+#: ui/main.ui:321
 msgid "Keep Source Video Name"
 msgstr ""
 
-#: ui/main.ui:244
+#: ui/main.ui:322
 msgid "The output file will use the original source video filename."
 msgstr ""
 
-#: ui/main.ui:255
+#: ui/main.ui:333
 msgid "Keep Source Audio Name"
 msgstr ""
 
-#: ui/main.ui:256
+#: ui/main.ui:334
 msgid "The output file will use the original source audio filename."
 msgstr ""
 
-#: ui/main.ui:285
+#: ui/main.ui:363
 msgid "Analyze"
 msgstr ""
 
-#: ui/main.ui:301
+#: ui/main.ui:379
 msgid "Start Processing"
 msgstr ""
 
-#: ui/main.ui:318
+#: ui/main.ui:396
 msgid "Cancel"
 msgstr ""
