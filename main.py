@@ -86,6 +86,7 @@ class VideoItem(GObject.Object):
 class ColumnViewRow(GObject.Object):
     video = GObject.Property(type=VideoItem)
     audio = GObject.Property(type=VideoItem)
+    status = GObject.Property(type=str, default="pending")
 
     def __init__(self, video, audio):
         super().__init__()
@@ -218,7 +219,7 @@ class MainWindow(Adw.ApplicationWindow):
     __gtype_name__ = "MainWindow"
 
     # Widgets de la plantilla
-    view_episodios = Gtk.Template.Child()
+    cv_files = Gtk.Template.Child()
     btn_seleccionar_videos_principales = Gtk.Template.Child()
     btn_seleccionar_videos_audio = Gtk.Template.Child()
     row_video_folder = Gtk.Template.Child()
@@ -265,9 +266,89 @@ class MainWindow(Adw.ApplicationWindow):
         threading.Thread(target=self._check_updates_async, daemon=True).start()
 
     def setup_ui(self):
-        self.view_episodios.set_model(self.selection_model)
+        self.cv_files.set_model(self.selection_model)
         self._add_column(_("Source Video"), self._on_bind_video_column)
         self._add_column(_("Source Audio"), self._on_bind_audio_column)
+        self._add_status_column()
+
+    def _add_status_column(self):
+        factory = Gtk.SignalListItemFactory()
+        factory.connect("setup", self._on_setup_status_column)
+        factory.connect("bind", self._on_bind_status_column)
+        factory.connect("unbind", self._on_unbind_status_column)
+
+        col = Gtk.ColumnViewColumn(title=_("Status"), factory=factory)
+        col.set_fixed_width(150)
+        self.cv_files.append_column(col)
+
+    def _on_setup_status_column(self, factory, list_item):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+
+        stack = Gtk.Stack()
+        stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        stack.set_transition_duration(250)
+
+        icon = Gtk.Image()
+        spinner = Gtk.Spinner()
+
+        stack.add_named(icon, "icon")
+        stack.add_named(spinner, "spinner")
+
+        label = Gtk.Label(xalign=0)
+        label.set_ellipsize(Pango.EllipsizeMode.END)
+
+        box.append(stack)
+        box.append(label)
+
+        list_item.set_child(box)
+
+    def _on_bind_status_column(self, factory, list_item):
+        row = list_item.get_item()
+        box = list_item.get_child()
+        stack = box.get_first_child()
+        icon = stack.get_child_by_name("icon")
+        spinner = stack.get_child_by_name("spinner")
+        label = stack.get_next_sibling()
+
+        def update_ui(*args):
+            status = row.status
+
+            for cls in ["success", "error", "accent"]:
+                icon.remove_css_class(cls)
+
+            label.remove_css_class("dim-label")
+
+            if status == "processing":
+                stack.set_visible_child_name("spinner")
+                spinner.start()
+                label.set_text(_("Processing…"))
+            else:
+                spinner.stop()
+                stack.set_visible_child_name("icon")
+
+                if status == "pending":
+                    icon.set_from_icon_name("document-open-recent-symbolic")
+                    label.set_text(_("Pending"))
+                    label.add_css_class("dim-label")
+                elif status == "completed":
+                    icon.set_from_icon_name("object-select-symbolic")
+                    icon.add_css_class("success")
+                    label.set_text(_("Done"))
+                elif status == "error":
+                    icon.set_from_icon_name("dialog-error-symbolic")
+                    icon.add_css_class("error")
+                    label.set_text(_("Error"))
+
+        list_item.handler_id = row.connect("notify::status", update_ui)
+
+        update_ui()
+
+    def _on_unbind_status_column(self, factory, list_item):
+        row = list_item.get_item()
+        handler_id = list_item.get_data("handler-id")
+        if row and handler_id:
+            row.disconnect(handler_id)
+            list_item.handler_id = None
 
     def _add_column(self, title, bind_callback):
         factory = Gtk.SignalListItemFactory()
@@ -275,7 +356,7 @@ class MainWindow(Adw.ApplicationWindow):
         factory.connect("bind", bind_callback)
         col = Gtk.ColumnViewColumn(title=title, factory=factory)
         col.set_expand(True)
-        self.view_episodios.append_column(col)
+        self.cv_files.append_column(col)
 
     # --- Handlers de UI ---
 
@@ -430,14 +511,18 @@ class MainWindow(Adw.ApplicationWindow):
             if not row.video or not row.audio:
                 continue
 
+            row.status = "processing"
+
             GLib.idle_add(self._update_progress, i/n, f"{i+1}/{n}")
 
             output_file = self.remux_service.prepare_output_path(
                 row.video.abs_path, row.audio.abs_path, out_dir, mode
             )
 
-            self.remux_service.execute(
+            finish_status = self.remux_service.execute(
                 row.video.abs_path, row.audio.abs_path, output_file)
+
+            row.status = "completed" if finish_status == True else "error"
 
         self.logger.info("Processing finished")
         GLib.idle_add(self._on_process_finished)

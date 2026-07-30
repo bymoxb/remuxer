@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 14:02-0500\n"
-"PO-Revision-Date: 2026-07-30 13:35-0500\n"
+"POT-Creation-Date: 2026-07-30 15:03-0500\n"
+"PO-Revision-Date: 2026-07-30 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
 "Language: es\n"
@@ -18,27 +18,47 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.9\n"
 
-#: main.py:269
+#: main.py:270
 msgid "Source Video"
 msgstr "Vídeos de origen"
 
-#: main.py:270
+#: main.py:271
 msgid "Source Audio"
 msgstr "Audios de origen"
 
-#: main.py:333
+#: main.py:280
+msgid "Status"
+msgstr "Estado"
+
+#: main.py:327
+msgid "Processing…"
+msgstr "Procesando..."
+
+#: main.py:334
+msgid "Pending"
+msgstr "Pendiente"
+
+#: main.py:339
+msgid "Done"
+msgstr "Finalizado"
+
+#: main.py:343
+msgid "Error"
+msgstr "Falló"
+
+#: main.py:421
 msgid "Select Folder"
 msgstr "Seleccionar Carpeta"
 
-#: main.py:452
+#: main.py:544
 msgid "Cancelled"
 msgstr "Cancelado"
 
-#: main.py:453
+#: main.py:545
 msgid "Completed!"
 msgstr "¡Completado!"
 
-#: main.py:476
+#: main.py:568
 msgid "About Remuxer"
 msgstr "Acerca de Remuxer"
 

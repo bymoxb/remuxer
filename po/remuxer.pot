@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 14:02-0500\n"
+"POT-Creation-Date: 2026-07-30 15:35-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:269
+#: main.py:270
 msgid "Source Video"
 msgstr ""
 
-#: main.py:270
+#: main.py:271
 msgid "Source Audio"
 msgstr ""
 
-#: main.py:333
+#: main.py:280
+msgid "Status"
+msgstr ""
+
+#: main.py:327
+msgid "Processing…"
+msgstr ""
+
+#: main.py:334
+msgid "Pending"
+msgstr ""
+
+#: main.py:339
+msgid "Done"
+msgstr ""
+
+#: main.py:343
+msgid "Error"
+msgstr ""
+
+#: main.py:421
 msgid "Select Folder"
 msgstr ""
 
-#: main.py:452
+#: main.py:544
 msgid "Cancelled"
 msgstr ""
 
-#: main.py:453
+#: main.py:545
 msgid "Completed!"
 msgstr ""
 
-#: main.py:476
+#: main.py:568
 msgid "About Remuxer"
 msgstr ""
 
