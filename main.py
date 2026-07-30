@@ -543,10 +543,10 @@ class MainWindow(Adw.ApplicationWindow):
         out_dir = self.entry_directorio_salida.get_text()
         if not out_dir:
             self.logger.error("output path is not set")
-            self.entry_directorio_salida.add_css_class("error")
+            self.row_output_folder.add_css_class("error")
             return
 
-        self.entry_directorio_salida.remove_css_class("error")
+        self.row_output_folder.remove_css_class("error")
         self.action_stack.set_visible_child_name("cancel")
         self.pro_bar.set_visible(True)
         self._change_button_status(disabled=True)
