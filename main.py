@@ -411,11 +411,7 @@ class MainWindow(Adw.ApplicationWindow):
                 spinner.stop()
                 stack.set_visible_child_name("icon")
 
-                if status == "pending":
-                    icon.set_from_icon_name("document-open-recent-symbolic")
-                    label.set_text(_("Pending"))
-                    label.add_css_class("dim-label")
-                elif status == "completed":
+                if status == "completed":
                     icon.set_from_icon_name("object-select-symbolic")
                     icon.add_css_class("success")
                     label.set_text(_("Done"))

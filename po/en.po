@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 16:49-0500\n"
+"POT-Creation-Date: 2026-07-30 16:55-0500\n"
 "PO-Revision-Date: 2026-07-28 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: English\n"
@@ -46,32 +46,28 @@ msgstr ""
 msgid "Processing…"
 msgstr ""
 
-#: main.py:414
-msgid "Pending"
-msgstr ""
-
-#: main.py:419
+#: main.py:415
 msgid "Done"
 msgstr ""
 
-#: main.py:423
+#: main.py:419
 msgid "Error"
 msgstr ""
 
-#: main.py:497
+#: main.py:493
 #, fuzzy
 msgid "Select Folder"
 msgstr "Choose video folder"
 
-#: main.py:620
+#: main.py:616
 msgid "Cancelled"
 msgstr ""
 
-#: main.py:621
+#: main.py:617
 msgid "Completed!"
 msgstr "Completed!"
 
-#: main.py:644
+#: main.py:640
 #, fuzzy
 msgid "About Remuxer"
 msgstr "Remuxer"

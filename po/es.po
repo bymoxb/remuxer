@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 16:49-0500\n"
+"POT-Creation-Date: 2026-07-30 16:55-0500\n"
 "PO-Revision-Date: 2026-07-30 16:51-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -46,31 +46,27 @@ msgstr "Estado"
 msgid "Processing…"
 msgstr "Procesando..."
 
-#: main.py:414
-msgid "Pending"
-msgstr "Pendiente"
-
-#: main.py:419
+#: main.py:415
 msgid "Done"
 msgstr "Finalizado"
 
-#: main.py:423
+#: main.py:419
 msgid "Error"
 msgstr "Falló"
 
-#: main.py:497
+#: main.py:493
 msgid "Select Folder"
 msgstr "Seleccionar Carpeta"
 
-#: main.py:620
+#: main.py:616
 msgid "Cancelled"
 msgstr "Cancelado"
 
-#: main.py:621
+#: main.py:617
 msgid "Completed!"
 msgstr "¡Completado!"
 
-#: main.py:644
+#: main.py:640
 msgid "About Remuxer"
 msgstr "Acerca de Remuxer"
 
@@ -189,6 +185,9 @@ msgstr "Iniciar procesamiento"
 #: ui/main.ui:396
 msgid "Cancel"
 msgstr "Cancelar"
+
+#~ msgid "Pending"
+#~ msgstr "Pendiente"
 
 #~ msgid "Cancelling..."
 #~ msgstr "Cancelando..."
