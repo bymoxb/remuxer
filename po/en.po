@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 11:43-0500\n"
+"POT-Creation-Date: 2026-07-30 13:33-0500\n"
 "PO-Revision-Date: 2026-07-28 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: English\n"
@@ -30,15 +30,15 @@ msgstr "Source Audio"
 msgid "Select Folder"
 msgstr "Choose video folder"
 
-#: main.py:445
+#: main.py:447
 msgid "Cancelled"
 msgstr ""
 
-#: main.py:446
+#: main.py:448
 msgid "Completed!"
 msgstr "Completed!"
 
-#: main.py:469
+#: main.py:471
 #, fuzzy
 msgid "About Remuxer"
 msgstr "Remuxer"
@@ -73,84 +73,88 @@ msgstr ""
 msgid "Main Menu"
 msgstr ""
 
-#: ui/main.ui:48
+#: ui/main.ui:57
 msgid "A new version {0} is available"
 msgstr ""
 
-#: ui/main.ui:49
+#: ui/main.ui:58
 msgid "Close"
 msgstr ""
 
-#: ui/main.ui:70
+#: ui/main.ui:79
 msgid "Media Sources"
 msgstr ""
 
-#: ui/main.ui:73
+#: ui/main.ui:82
 #, fuzzy
 msgid "Video Folder"
 msgstr "Choose video folder"
 
-#: ui/main.ui:87
+#: ui/main.ui:96
 #, fuzzy
 msgid "Audio Folder"
 msgstr "Choose audio folder"
 
-#: ui/main.ui:112
+#: ui/main.ui:121
 msgid "Episode Alignment"
 msgstr ""
 
-#: ui/main.ui:126
+#: ui/main.ui:135
 msgid "Video:"
 msgstr "Video:"
 
-#: ui/main.ui:140 ui/main.ui:180
+#: ui/main.ui:149 ui/main.ui:189
 msgid "Move Up"
 msgstr ""
 
-#: ui/main.ui:146 ui/main.ui:186
+#: ui/main.ui:155 ui/main.ui:195
 msgid "Move Down"
 msgstr ""
 
-#: ui/main.ui:166
+#: ui/main.ui:175
 msgid "Audio:"
 msgstr "Audio:"
 
-#: ui/main.ui:220
+#: ui/main.ui:223
+msgid "Output Settings"
+msgstr ""
+
+#: ui/main.ui:226
 #, fuzzy
 msgid "Output Folder"
 msgstr "Choose output folder"
 
-#: ui/main.ui:238
+#: ui/main.ui:240
 msgid "Output Naming"
 msgstr ""
 
-#: ui/main.ui:241
+#: ui/main.ui:243
 #, fuzzy
 msgid "Keep Source Video Name"
 msgstr "Source Video"
 
-#: ui/main.ui:242
+#: ui/main.ui:244
 msgid "The output file will use the original source video filename."
 msgstr ""
 
-#: ui/main.ui:253
+#: ui/main.ui:255
 #, fuzzy
 msgid "Keep Source Audio Name"
 msgstr "Source Audio"
 
-#: ui/main.ui:254
+#: ui/main.ui:256
 msgid "The output file will use the original source audio filename."
 msgstr ""
 
-#: ui/main.ui:273
+#: ui/main.ui:285
 msgid "Analyze"
 msgstr ""
 
-#: ui/main.ui:289
+#: ui/main.ui:301
 msgid "Start Processing"
 msgstr ""
 
-#: ui/main.ui:306
+#: ui/main.ui:318
 msgid "Cancel"
 msgstr ""
 

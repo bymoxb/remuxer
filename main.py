@@ -404,6 +404,7 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.entry_directorio_salida.remove_css_class("error")
         self.action_stack.set_visible_child_name("cancel")
+        self.pro_bar.set_visible(True)
         self._change_button_status(disabled=True)
 
         threading.Thread(target=self._worker_thread,
@@ -437,9 +438,9 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _update_progress(self, fraction, text):
         self.pro_bar.set_fraction(fraction)
-        self.pro_bar.set_text(text)
 
     def _on_process_finished(self):
+        self.pro_bar.set_visible(False)
         self._change_button_status(disabled=False)
         self.action_stack.set_visible_child_name("process")
         status = _("Cancelled") if self.remux_service.cancel_event.is_set() else _(
