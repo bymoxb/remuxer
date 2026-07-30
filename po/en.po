@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 15:03-0500\n"
+"POT-Creation-Date: 2026-07-30 16:49-0500\n"
 "PO-Revision-Date: 2026-07-28 15:37-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: English\n"
@@ -17,48 +17,61 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: main.py:270
+#: main.py:271
 msgid "Source Video"
 msgstr "Source Video"
 
-#: main.py:271
+#: main.py:272
 msgid "Source Audio"
 msgstr "Source Audio"
 
-#: main.py:280
+#: main.py:281
+msgid "Sel"
+msgstr ""
+
+#: main.py:288
+#, fuzzy
+msgid "Select All"
+msgstr "Choose video folder"
+
+#: main.py:289
+msgid "Deselect All"
+msgstr ""
+
+#: main.py:363
 msgid "Status"
 msgstr ""
 
-#: main.py:327
+#: main.py:407
 msgid "Processing…"
 msgstr ""
 
-#: main.py:334
+#: main.py:414
 msgid "Pending"
 msgstr ""
 
-#: main.py:339
+#: main.py:419
 msgid "Done"
 msgstr ""
 
-#: main.py:343
+#: main.py:423
 msgid "Error"
 msgstr ""
 
-#: main.py:421
+#: main.py:497
 #, fuzzy
 msgid "Select Folder"
 msgstr "Choose video folder"
 
-#: main.py:544
+#: main.py:620
 msgid "Cancelled"
 msgstr ""
 
-#: main.py:545
+#: main.py:621
 msgid "Completed!"
 msgstr "Completed!"
 
-#: main.py:568
+#: main.py:644
 #, fuzzy
 msgid "About Remuxer"
 msgstr "Remuxer"

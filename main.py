@@ -87,6 +87,7 @@ class ColumnViewRow(GObject.Object):
     video = GObject.Property(type=VideoItem)
     audio = GObject.Property(type=VideoItem)
     status = GObject.Property(type=str, default="pending")
+    selected = GObject.Property(type=bool, default=True)
 
     def __init__(self, video, audio):
         super().__init__()
@@ -261,15 +262,99 @@ class MainWindow(Adw.ApplicationWindow):
         self.setup_ui()
         self.connect_signals()
         self.setup_actions()
+        self.setup_cv_actions()
 
         # Tarea de red en segundo plano
         threading.Thread(target=self._check_updates_async, daemon=True).start()
 
     def setup_ui(self):
         self.cv_files.set_model(self.selection_model)
+        self._add_selection_column()
         self._add_column(_("Source Video"), self._on_bind_video_column)
         self._add_column(_("Source Audio"), self._on_bind_audio_column)
         self._add_status_column()
+
+    def _add_selection_column(self):
+        factory = Gtk.SignalListItemFactory()
+        factory.connect("setup", self._on_setup_selection_column)
+        factory.connect("bind", self._on_bind_selection_column)
+        factory.connect("unbind", self._on_unbind_selection_column)
+
+        col = Gtk.ColumnViewColumn(title=_("Sel"), factory=factory)
+        col.set_fixed_width(50)
+
+        # --- NUEVO: Checkbox en la cabecera ---
+
+        # --- CREAR EL MENÚ ---
+        menu = Gio.Menu.new()
+        menu.append(_("Select All"), "win.select_all")
+        menu.append(_("Deselect All"), "win.unselect_all")
+
+        # Asignar el menú al encabezado
+        col.set_header_menu(menu)
+
+        # --------------------------------------
+
+        self.cv_files.append_column(col)
+
+    def setup_cv_actions(self):
+        action_select_all = Gio.SimpleAction.new("select_all", None)
+        action_select_all.connect("activate", self._on_select_all_activated)
+        self.add_action(action_select_all)
+
+        action_unselect_all = Gio.SimpleAction.new("unselect_all", None)
+        action_unselect_all.connect(
+            "activate", self._on_unselect_all_activated)
+        self.add_action(action_unselect_all)
+
+    def _on_select_all_activated(self, action, parameter):
+        for i in range(self.store.get_n_items()):
+            self.store.get_item(i).selected = True
+
+    def _on_unselect_all_activated(self, action, parameter):
+        for i in range(self.store.get_n_items()):
+            self.store.get_item(i).selected = False
+
+    def _on_header_check_toggled(self, check_button):
+        """Activa o desactiva todos los elementos del store."""
+        is_active = check_button.get_active()
+
+        for i in range(self.store.get_n_items()):
+            item = self.store.get_item(i)
+            item.selected = is_active
+
+    def _on_setup_selection_column(self, factory, list_item):
+        check = Gtk.CheckButton()
+        check.set_halign(Gtk.Align.CENTER)
+        check.set_valign(Gtk.Align.CENTER)
+        list_item.set_child(check)
+
+    def _on_bind_selection_column(self, factory, list_item):
+        row = list_item.get_item()
+        check = list_item.get_child()
+
+        # Creamos un binding bidireccional entre la propiedad 'selected' del objeto
+        # y la propiedad 'active' del CheckButton
+        # GObject.BindingFlags.BIDIRECTIONAL: si uno cambia, el otro también
+        # GObject.BindingFlags.SYNC_CREATE: sincroniza el valor inmediatamente al crear el vínculo
+        bind = row.bind_property(
+            "selected",
+            check,
+            "active",
+            GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
+        )
+
+        # Guardamos la referencia del binding para poder desvincularlo luego
+        list_item.selection_binding = bind
+
+    def _on_unbind_selection_column(self, factory, list_item):
+        # Limpiar el binding al reciclar el widget
+        # bind = getattr(list_item, "selection_binding", None)
+        bind = list_item.get_data("selection-binding")
+        if bind:
+            bind.unbind()
+
+        list_item.set_data("selection-binding", None)
 
     def _add_status_column(self):
         factory = Gtk.SignalListItemFactory()
@@ -508,7 +593,7 @@ class MainWindow(Adw.ApplicationWindow):
                 break
 
             row = self.store.get_item(i)
-            if not row.video or not row.audio:
+            if not row.video or not row.audio or not row.selected:
                 continue
 
             row.status = "processing"
