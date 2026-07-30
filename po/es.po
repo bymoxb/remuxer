@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 16:55-0500\n"
-"PO-Revision-Date: 2026-07-30 16:51-0500\n"
+"POT-Creation-Date: 2026-07-30 18:46-0500\n"
+"PO-Revision-Date: 2026-07-30 18:47-0500\n"
 "Last-Translator: Luis Fernando <moxb@outlook.es>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
 "Language: es\n"
@@ -18,63 +18,47 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.9\n"
 
-#: main.py:271
-msgid "Source Video"
-msgstr "Vídeos de origen"
-
-#: main.py:272
-msgid "Source Audio"
-msgstr "Audios de origen"
-
-#: main.py:281
-msgid "Sel"
-msgstr "Sel"
-
-#: main.py:288
-msgid "Select All"
-msgstr "Seleccionar todo"
-
-#: main.py:289
-msgid "Deselect All"
-msgstr "Deseleccionar todo"
-
-#: main.py:363
-msgid "Status"
-msgstr "Estado"
-
-#: main.py:407
+#: main.py:351
 msgid "Processing…"
 msgstr "Procesando..."
 
-#: main.py:415
+#: main.py:359
 msgid "Done"
 msgstr "Finalizado"
 
-#: main.py:419
+#: main.py:363
 msgid "Error"
 msgstr "Falló"
 
-#: main.py:493
+#: main.py:471
 msgid "Select Folder"
 msgstr "Seleccionar Carpeta"
 
-#: main.py:616
+#: main.py:594
 msgid "Cancelled"
 msgstr "Cancelado"
 
-#: main.py:617
+#: main.py:595
 msgid "Completed!"
 msgstr "¡Completado!"
 
-#: main.py:640
-msgid "About Remuxer"
-msgstr "Acerca de Remuxer"
+#: ui/main.ui:11
+msgid "Select All"
+msgstr "Seleccionar todo"
 
-#: ui/main.ui:10
+#: ui/main.ui:15
+msgid "Deselect All"
+msgstr "Deseleccionar todo"
+
+#: ui/main.ui:22
+msgid "About"
+msgstr "Acerca"
+
+#: ui/main.ui:28
 msgid "Cancel process?"
 msgstr "¿Cancelar proceso?"
 
-#: ui/main.ui:11
+#: ui/main.ui:29
 msgid ""
 "If you cancel now, the current progress will be lost and the file may be "
 "left incomplete."
@@ -82,109 +66,128 @@ msgstr ""
 "Si cancelas ahora, se perderá el progreso actual y los archivos podrían "
 "quedar incompletos."
 
-#: ui/main.ui:15
+#: ui/main.ui:33
 msgid "Continue processing"
 msgstr "Continuar procesando"
 
-#: ui/main.ui:16
+#: ui/main.ui:34
 msgid "Stop processing"
 msgstr "Detener procesamiento"
 
-#: ui/main.ui:22 ui/main.ui:30
+#: ui/main.ui:40 ui/main.ui:48
 msgid "Remuxer"
 msgstr ""
 
-#: ui/main.ui:29
+#: ui/main.ui:47
 msgid "Episode Processor"
 msgstr "Procesador de episodios"
 
-#: ui/main.ui:37
+#: ui/main.ui:55
 msgid "Main Menu"
 msgstr "Menú Principal"
 
-#: ui/main.ui:57
+#: ui/main.ui:76
 msgid "A new version {0} is available"
 msgstr "Hay una nueva versión {0} disponible"
 
-#: ui/main.ui:58
+#: ui/main.ui:77
 msgid "Close"
 msgstr "Cerrar"
 
-#: ui/main.ui:79
+#: ui/main.ui:98
 msgid "Media Sources"
 msgstr "Orígenes multimedia"
 
-#: ui/main.ui:82
+#: ui/main.ui:101
 msgid "Video Folder"
 msgstr "Carpeta de vídeos"
 
-#: ui/main.ui:122
+#: ui/main.ui:141
 msgid "Audio Folder"
 msgstr "Carpeta de audios"
 
-#: ui/main.ui:173
+#: ui/main.ui:192
 msgid "Episode Alignment"
 msgstr "Alineación de episodios"
 
-#: ui/main.ui:187
+#: ui/main.ui:206
 msgid "Video:"
 msgstr "Vídeo:"
 
-#: ui/main.ui:201 ui/main.ui:241
+#: ui/main.ui:220 ui/main.ui:260
 msgid "Move Up"
 msgstr "Subir"
 
-#: ui/main.ui:207 ui/main.ui:247
+#: ui/main.ui:226 ui/main.ui:266
 msgid "Move Down"
 msgstr "Bajar"
 
-#: ui/main.ui:227
+#: ui/main.ui:246
 msgid "Audio:"
 msgstr "Audio:"
 
-#: ui/main.ui:275
+#: ui/main.ui:286
+msgid "Sel"
+msgstr "Sel"
+
+#: ui/main.ui:296
+msgid "Source Video"
+msgstr "Vídeos de origen"
+
+#: ui/main.ui:305
+msgid "Source Audio"
+msgstr "Audios de origen"
+
+#: ui/main.ui:314
+msgid "Status"
+msgstr "Estado"
+
+#: ui/main.ui:331
 msgid "Output Settings"
 msgstr "Configuración de salida"
 
-#: ui/main.ui:278
+#: ui/main.ui:334
 msgid "Output Folder"
 msgstr "Carpeta de salida"
 
-#: ui/main.ui:318
+#: ui/main.ui:374
 msgid "Output Naming"
 msgstr "Nombre del archivo de salida"
 
-#: ui/main.ui:321
+#: ui/main.ui:377
 msgid "Keep Source Video Name"
 msgstr "Conservar el nombre del video de origen"
 
-#: ui/main.ui:322
+#: ui/main.ui:378
 msgid "The output file will use the original source video filename."
 msgstr ""
 "El archivo de salida utilizará el nombre original del archivo de video de "
 "origen."
 
-#: ui/main.ui:333
+#: ui/main.ui:389
 msgid "Keep Source Audio Name"
 msgstr "Conservar el nombre del audio de origen"
 
-#: ui/main.ui:334
+#: ui/main.ui:390
 msgid "The output file will use the original source audio filename."
 msgstr ""
 "El archivo de salida utilizará el nombre original del archivo de audio de "
 "origen."
 
-#: ui/main.ui:363
+#: ui/main.ui:419
 msgid "Analyze"
 msgstr "Analizar"
 
-#: ui/main.ui:379
+#: ui/main.ui:435
 msgid "Start Processing"
 msgstr "Iniciar procesamiento"
 
-#: ui/main.ui:396
+#: ui/main.ui:452
 msgid "Cancel"
 msgstr "Cancelar"
+
+#~ msgid "About Remuxer"
+#~ msgstr "Acerca de Remuxer"
 
 #~ msgid "Pending"
 #~ msgstr "Pendiente"

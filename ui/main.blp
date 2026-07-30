@@ -1,5 +1,11 @@
 using Gtk 4.0;
 using Adw 1;
+
+menu cv_selection_menu {
+  item (_("Select All"), "win.select_all")
+  item (_("Deselect All"), "win.unselect_all")
+}
+
 menu app_menu {
   section {
     item (_("About"), "app.about")
@@ -250,6 +256,39 @@ template $MainWindow: Adw.ApplicationWindow {
                   child: Gtk.ColumnView cv_files {
                     hexpand: true;
                     vexpand: true;
+
+                    // COLUMNA 1: Selección
+                    Gtk.ColumnViewColumn {
+                      title: _("Sel");
+                      fixed-width: 40;
+                      header-menu: cv_selection_menu;
+
+                      factory: Gtk.SignalListItemFactory cv_selection_factory {};
+                    }
+
+                    // COLUMNA 2: Source Video
+                    Gtk.ColumnViewColumn {
+                      title: _("Source Video");
+                      expand: true;
+
+                      factory: Gtk.SignalListItemFactory cv_video_factory {};
+                    }
+
+                    // COLUMNA 3: Source Audio
+                    Gtk.ColumnViewColumn {
+                      title: _("Source Audio");
+                      expand: true;
+
+                      factory: Gtk.SignalListItemFactory cv_audio_factory {};
+                    }
+
+                    // COLUMNA 4: Status
+                    Gtk.ColumnViewColumn {
+                      title: _("Status");
+                      fixed-width: 150;
+
+                      factory: Gtk.SignalListItemFactory cv_status_factory {};
+                    }
                   };
                 };
               }
