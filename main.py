@@ -261,7 +261,6 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.setup_ui()
         self.connect_signals()
-        self.setup_actions()
         self.setup_cv_actions()
 
         # Tarea de red en segundo plano
@@ -632,32 +631,40 @@ class MainWindow(Adw.ApplicationWindow):
             self.remux_service.cancel()
             self.logger.info("Cancelling...")
 
-    def setup_actions(self):
-        # Acciones de menú (About, etc)
-        action = Gio.SimpleAction.new("about", None)
-        action.connect("activate", self.on_about_clicked)
-        self.add_action(action)
-
-        menu = Gio.Menu.new()
-        menu.append(_("About Remuxer"), "win.about")
-        self.btn_menu.set_menu_model(menu)
-
-    def on_about_clicked(self, *args):
-        Adw.AboutWindow(
-            transient_for=self, version=APP_VERSION, application_name=APP_NAME,
-            application_icon=APP_ID, website=APP_GITHUB, developer_name="bymoxb"
-        ).present()
 
 # --- 4. APLICACIÓN ---
 
-
 class AudioRemuxApp(Adw.Application):
     def __init__(self):
-        super().__init__(application_id=APP_ID)
+        super().__init__(application_id=APP_ID,
+                         flags=Gio.ApplicationFlags.FLAGS_NONE)
 
     def do_activate(self):
-        win = MainWindow(application=self)
+        win = self.get_active_window()
+        if not win:
+            win = MainWindow(application=self)
         win.present()
+
+    def do_startup(self):
+        Adw.Application.do_startup(self)
+        self._setup_actions()
+
+    def _setup_actions(self):
+        about_action = Gio.SimpleAction.new("about", None)
+        about_action.connect("activate", self.on_about_activated)
+        self.add_action(about_action)
+
+    def on_about_activated(self, action, parameter):
+        about = Adw.AboutWindow(
+            transient_for=self.get_active_window(),
+            version=APP_VERSION,
+            application_name=APP_NAME,
+            application_icon=APP_ID,
+            website=APP_GITHUB,
+            developer_name="bymoxb"
+        )
+        about.present()
+
 
 
 if __name__ == "__main__":

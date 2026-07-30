@@ -1,5 +1,10 @@
 using Gtk 4.0;
 using Adw 1;
+menu app_menu {
+  section {
+    item (_("About"), "app.about")
+  }
+}
 
 Adw.AlertDialog dialog_confirmar_cancelacion {
   heading: _("Cancel process?");
@@ -32,6 +37,7 @@ template $MainWindow: Adw.ApplicationWindow {
         primary: true;
         icon-name: "open-menu-symbolic";
         tooltip-text: _("Main Menu");
+        menu-model: app_menu;
       }
     }
 
