@@ -8,6 +8,16 @@ import time
 from pathlib import Path
 import requests
 from packaging import version
+import logging
+
+# Configuración profesional del logger
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    datefmt='%H:%M:%S'
+)
+
+logger = logging.getLogger("RemuxerApp")
 
 # --- CONSTANTES Y CONFIGURACIÓN ---
 APP_NAME = "remuxer"
@@ -39,9 +49,9 @@ gi.require_version('Pango', '1.0')
 
 from gi.repository import Gtk, Gio, GObject, Pango, Adw, GLib
 
-print(f"Current language: {os.environ.get('LANGUAGE')}")
-print(f"Translation search path: {LOCALE_DIR}")
-print(f"Test translation (Analyze): {gettext.gettext('Analyze')}")
+logger.info(f"Current version: {APP_VERSION}")
+logger.info(f"Current language: {os.environ.get('LANGUAGE')}")
+logger.info(f"Translation search path: {LOCALE_DIR}")
 
 
 # --- 1. MODELOS DE DATOS ---
@@ -75,9 +85,12 @@ class ColumnViewRow(GObject.Object):
 
 
 class UpdateService:
+    def __init__(self):
+        self.logger = logging.getLogger("RemuxerApp.UpdateService")
+
     """Encargado de verificar actualizaciones en GitHub"""
-    @staticmethod
-    def check_for_updates(current_version):
+
+    def check_for_updates(self, current_version):
         try:
             response = requests.get(APP_GITHUB_RELEASES, timeout=2)
             response.raise_for_status()
@@ -85,16 +98,20 @@ class UpdateService:
             tag = data.get("tag_name", "").lstrip("v")
 
             if tag and version.parse(tag) > version.parse(current_version):
+                self.logger.info(f"New version available {tag}")
                 return tag
         except Exception as e:
-            print(f"Update check failed: {e}")
+            self.logger.error(f"Update check failed: {e}")
         return None
 
 
 class FileService:
+    def __init__(self):
+        self.logger = logging.getLogger("RemuxerApp.FileService")
+
     """Encargado de interactuar con el sistema de archivos"""
-    @staticmethod
-    def list_videos(path):
+
+    def list_videos(self, path):
         videos = []
         try:
             files = sorted(os.listdir(path))
@@ -106,8 +123,9 @@ class FileService:
                         "abs_path": os.path.join(path, f),
                         "order": i
                     })
+            self.logger.debug(f"{len(videos)} found in {path}")
         except Exception as e:
-            print(f"Error listando archivos: {e}")
+            self.logger.error(f"Error listando archivos: {e}")
         return videos
 
 
@@ -117,6 +135,7 @@ class RemuxService:
     def __init__(self):
         self.current_process = None
         self.cancel_event = threading.Event()
+        self.logger = logging.getLogger("RemuxerApp.RemuxService")
 
     def cancel(self):
         self.cancel_event.set()
@@ -139,17 +158,21 @@ class RemuxService:
             "-map_metadata", "0", "-c", "copy", destination,
         ]
         try:
+            new_file = Path(destination)
+            self.logger.debug(f"Running command for: {new_file.name}")
             self.current_process = subprocess.Popen(
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
             )
             while self.current_process.poll() is None:
                 if self.cancel_event.is_set():
+                    self.logger.warning(
+                        f"Command was canelled when on: {new_file.name}")
                     self.current_process.terminate()
                     return False
-                time.sleep(0.5)
+                time.sleep(1)
             return self.current_process.returncode == 0
         except Exception as e:
-            print(f"FFmpeg Error: {e}")
+            self.logger.error(f"FFmpeg Error: {e}")
             return False
         finally:
             self.current_process = None
@@ -185,8 +208,12 @@ class MainWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.logger = logging.getLogger("RemuxerApp.MainWindow")
+
         # Inicializar Servicios
         self.remux_service = RemuxService()
+        self.update_service = UpdateService()
+        self.file_service = FileService()
         self.video_data_cache = {"videos": [], "audios": []}
 
         # Estado de la UI
@@ -256,7 +283,7 @@ class MainWindow(Adw.ApplicationWindow):
     # --- Lógica de Interfaz ---
 
     def _check_updates_async(self):
-        new_version = UpdateService.check_for_updates(APP_VERSION)
+        new_version = self.update_service.check_for_updates(APP_VERSION)
         if new_version:
             GLib.idle_add(self._show_update_banner, new_version)
 
@@ -278,10 +305,12 @@ class MainWindow(Adw.ApplicationWindow):
 
             if target == "videos":
                 self.entry_videos_principales.set_text(path)
-                self.video_data_cache["videos"] = FileService.list_videos(path)
+                self.video_data_cache["videos"] = self.file_service.list_videos(
+                    path)
             elif target == "audios":
                 self.entry_videos_audio.set_text(path)
-                self.video_data_cache["audios"] = FileService.list_videos(path)
+                self.video_data_cache["audios"] = self.file_service.list_videos(
+                    path)
             else:
                 self.entry_directorio_salida.set_text(path)
         except Exception:
@@ -326,6 +355,7 @@ class MainWindow(Adw.ApplicationWindow):
     def on_process_clicked(self, btn):
         out_dir = self.entry_directorio_salida.get_text()
         if not out_dir:
+            self.logger.error("output path is not set")
             self.entry_directorio_salida.add_css_class("error")
             return
 
@@ -337,6 +367,7 @@ class MainWindow(Adw.ApplicationWindow):
                          args=(out_dir,), daemon=True).start()
 
     def _worker_thread(self, out_dir):
+        self.logger.info("Processing started")
         self.remux_service.cancel_event.clear()
         n = self.store.get_n_items()
         mode = "source" if self.radio_keep_source_name.get_active() else "dest"
@@ -358,6 +389,7 @@ class MainWindow(Adw.ApplicationWindow):
             self.remux_service.run_ffmpeg(
                 row.video.abs_path, row.audio.abs_path, output_file)
 
+        self.logger.info("Processing finished")
         GLib.idle_add(self._on_process_finished)
 
     def _update_progress(self, fraction, text):
@@ -373,6 +405,7 @@ class MainWindow(Adw.ApplicationWindow):
 
     def on_cancel_clicked(self, btn):
         self.remux_service.cancel()
+        self.logger.info("Cancelling...")
         self.pro_bar.set_text(_("Cancelling..."))
 
     def setup_actions(self):
