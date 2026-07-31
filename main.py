@@ -546,54 +546,68 @@ class MainWindow(Adw.ApplicationWindow):
             self.row_output_folder.add_css_class("error")
             return
 
+        items_to_process = []
+        for i in range(self.store.get_n_items()):
+            row = self.store.get_item(i)
+            if row.video and row.audio and row.selected:
+                items_to_process.append(row)
+
+        if not items_to_process:
+            self.logger.warning("No items selected for processing")
+            return
+
+        mode = "source" if self.radio_keep_source_name.get_active() else "dest"
+
         self.row_output_folder.remove_css_class("error")
         self.action_stack.set_visible_child_name("cancel")
         self.pro_bar.set_visible(True)
+        self.pro_bar.set_fraction(0.0)
         self._change_button_status(disabled=True)
 
         threading.Thread(target=self._worker_thread,
-                         args=(out_dir,), daemon=True).start()
+                         args=(items_to_process, out_dir, mode),
+                         daemon=True).start()
 
-    def _worker_thread(self, out_dir):
+    def _worker_thread(self, items_to_process, out_dir, mode):
         self.logger.info("Processing started")
         self.remux_service.cancel_event.clear()
-        n = self.store.get_n_items()
-        mode = "source" if self.radio_keep_source_name.get_active() else "dest"
+        total = len(items_to_process)
 
-        for i in range(n):
+        total_steps = total * 2
+
+        for index, row in enumerate(items_to_process):
+
             if self.remux_service.cancel_event.is_set():
                 break
 
-            row = self.store.get_item(i)
-            if not row.video or not row.audio or not row.selected:
-                continue
+            micro_step_start = (index * 2) + 1
+            progress_start = micro_step_start / total_steps
 
-            row.status = "processing"
-
-            GLib.idle_add(self._update_progress, i/n, f"{i+1}/{n}")
+            GLib.idle_add(setattr, row, "status", "processing")
+            GLib.idle_add(self._update_progress, progress_start)
 
             output_file = self.remux_service.prepare_output_path(
                 row.video.abs_path, row.audio.abs_path, out_dir, mode
             )
 
-            finish_status = self.remux_service.execute(
+            is_success = self.remux_service.execute(
                 row.video.abs_path, row.audio.abs_path, output_file)
 
-            row.status = "completed" if finish_status == True else "error"
+            final_status = "completed" if is_success == True else "error"
+            GLib.idle_add(setattr, row, "status", final_status)
+
 
         self.logger.info("Processing finished")
         GLib.idle_add(self._on_process_finished)
 
-    def _update_progress(self, fraction, text):
+    def _update_progress(self, fraction):
         self.pro_bar.set_fraction(fraction)
+        return False
 
     def _on_process_finished(self):
         self.pro_bar.set_visible(False)
         self._change_button_status(disabled=False)
         self.action_stack.set_visible_child_name("process")
-        status = _("Cancelled") if self.remux_service.cancel_event.is_set() else _(
-            "Completed!")
-        self._update_progress(1.0 if "Comp" in status else 0.0, status)
 
     def on_cancel_clicked(self, btn):
         self.dialog_confirmar_cancelacion.choose(
