@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 18:47-0500\n"
+"POT-Creation-Date: 2026-07-30 19:30-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,14 +31,6 @@ msgstr ""
 
 #: main.py:471
 msgid "Select Folder"
-msgstr ""
-
-#: main.py:594
-msgid "Cancelled"
-msgstr ""
-
-#: main.py:595
-msgid "Completed!"
 msgstr ""
 
 #: ui/main.ui:11
