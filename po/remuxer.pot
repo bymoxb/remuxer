@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 16:55-0500\n"
+"POT-Creation-Date: 2026-07-30 19:30-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,164 +17,156 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:271
-msgid "Source Video"
-msgstr ""
-
-#: main.py:272
-msgid "Source Audio"
-msgstr ""
-
-#: main.py:281
-msgid "Sel"
-msgstr ""
-
-#: main.py:288
-msgid "Select All"
-msgstr ""
-
-#: main.py:289
-msgid "Deselect All"
-msgstr ""
-
-#: main.py:363
-msgid "Status"
-msgstr ""
-
-#: main.py:407
+#: main.py:351
 msgid "Processing…"
 msgstr ""
 
-#: main.py:415
+#: main.py:359
 msgid "Done"
 msgstr ""
 
-#: main.py:419
+#: main.py:363
 msgid "Error"
 msgstr ""
 
-#: main.py:493
+#: main.py:471
 msgid "Select Folder"
 msgstr ""
 
-#: main.py:616
-msgid "Cancelled"
+#: ui/main.ui:11
+msgid "Select All"
 msgstr ""
 
-#: main.py:617
-msgid "Completed!"
+#: ui/main.ui:15
+msgid "Deselect All"
 msgstr ""
 
-#: main.py:640
-msgid "About Remuxer"
+#: ui/main.ui:22
+msgid "About"
 msgstr ""
 
-#: ui/main.ui:10
+#: ui/main.ui:28
 msgid "Cancel process?"
 msgstr ""
 
-#: ui/main.ui:11
+#: ui/main.ui:29
 msgid ""
 "If you cancel now, the current progress will be lost and the file may be "
 "left incomplete."
 msgstr ""
 
-#: ui/main.ui:15
+#: ui/main.ui:33
 msgid "Continue processing"
 msgstr ""
 
-#: ui/main.ui:16
+#: ui/main.ui:34
 msgid "Stop processing"
 msgstr ""
 
-#: ui/main.ui:22 ui/main.ui:30
+#: ui/main.ui:40 ui/main.ui:48
 msgid "Remuxer"
 msgstr ""
 
-#: ui/main.ui:29
+#: ui/main.ui:47
 msgid "Episode Processor"
 msgstr ""
 
-#: ui/main.ui:37
+#: ui/main.ui:55
 msgid "Main Menu"
 msgstr ""
 
-#: ui/main.ui:57
+#: ui/main.ui:76
 msgid "A new version {0} is available"
 msgstr ""
 
-#: ui/main.ui:58
+#: ui/main.ui:77
 msgid "Close"
 msgstr ""
 
-#: ui/main.ui:79
+#: ui/main.ui:98
 msgid "Media Sources"
 msgstr ""
 
-#: ui/main.ui:82
+#: ui/main.ui:101
 msgid "Video Folder"
 msgstr ""
 
-#: ui/main.ui:122
+#: ui/main.ui:141
 msgid "Audio Folder"
 msgstr ""
 
-#: ui/main.ui:173
+#: ui/main.ui:192
 msgid "Episode Alignment"
 msgstr ""
 
-#: ui/main.ui:187
+#: ui/main.ui:206
 msgid "Video:"
 msgstr ""
 
-#: ui/main.ui:201 ui/main.ui:241
+#: ui/main.ui:220 ui/main.ui:260
 msgid "Move Up"
 msgstr ""
 
-#: ui/main.ui:207 ui/main.ui:247
+#: ui/main.ui:226 ui/main.ui:266
 msgid "Move Down"
 msgstr ""
 
-#: ui/main.ui:227
+#: ui/main.ui:246
 msgid "Audio:"
 msgstr ""
 
-#: ui/main.ui:275
+#: ui/main.ui:286
+msgid "Sel"
+msgstr ""
+
+#: ui/main.ui:296
+msgid "Source Video"
+msgstr ""
+
+#: ui/main.ui:305
+msgid "Source Audio"
+msgstr ""
+
+#: ui/main.ui:314
+msgid "Status"
+msgstr ""
+
+#: ui/main.ui:331
 msgid "Output Settings"
 msgstr ""
 
-#: ui/main.ui:278
+#: ui/main.ui:334
 msgid "Output Folder"
 msgstr ""
 
-#: ui/main.ui:318
+#: ui/main.ui:374
 msgid "Output Naming"
 msgstr ""
 
-#: ui/main.ui:321
+#: ui/main.ui:377
 msgid "Keep Source Video Name"
 msgstr ""
 
-#: ui/main.ui:322
+#: ui/main.ui:378
 msgid "The output file will use the original source video filename."
 msgstr ""
 
-#: ui/main.ui:333
+#: ui/main.ui:389
 msgid "Keep Source Audio Name"
 msgstr ""
 
-#: ui/main.ui:334
+#: ui/main.ui:390
 msgid "The output file will use the original source audio filename."
 msgstr ""
 
-#: ui/main.ui:363
+#: ui/main.ui:419
 msgid "Analyze"
 msgstr ""
 
-#: ui/main.ui:379
+#: ui/main.ui:435
 msgid "Start Processing"
 msgstr ""
 
-#: ui/main.ui:396
+#: ui/main.ui:452
 msgid "Cancel"
 msgstr ""

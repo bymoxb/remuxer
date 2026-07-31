@@ -244,6 +244,12 @@ class MainWindow(Adw.ApplicationWindow):
     updates_banner = Gtk.Template.Child()
     dialog_confirmar_cancelacion = Gtk.Template.Child()
 
+    # Factories
+    cv_selection_factory = Gtk.Template.Child()
+    cv_video_factory = Gtk.Template.Child()
+    cv_audio_factory = Gtk.Template.Child()
+    cv_status_factory = Gtk.Template.Child()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -261,7 +267,6 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.setup_ui()
         self.connect_signals()
-        self.setup_actions()
         self.setup_cv_actions()
 
         # Tarea de red en segundo plano
@@ -269,33 +274,20 @@ class MainWindow(Adw.ApplicationWindow):
 
     def setup_ui(self):
         self.cv_files.set_model(self.selection_model)
-        self._add_selection_column()
-        self._add_column(_("Source Video"), self._on_bind_video_column)
-        self._add_column(_("Source Audio"), self._on_bind_audio_column)
-        self._add_status_column()
+        self._setup_selection_factory()
+        self._setup_label_factory(
+            self.cv_video_factory, self._on_bind_video_column)
+        self._setup_label_factory(
+            self.cv_audio_factory, self._on_bind_audio_column)
+        self._setup_status_factory()
 
-    def _add_selection_column(self):
-        factory = Gtk.SignalListItemFactory()
-        factory.connect("setup", self._on_setup_selection_column)
-        factory.connect("bind", self._on_bind_selection_column)
-        factory.connect("unbind", self._on_unbind_selection_column)
-
-        col = Gtk.ColumnViewColumn(title=_("Sel"), factory=factory)
-        col.set_fixed_width(50)
-
-        # --- NUEVO: Checkbox en la cabecera ---
-
-        # --- CREAR EL MENÚ ---
-        menu = Gio.Menu.new()
-        menu.append(_("Select All"), "win.select_all")
-        menu.append(_("Deselect All"), "win.unselect_all")
-
-        # Asignar el menú al encabezado
-        col.set_header_menu(menu)
-
-        # --------------------------------------
-
-        self.cv_files.append_column(col)
+    def _setup_selection_factory(self):
+        self.cv_selection_factory.connect(
+            "setup", self._on_setup_selection_column)
+        self.cv_selection_factory.connect(
+            "bind", self._on_bind_selection_column)
+        self.cv_selection_factory.connect(
+            "unbind", self._on_unbind_selection_column)
 
     def setup_cv_actions(self):
         action_select_all = Gio.SimpleAction.new("select_all", None)
@@ -307,64 +299,14 @@ class MainWindow(Adw.ApplicationWindow):
             "activate", self._on_unselect_all_activated)
         self.add_action(action_unselect_all)
 
-    def _on_select_all_activated(self, action, parameter):
-        for i in range(self.store.get_n_items()):
-            self.store.get_item(i).selected = True
+    def _setup_status_factory(self):
+        self.cv_status_factory.connect("setup", self._on_setup_status_column)
+        self.cv_status_factory.connect("bind", self._on_bind_status_column)
+        self.cv_status_factory.connect("unbind", self._on_unbind_status_column)
 
-    def _on_unselect_all_activated(self, action, parameter):
-        for i in range(self.store.get_n_items()):
-            self.store.get_item(i).selected = False
-
-    def _on_header_check_toggled(self, check_button):
-        """Activa o desactiva todos los elementos del store."""
-        is_active = check_button.get_active()
-
-        for i in range(self.store.get_n_items()):
-            item = self.store.get_item(i)
-            item.selected = is_active
-
-    def _on_setup_selection_column(self, factory, list_item):
-        check = Gtk.CheckButton()
-        check.set_halign(Gtk.Align.CENTER)
-        check.set_valign(Gtk.Align.CENTER)
-        list_item.set_child(check)
-
-    def _on_bind_selection_column(self, factory, list_item):
-        row = list_item.get_item()
-        check = list_item.get_child()
-
-        # Creamos un binding bidireccional entre la propiedad 'selected' del objeto
-        # y la propiedad 'active' del CheckButton
-        # GObject.BindingFlags.BIDIRECTIONAL: si uno cambia, el otro también
-        # GObject.BindingFlags.SYNC_CREATE: sincroniza el valor inmediatamente al crear el vínculo
-        bind = row.bind_property(
-            "selected",
-            check,
-            "active",
-            GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
-        )
-
-        # Guardamos la referencia del binding para poder desvincularlo luego
-        list_item.selection_binding = bind
-
-    def _on_unbind_selection_column(self, factory, list_item):
-        # Limpiar el binding al reciclar el widget
-        # bind = getattr(list_item, "selection_binding", None)
-        bind = list_item.get_data("selection-binding")
-        if bind:
-            bind.unbind()
-
-        list_item.set_data("selection-binding", None)
-
-    def _add_status_column(self):
-        factory = Gtk.SignalListItemFactory()
-        factory.connect("setup", self._on_setup_status_column)
-        factory.connect("bind", self._on_bind_status_column)
-        factory.connect("unbind", self._on_unbind_status_column)
-
-        col = Gtk.ColumnViewColumn(title=_("Status"), factory=factory)
-        col.set_fixed_width(150)
-        self.cv_files.append_column(col)
+    def _setup_label_factory(self, factory, bind_callback):
+        factory.connect("setup", self._on_factory_setup_label)
+        factory.connect("bind", bind_callback)
 
     def _on_setup_status_column(self, factory, list_item):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
@@ -431,13 +373,47 @@ class MainWindow(Adw.ApplicationWindow):
             row.disconnect(handler_id)
             list_item.handler_id = None
 
-    def _add_column(self, title, bind_callback):
-        factory = Gtk.SignalListItemFactory()
-        factory.connect("setup", self._on_factory_setup_label)
-        factory.connect("bind", bind_callback)
-        col = Gtk.ColumnViewColumn(title=title, factory=factory)
-        col.set_expand(True)
-        self.cv_files.append_column(col)
+    def _on_setup_selection_column(self, factory, list_item):
+        check = Gtk.CheckButton()
+        check.set_halign(Gtk.Align.CENTER)
+        check.set_valign(Gtk.Align.CENTER)
+        list_item.set_child(check)
+
+    def _on_bind_selection_column(self, factory, list_item):
+        row = list_item.get_item()
+        check = list_item.get_child()
+
+        # Creamos un binding bidireccional entre la propiedad 'selected' del objeto
+        # y la propiedad 'active' del CheckButton
+        # GObject.BindingFlags.BIDIRECTIONAL: si uno cambia, el otro también
+        # GObject.BindingFlags.SYNC_CREATE: sincroniza el valor inmediatamente al crear el vínculo
+        bind = row.bind_property(
+            "selected",
+            check,
+            "active",
+            GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
+        )
+
+        # Guardamos la referencia del binding para poder desvincularlo luego
+        list_item.selection_binding = bind
+
+    def _on_unbind_selection_column(self, factory, list_item):
+        # Limpiar el binding al reciclar el widget
+        # bind = getattr(list_item, "selection_binding", None)
+        bind = list_item.get_data("selection-binding")
+        if bind:
+            bind.unbind()
+
+        list_item.set_data("selection-binding", None)
+
+    def _on_select_all_activated(self, action, parameter):
+        for i in range(self.store.get_n_items()):
+            self.store.get_item(i).selected = True
+
+    def _on_unselect_all_activated(self, action, parameter):
+        for i in range(self.store.get_n_items()):
+            self.store.get_item(i).selected = False
+
 
     # --- Handlers de UI ---
 
@@ -567,57 +543,71 @@ class MainWindow(Adw.ApplicationWindow):
         out_dir = self.entry_directorio_salida.get_text()
         if not out_dir:
             self.logger.error("output path is not set")
-            self.entry_directorio_salida.add_css_class("error")
+            self.row_output_folder.add_css_class("error")
             return
 
-        self.entry_directorio_salida.remove_css_class("error")
+        items_to_process = []
+        for i in range(self.store.get_n_items()):
+            row = self.store.get_item(i)
+            if row.video and row.audio and row.selected:
+                items_to_process.append(row)
+
+        if not items_to_process:
+            self.logger.warning("No items selected for processing")
+            return
+
+        mode = "source" if self.radio_keep_source_name.get_active() else "dest"
+
+        self.row_output_folder.remove_css_class("error")
         self.action_stack.set_visible_child_name("cancel")
         self.pro_bar.set_visible(True)
+        self.pro_bar.set_fraction(0.0)
         self._change_button_status(disabled=True)
 
         threading.Thread(target=self._worker_thread,
-                         args=(out_dir,), daemon=True).start()
+                         args=(items_to_process, out_dir, mode),
+                         daemon=True).start()
 
-    def _worker_thread(self, out_dir):
+    def _worker_thread(self, items_to_process, out_dir, mode):
         self.logger.info("Processing started")
         self.remux_service.cancel_event.clear()
-        n = self.store.get_n_items()
-        mode = "source" if self.radio_keep_source_name.get_active() else "dest"
+        total = len(items_to_process)
 
-        for i in range(n):
+        total_steps = total * 2
+
+        for index, row in enumerate(items_to_process):
+
             if self.remux_service.cancel_event.is_set():
                 break
 
-            row = self.store.get_item(i)
-            if not row.video or not row.audio or not row.selected:
-                continue
+            micro_step_start = (index * 2) + 1
+            progress_start = micro_step_start / total_steps
 
-            row.status = "processing"
-
-            GLib.idle_add(self._update_progress, i/n, f"{i+1}/{n}")
+            GLib.idle_add(setattr, row, "status", "processing")
+            GLib.idle_add(self._update_progress, progress_start)
 
             output_file = self.remux_service.prepare_output_path(
                 row.video.abs_path, row.audio.abs_path, out_dir, mode
             )
 
-            finish_status = self.remux_service.execute(
+            is_success = self.remux_service.execute(
                 row.video.abs_path, row.audio.abs_path, output_file)
 
-            row.status = "completed" if finish_status == True else "error"
+            final_status = "completed" if is_success == True else "error"
+            GLib.idle_add(setattr, row, "status", final_status)
+
 
         self.logger.info("Processing finished")
         GLib.idle_add(self._on_process_finished)
 
-    def _update_progress(self, fraction, text):
+    def _update_progress(self, fraction):
         self.pro_bar.set_fraction(fraction)
+        return False
 
     def _on_process_finished(self):
         self.pro_bar.set_visible(False)
         self._change_button_status(disabled=False)
         self.action_stack.set_visible_child_name("process")
-        status = _("Cancelled") if self.remux_service.cancel_event.is_set() else _(
-            "Completed!")
-        self._update_progress(1.0 if "Comp" in status else 0.0, status)
 
     def on_cancel_clicked(self, btn):
         self.dialog_confirmar_cancelacion.choose(
@@ -632,32 +622,40 @@ class MainWindow(Adw.ApplicationWindow):
             self.remux_service.cancel()
             self.logger.info("Cancelling...")
 
-    def setup_actions(self):
-        # Acciones de menú (About, etc)
-        action = Gio.SimpleAction.new("about", None)
-        action.connect("activate", self.on_about_clicked)
-        self.add_action(action)
-
-        menu = Gio.Menu.new()
-        menu.append(_("About Remuxer"), "win.about")
-        self.btn_menu.set_menu_model(menu)
-
-    def on_about_clicked(self, *args):
-        Adw.AboutWindow(
-            transient_for=self, version=APP_VERSION, application_name=APP_NAME,
-            application_icon=APP_ID, website=APP_GITHUB, developer_name="bymoxb"
-        ).present()
 
 # --- 4. APLICACIÓN ---
 
-
 class AudioRemuxApp(Adw.Application):
     def __init__(self):
-        super().__init__(application_id=APP_ID)
+        super().__init__(application_id=APP_ID,
+                         flags=Gio.ApplicationFlags.FLAGS_NONE)
 
     def do_activate(self):
-        win = MainWindow(application=self)
+        win = self.get_active_window()
+        if not win:
+            win = MainWindow(application=self)
         win.present()
+
+    def do_startup(self):
+        Adw.Application.do_startup(self)
+        self._setup_actions()
+
+    def _setup_actions(self):
+        about_action = Gio.SimpleAction.new("about", None)
+        about_action.connect("activate", self.on_about_activated)
+        self.add_action(about_action)
+
+    def on_about_activated(self, action, parameter):
+        about = Adw.AboutWindow(
+            transient_for=self.get_active_window(),
+            version=APP_VERSION,
+            application_name=APP_NAME,
+            application_icon=APP_ID,
+            website=APP_GITHUB,
+            developer_name="bymoxb"
+        )
+        about.present()
+
 
 
 if __name__ == "__main__":
