@@ -416,7 +416,6 @@ class MainWindow(Adw.ApplicationWindow):
         for i in range(self.store.get_n_items()):
             self.store.get_item(i).selected = False
 
-
     # --- Handlers de UI ---
 
     def _on_factory_setup_label(self, factory, list_item):
@@ -446,6 +445,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.btn_analizar.connect("clicked", self.on_analyze_clicked)
         self.btn_procesar.connect("clicked", self.on_process_clicked)
         self.btn_cancelar.connect("clicked", self.on_cancel_clicked)
+        self.updates_banner.connect(
+            "button-clicked", self._on_close_updates_banner)
 
         # Movimientos
         self.btn_video_subir.connect(
@@ -463,6 +464,9 @@ class MainWindow(Adw.ApplicationWindow):
         new_version = self.update_service.check_for_updates(APP_VERSION)
         if new_version:
             GLib.idle_add(self._show_update_banner, new_version)
+
+    def _on_close_updates_banner(self, btn):
+        self.updates_banner.set_revealed(False)
 
     def _show_update_banner(self, ver):
         self.updates_banner.set_title(
@@ -598,7 +602,6 @@ class MainWindow(Adw.ApplicationWindow):
             final_status = "completed" if is_success == True else "error"
             GLib.idle_add(setattr, row, "status", final_status)
 
-
         self.logger.info("Processing finished")
         GLib.idle_add(self._on_process_finished)
 
@@ -657,7 +660,6 @@ class AudioRemuxApp(Adw.Application):
             developer_name="bymoxb"
         )
         about.present()
-
 
 
 if __name__ == "__main__":
