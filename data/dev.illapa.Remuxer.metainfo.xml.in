@@ -9,7 +9,7 @@
 
   <description>
     <p>
-      Remuxer is a high-performance batch media muxing tool. It allows you to effortlessly
+      Remuxer is a batch media muxing tool. It allows you to effortlessly
       copy audio tracks from one source to another set of high-quality video files
       without the need for re-encoding.
     </p>
