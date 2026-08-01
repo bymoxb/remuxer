@@ -69,18 +69,16 @@
   </screenshots>
 
   <releases>
-    <releases>
-      <release version="1.0.0" date="2026-08-01">
-        <url type="details">https://github.com/bymoxb/remuxer/releases/tag/v1.0.0</url>
-        <description>
-          <p>Initial stable release of Remuxer.</p>
-          <ul>
-            <li>Batch remuxing of audio and video files without quality loss.</li>
-            <li>FFmpeg-based stream copy processing for fast container conversion.</li>
-            <li>Support for processing multiple media files in a single operation.</li>
-          </ul>
-        </description>
-      </release>
-    </releases>
+    <release version="1.0.0" date="2026-08-01">
+      <url type="details">https://github.com/bymoxb/remuxer/releases/tag/v1.0.0</url>
+      <description>
+        <p>Initial stable release of Remuxer.</p>
+        <ul>
+          <li>Batch remuxing of audio and video files without quality loss.</li>
+          <li>FFmpeg-based stream copy processing for fast container conversion.</li>
+          <li>Support for processing multiple media files in a single operation.</li>
+        </ul>
+      </description>
+    </release>
   </releases>
 </component>
