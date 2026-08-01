@@ -1,14 +1,24 @@
 project('remuxer',
           version: '0.1.0',
     meson_version: '>= 1.0.0',
-  default_options: [ 'warning_level=2', 'werror=false', ],
+          license: 'GPL-3.0-only',
 )
 
 i18n = import('i18n')
 gnome = import('gnome')
 
+project_id = 'dev.illapa.Remuxer'
+project_name = 'Remuxer'
+app_github = 'https://github.com/bymoxb/remuxer'
+app_github_api = 'https://api.github.com/repos/bymoxb/remuxer/releases/latest'
 
-
+# Profiles
+application_id = project_id
+if get_option('profile') == 'development'
+  profile = 'Devel'
+else
+  profile = ''
+endif
 
 subdir('data')
 subdir('src')

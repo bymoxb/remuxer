@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
+APP_ID = "@APP_ID@"
+APP_NAME = "@APP_NAME@"
+VERSION = "@VERSION@"
+PROFILE = "@PROFILE@"
+
+APP_GITHUB = "@APP_GITHUB@"
+APP_GITHUB_RELEASES = "@APP_GITHUB_RELEASES@"
+
+IS_DEVEL = PROFILE == "Devel"
+SUFFIX = " (Devel)" if IS_DEVEL else ""
+

@@ -11,6 +11,22 @@ gnome.compile_resources('remuxer',
 
 python = import('python')
 
+const_conf = configuration_data()
+
+const_conf.set('APP_NAME', project_name)
+const_conf.set('APP_ID', project_id)
+const_conf.set('VERSION', meson.project_version())
+const_conf.set('APP_GITHUB', app_github)
+const_conf.set('APP_GITHUB_RELEASES', app_github_api)
+const_conf.set('PROFILE', profile)
+
+const_py = configure_file(
+  input: 'const.py.in',
+  output: 'const.py',
+  configuration: const_conf
+)
+
+
 conf = configuration_data()
 conf.set('PYTHON', python.find_installation('python3').full_path())
 conf.set('VERSION', meson.project_version())
@@ -30,6 +46,7 @@ remuxer_sources = [
   '__init__.py',
   'main.py',
   'window.py',
+  const_py,
 ]
 
 install_data(remuxer_sources, install_dir: moduledir)

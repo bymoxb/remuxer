@@ -5,12 +5,7 @@ import threading
 
 from gettext import gettext as _
 
-from gi.repository import Adw
-from gi.repository import Gtk
-from gi.repository import Gio
-from gi.repository import Pango
-from gi.repository import GLib
-from gi.repository import GObject
+from gi.repository import Adw, Gtk, Gio, Pango, GLib, GObject
 
 from .models.column_view_row import ColumnViewRow
 from .models.view_item import VideoItem
@@ -19,7 +14,8 @@ from .services.file_service import FileService
 from .services.remux_service import RemuxService
 from .services.update_service import UpdateService
 
-APP_VERSION = "0.1.0-dev"
+from remuxer import const
+
 
 @Gtk.Template(resource_path='/dev/illapa/Remuxer/window.ui')
 class RemuxerWindow(Adw.ApplicationWindow):
@@ -63,7 +59,8 @@ class RemuxerWindow(Adw.ApplicationWindow):
 
         # Inicializar Servicios
         self.remux_service = RemuxService(FFmpegRunner())
-        self.update_service = UpdateService()
+        self.update_service = UpdateService(
+            target_url=const.APP_GITHUB_RELEASES, current_version=const.VERSION)
         self.file_service = FileService()
         self.video_data_cache = {"videos": [], "audios": []}
 
@@ -265,7 +262,10 @@ class RemuxerWindow(Adw.ApplicationWindow):
     # --- Lógica de Interfaz ---
 
     def _check_updates_async(self):
-        new_version = self.update_service.check_for_updates(APP_VERSION)
+        if const.IS_DEVEL:
+            self.logger.debug("Development mode: skipping update check")
+            return
+        new_version = self.update_service.check_for_updates()
         if new_version:
             GLib.idle_add(self._show_update_banner, new_version)
 
@@ -430,4 +430,3 @@ class RemuxerWindow(Adw.ApplicationWindow):
         if response == "confirm":
             self.remux_service.cancel()
             self.logger.info("Cancelling...")
-
