@@ -24,7 +24,7 @@ Adw.AlertDialog dialog_confirmar_cancelacion {
   ]
 }
 
-template $MainWindow: Adw.ApplicationWindow {
+template $RemuxerWindow: Adw.ApplicationWindow {
   default-width: 1000;
   default-height: 900;
   title: _("Remuxer");
@@ -70,299 +70,293 @@ template $MainWindow: Adw.ApplicationWindow {
         vexpand: true;
         hscrollbar-policy: never;
 
-        child: Adw.Clamp {
-          maximum-size: 1400;
-          tightening-threshold: 800;
+        child: Gtk.Box {
+          orientation: vertical;
+          spacing: 16;
+          margin-top: 24;
+          margin-bottom: 24;
+          margin-start: 24;
+          margin-end: 24;
 
-          child: Gtk.Box {
-            orientation: vertical;
-            spacing: 16;
-            margin-top: 24;
-            margin-bottom: 24;
-            margin-start: 24;
-            margin-end: 24;
+          Adw.PreferencesGroup {
+            title: _("Media Sources");
 
-            Adw.PreferencesGroup {
-              title: _("Media Sources");
+            Adw.ActionRow row_video_folder {
+              title: _("Video Folder");
+              tooltip-text: _("");
+              activatable-widget: btn_seleccionar_videos_principales;
 
-              Adw.ActionRow row_video_folder {
-                title: _("Video Folder");
-                tooltip-text: _("");
-                activatable-widget: btn_seleccionar_videos_principales;
+              [prefix]
+              Gtk.Image {
+                icon-name: "folder-open-symbolic";
+              }
 
-                [prefix]
-                Gtk.Image {
-                  icon-name: "folder-open-symbolic";
-                }
+              Gtk.Box {
+                orientation: vertical;
+                valign: center;
+                hexpand: true;
 
-                Gtk.Box {
-                  orientation: vertical;
-                  valign: center;
-                  hexpand: true;
-
-                  Gtk.Label entry_videos_principales {
-                    label: _("");
-                    halign: start;
-                    ellipsize: start;
-                    xalign: 0;
-
-                    styles [
-                      "caption",
-                      "dim-label",
-                    ]
-                  }
-                }
-
-                [suffix]
-                Button btn_seleccionar_videos_principales {
-                  icon-name: "document-edit-symbolic";
-                  valign: center;
+                Gtk.Label entry_videos_principales {
+                  label: _("");
+                  halign: start;
+                  ellipsize: start;
+                  xalign: 0;
 
                   styles [
-                    "flat",
+                    "caption",
+                    "dim-label",
                   ]
                 }
               }
 
-              Adw.ActionRow row_audio_folder {
-                title: _("Audio Folder");
-                tooltip-text: _("");
-                activatable-widget: btn_seleccionar_videos_audio;
+              [suffix]
+              Button btn_seleccionar_videos_principales {
+                icon-name: "document-edit-symbolic";
+                valign: center;
 
-                [prefix]
-                Gtk.Image {
-                  icon-name: "folder-open-symbolic";
-                }
-
-                Gtk.Box {
-                  orientation: vertical;
-                  valign: center;
-                  hexpand: true;
-
-                  Gtk.Label entry_videos_audio {
-                    label: _("");
-                    halign: start;
-                    ellipsize: start;
-                    xalign: 0;
-
-                    styles [
-                      "caption",
-                      "dim-label",
-                    ]
-                  }
-                }
-
-                [suffix]
-                Button btn_seleccionar_videos_audio {
-                  icon-name: "document-edit-symbolic";
-                  valign: center;
-
-                  styles [
-                    "flat",
-                  ]
-                }
+                styles [
+                  "flat",
+                ]
               }
             }
 
+            Adw.ActionRow row_audio_folder {
+              title: _("Audio Folder");
+              tooltip-text: _("");
+              activatable-widget: btn_seleccionar_videos_audio;
+
+              [prefix]
+              Gtk.Image {
+                icon-name: "folder-open-symbolic";
+              }
+
+              Gtk.Box {
+                orientation: vertical;
+                valign: center;
+                hexpand: true;
+
+                Gtk.Label entry_videos_audio {
+                  label: _("");
+                  halign: start;
+                  ellipsize: start;
+                  xalign: 0;
+
+                  styles [
+                    "caption",
+                    "dim-label",
+                  ]
+                }
+              }
+
+              [suffix]
+              Button btn_seleccionar_videos_audio {
+                icon-name: "document-edit-symbolic";
+                valign: center;
+
+                styles [
+                  "flat",
+                ]
+              }
+            }
+          }
+
+          Gtk.Box {
+            orientation: vertical;
+            spacing: 12;
+            vexpand: true;
+
             Gtk.Box {
-              orientation: vertical;
+              orientation: horizontal;
               spacing: 12;
-              vexpand: true;
+
+              Gtk.Label {
+                label: _("Episode Alignment");
+
+                styles [
+                  "heading",
+                ]
+
+                hexpand: true;
+                halign: start;
+              }
 
               Gtk.Box {
                 orientation: horizontal;
-                spacing: 12;
+                spacing: 6;
 
                 Gtk.Label {
-                  label: _("Episode Alignment");
+                  label: _("Video:");
 
                   styles [
-                    "heading",
-                  ]
-
-                  hexpand: true;
-                  halign: start;
-                }
-
-                Gtk.Box {
-                  orientation: horizontal;
-                  spacing: 6;
-
-                  Gtk.Label {
-                    label: _("Video:");
-
-                    styles [
-                      "caption",
-                    ]
-                  }
-
-                  Gtk.Box {
-                    styles [
-                      "linked",
-                    ]
-
-                    Button btn_video_subir {
-                      icon-name: "go-up-symbolic";
-                      tooltip-text: _("Move Up");
-                    }
-
-                    Button btn_video_bajar {
-                      icon-name: "go-down-symbolic";
-                      tooltip-text: _("Move Down");
-                    }
-                  }
-                }
-
-                Gtk.Separator {
-                  styles [
-                    "spacer",
+                    "caption",
                   ]
                 }
 
                 Gtk.Box {
-                  orientation: horizontal;
-                  spacing: 6;
+                  styles [
+                    "linked",
+                  ]
 
-                  Gtk.Label {
-                    label: _("Audio:");
-
-                    styles [
-                      "caption",
-                    ]
+                  Button btn_video_subir {
+                    icon-name: "go-up-symbolic";
+                    tooltip-text: _("Move Up");
                   }
 
-                  Gtk.Box {
-                    styles [
-                      "linked",
-                    ]
-
-                    Button btn_audio_subir {
-                      icon-name: "go-up-symbolic";
-                      tooltip-text: _("Move Up");
-                    }
-
-                    Button btn_audio_bajar {
-                      icon-name: "go-down-symbolic";
-                      tooltip-text: _("Move Down");
-                    }
+                  Button btn_video_bajar {
+                    icon-name: "go-down-symbolic";
+                    tooltip-text: _("Move Down");
                   }
                 }
               }
 
-              Gtk.Frame {
-                child: Gtk.ScrolledWindow {
-                  min-content-height: 350;
+              Gtk.Separator {
+                styles [
+                  "spacer",
+                ]
+              }
 
-                  child: Gtk.ColumnView cv_files {
-                    hexpand: true;
-                    vexpand: true;
+              Gtk.Box {
+                orientation: horizontal;
+                spacing: 6;
 
-                    // COLUMNA 1: Selección
-                    Gtk.ColumnViewColumn {
-                      title: _("Sel");
-                      fixed-width: 40;
-                      header-menu: cv_selection_menu;
+                Gtk.Label {
+                  label: _("Audio:");
 
-                      factory: Gtk.SignalListItemFactory cv_selection_factory {};
-                    }
+                  styles [
+                    "caption",
+                  ]
+                }
 
-                    // COLUMNA 2: Source Video
-                    Gtk.ColumnViewColumn {
-                      title: _("Source Video");
-                      expand: true;
+                Gtk.Box {
+                  styles [
+                    "linked",
+                  ]
 
-                      factory: Gtk.SignalListItemFactory cv_video_factory {};
-                    }
+                  Button btn_audio_subir {
+                    icon-name: "go-up-symbolic";
+                    tooltip-text: _("Move Up");
+                  }
 
-                    // COLUMNA 3: Source Audio
-                    Gtk.ColumnViewColumn {
-                      title: _("Source Audio");
-                      expand: true;
-
-                      factory: Gtk.SignalListItemFactory cv_audio_factory {};
-                    }
-
-                    // COLUMNA 4: Status
-                    Gtk.ColumnViewColumn {
-                      title: _("Status");
-                      fixed-width: 150;
-
-                      factory: Gtk.SignalListItemFactory cv_status_factory {};
-                    }
-                  };
-                };
+                  Button btn_audio_bajar {
+                    icon-name: "go-down-symbolic";
+                    tooltip-text: _("Move Down");
+                  }
+                }
               }
             }
 
-            Adw.PreferencesGroup {
-              title: _("Output Settings");
+            Gtk.Frame {
+              child: Gtk.ScrolledWindow {
+                min-content-height: 350;
 
-              Adw.ActionRow row_output_folder {
-                title: _("Output Folder");
-                tooltip-text: _("");
-                activatable-widget: btn_seleccionar_salida;
+                child: Gtk.ColumnView cv_files {
+                  hexpand: true;
+                  vexpand: true;
+                  // COLUMNA 1: Selección
+                  Gtk.ColumnViewColumn {
+                    title: _("Sel");
+                    fixed-width: 40;
+                    header-menu: cv_selection_menu;
+
+                    factory: Gtk.SignalListItemFactory cv_selection_factory {};
+                  }
+
+                  // COLUMNA 2: Source Video
+                  Gtk.ColumnViewColumn {
+                    title: _("Source Video");
+                    expand: true;
+
+                    factory: Gtk.SignalListItemFactory cv_video_factory {};
+                  }
+
+                  // COLUMNA 3: Source Audio
+                  Gtk.ColumnViewColumn {
+                    title: _("Source Audio");
+                    expand: true;
+
+                    factory: Gtk.SignalListItemFactory cv_audio_factory {};
+                  }
+
+                  // COLUMNA 4: Status
+                  Gtk.ColumnViewColumn {
+                    title: _("Status");
+                    fixed-width: 150;
+
+                    factory: Gtk.SignalListItemFactory cv_status_factory {};
+                  }
+                };
+              };
+            }
+          }
+
+          Adw.PreferencesGroup {
+            title: _("Output Settings");
+
+            Adw.ActionRow row_output_folder {
+              title: _("Output Folder");
+              tooltip-text: _("");
+              activatable-widget: btn_seleccionar_salida;
+
+              [prefix]
+              Gtk.Image {
+                icon-name: "folder-open-symbolic";
+              }
+
+              Gtk.Box {
+                orientation: vertical;
+                valign: center;
+                hexpand: true;
+
+                Gtk.Label entry_directorio_salida {
+                  label: _("");
+                  halign: start;
+                  ellipsize: start;
+                  xalign: 0;
+
+                  styles [
+                    "caption",
+                    "dim-label",
+                  ]
+                }
+              }
+
+              [suffix]
+              Button btn_seleccionar_salida {
+                icon-name: "document-edit-symbolic";
+                valign: center;
+
+                styles [
+                  "flat",
+                ]
+              }
+            }
+
+            Adw.ExpanderRow {
+              title: _("Output Naming");
+
+              Adw.ActionRow row_keep_source_name {
+                title: _("Keep Source Video Name");
+                subtitle: _("The output file will use the original source video filename.");
+                activatable-widget: radio_keep_source_name;
 
                 [prefix]
-                Gtk.Image {
-                  icon-name: "folder-open-symbolic";
-                }
-
-                Gtk.Box {
-                  orientation: vertical;
-                  valign: center;
-                  hexpand: true;
-
-                  Gtk.Label entry_directorio_salida {
-                    label: _("");
-                    halign: start;
-                    ellipsize: start;
-                    xalign: 0;
-
-                    styles [
-                      "caption",
-                      "dim-label",
-                    ]
-                  }
-                }
-
-                [suffix]
-                Button btn_seleccionar_salida {
-                  icon-name: "document-edit-symbolic";
-                  valign: center;
-
-                  styles [
-                    "flat",
-                  ]
+                CheckButton radio_keep_source_name {
+                  active: true;
                 }
               }
 
-              Adw.ExpanderRow {
-                title: _("Output Naming");
+              Adw.ActionRow row_keep_destination_name {
+                title: _("Keep Source Audio Name");
+                subtitle: _("The output file will use the original source audio filename.");
+                activatable-widget: radio_keep_destination_name;
 
-                Adw.ActionRow row_keep_source_name {
-                  title: _("Keep Source Video Name");
-                  subtitle: _("The output file will use the original source video filename.");
-                  activatable-widget: radio_keep_source_name;
-
-                  [prefix]
-                  CheckButton radio_keep_source_name {
-                    active: true;
-                  }
-                }
-
-                Adw.ActionRow row_keep_destination_name {
-                  title: _("Keep Source Audio Name");
-                  subtitle: _("The output file will use the original source audio filename.");
-                  activatable-widget: radio_keep_destination_name;
-
-                  [prefix]
-                  CheckButton radio_keep_destination_name {
-                    group: radio_keep_source_name;
-                  }
+                [prefix]
+                CheckButton radio_keep_destination_name {
+                  group: radio_keep_source_name;
                 }
               }
             }
-          };
+          }
         };
       }
     };

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-31 23:53-0500\n"
+"POT-Creation-Date: 2026-08-01 02:30-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -13,7 +13,7 @@ msgstr ""
 "X-Generator: Poedit 3.9\n"
 
 #: data/dev.illapa.Remuxer.desktop.in:2
-#: data/dev.illapa.Remuxer.metainfo.xml.in:7 src/window.ui:37 src/window.ui:45
+#: data/dev.illapa.Remuxer.metainfo.xml.in:7 src/window.ui:42 src/window.ui:50
 msgid "Remuxer"
 msgstr ""
 
@@ -38,39 +38,39 @@ msgstr ""
 msgid "A caption"
 msgstr ""
 
-#: src/window.py:156
+#: src/window.py:154
 msgid "Processing..."
 msgstr "Procesando..."
 
-#: src/window.py:164
+#: src/window.py:162
 msgid "Done"
 msgstr "Finalizado"
 
-#: src/window.py:168
+#: src/window.py:166
 msgid "Error"
 msgstr "Falló"
 
-#: src/window.py:280
+#: src/window.py:281
 msgid "Select Folder"
 msgstr "Seleccionar Carpeta"
 
-#: src/window.ui:8
+#: src/window.ui:13
 msgid "Select All"
 msgstr "Seleccionar todo"
 
-#: src/window.ui:12
+#: src/window.ui:17
 msgid "Deselect All"
 msgstr "Deseleccionar todo"
 
-#: src/window.ui:19
+#: src/window.ui:24
 msgid "About"
 msgstr "Acerca"
 
-#: src/window.ui:25
+#: src/window.ui:30
 msgid "Cancel process?"
 msgstr "¿Cancelar proceso?"
 
-#: src/window.ui:26
+#: src/window.ui:31
 msgid ""
 "If you cancel now, the current progress will be lost and the file may be "
 "left incomplete."
@@ -78,118 +78,118 @@ msgstr ""
 "Si cancelas ahora, se perderá el progreso actual y los archivos podrían "
 "quedar incompletos."
 
-#: src/window.ui:30
+#: src/window.ui:35
 msgid "Continue processing"
 msgstr "Continuar procesando"
 
-#: src/window.ui:31
+#: src/window.ui:36
 msgid "Stop processing"
 msgstr "Detener procesamiento"
 
-#: src/window.ui:44
+#: src/window.ui:49
 msgid "Episode Processor"
 msgstr "Procesador de episodios"
 
-#: src/window.ui:52
+#: src/window.ui:57
 msgid "Main Menu"
 msgstr "Menú Principal"
 
-#: src/window.ui:73
+#: src/window.ui:78
 msgid "A new version {0} is available"
 msgstr "Hay una nueva versión {0} disponible"
 
-#: src/window.ui:74
+#: src/window.ui:79
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/window.ui:95
+#: src/window.ui:96
 msgid "Media Sources"
 msgstr "Orígenes multimedia"
 
-#: src/window.ui:98
+#: src/window.ui:99
 msgid "Video Folder"
 msgstr "Carpeta de vídeos"
 
-#: src/window.ui:138
+#: src/window.ui:139
 msgid "Audio Folder"
 msgstr "Carpeta de audios"
 
-#: src/window.ui:189
+#: src/window.ui:190
 msgid "Episode Alignment"
 msgstr "Alineación de episodios"
 
-#: src/window.ui:203
+#: src/window.ui:204
 msgid "Video:"
 msgstr "Video:"
 
-#: src/window.ui:217 src/window.ui:257
+#: src/window.ui:218 src/window.ui:258
 msgid "Move Up"
 msgstr "Subir"
 
-#: src/window.ui:223 src/window.ui:263
+#: src/window.ui:224 src/window.ui:264
 msgid "Move Down"
 msgstr "Bajar"
 
-#: src/window.ui:243
+#: src/window.ui:244
 msgid "Audio:"
 msgstr "Audio:"
 
-#: src/window.ui:283
+#: src/window.ui:284
 msgid "Sel"
 msgstr "Sel"
 
-#: src/window.ui:293
+#: src/window.ui:294
 msgid "Source Video"
 msgstr "Vídeos de origen"
 
-#: src/window.ui:302
+#: src/window.ui:303
 msgid "Source Audio"
 msgstr "Audios de origen"
 
-#: src/window.ui:311
+#: src/window.ui:312
 msgid "Status"
 msgstr "Estado"
 
-#: src/window.ui:328
+#: src/window.ui:329
 msgid "Output Settings"
 msgstr "Configuración de salida"
 
-#: src/window.ui:331
+#: src/window.ui:332
 msgid "Output Folder"
 msgstr "Carpeta de salida"
 
-#: src/window.ui:371
+#: src/window.ui:372
 msgid "Output Naming"
 msgstr "Nombre del archivo de salida"
 
-#: src/window.ui:374
+#: src/window.ui:375
 msgid "Keep Source Video Name"
 msgstr "Conservar el nombre del video de origen"
 
-#: src/window.ui:375
+#: src/window.ui:376
 msgid "The output file will use the original source video filename."
 msgstr ""
 "El archivo de salida utilizará el nombre original del archivo de video de "
 "origen."
 
-#: src/window.ui:386
+#: src/window.ui:387
 msgid "Keep Source Audio Name"
 msgstr "Conservar el nombre del audio de origen"
 
-#: src/window.ui:387
+#: src/window.ui:388
 msgid "The output file will use the original source audio filename."
 msgstr ""
 "El archivo de salida utilizará el nombre original del archivo de audio de "
 "origen."
 
-#: src/window.ui:416
+#: src/window.ui:415
 msgid "Analyze"
 msgstr "Analizar"
 
-#: src/window.ui:432
+#: src/window.ui:431
 msgid "Start Processing"
 msgstr "Iniciar procesamiento"
 
-#: src/window.ui:449
+#: src/window.ui:448
 msgid "Cancel"
 msgstr "Cancelar"
