@@ -30,7 +30,6 @@ metainfo_conf.set('APPID', application_id)
 metainfo_conf.set('NAME', project_name)
 
 appstream_file = i18n.merge_file(
-        input: 'dev.illapa.Remuxer.metainfo.xml.in',
         input: configure_file(
                   input: 'dev.illapa.Remuxer.metainfo.xml.in',
                  output: '@0@.metainfo.xml.in'.format(application_id),

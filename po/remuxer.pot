@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: remuxer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-01 02:30-0500\n"
+"POT-Creation-Date: 2026-08-01 13:58-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,30 +17,70 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/dev.illapa.Remuxer.desktop.in:2
-#: data/dev.illapa.Remuxer.metainfo.xml.in:7 src/window.ui:42 src/window.ui:50
+#: data/dev.illapa.Remuxer.desktop.in:2 src/window.ui:42 src/window.ui:50
 msgid "Remuxer"
 msgstr ""
 
-#: data/dev.illapa.Remuxer.desktop.in:8
-msgid "GTK;"
+#: data/dev.illapa.Remuxer.desktop.in:3
+msgid "Batch media muxing tool for Linux"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.desktop.in:9
+msgid "remuxer;remux;video;audio"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:7
+msgid "@NAME@"
 msgstr ""
 
 #: data/dev.illapa.Remuxer.metainfo.xml.in:8
-msgid "Keep the summary shorter, between 10 and 35 characters"
+msgid "Batch media muxing without quality loss"
 msgstr ""
 
-#: data/dev.illapa.Remuxer.metainfo.xml.in:10
-msgid "No description"
+#: data/dev.illapa.Remuxer.metainfo.xml.in:11
+msgid ""
+"Remuxer is a high-performance batch media muxing tool. It allows you to "
+"effortlessly copy audio tracks from one source to another set of high-"
+"quality video files without the need for re-encoding."
 msgstr ""
 
-#: data/dev.illapa.Remuxer.metainfo.xml.in:14
-msgid "Developer name"
+#: data/dev.illapa.Remuxer.metainfo.xml.in:16
+msgid "Features:"
 msgstr ""
 
-#: data/dev.illapa.Remuxer.metainfo.xml.in:52
-#: data/dev.illapa.Remuxer.metainfo.xml.in:56
-msgid "A caption"
+#: data/dev.illapa.Remuxer.metainfo.xml.in:18
+msgid "Batch Media Muxing: Process entire directories simultaneously."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:19
+msgid ""
+"Zero Quality Loss: Uses FFmpeg stream copying for lightning-fast results."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:20
+msgid ""
+"Intuitive Mapping: Align source and destination files easily using a modern "
+"interface."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:21
+msgid "Native Linux Experience: Built with GTK4 and Libadwaita."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:63
+msgid "Initial release of Remuxer"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:65
+msgid "Batch processing of video and audio files"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:66
+msgid "GTK4/Libadwaita interface"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:67
+msgid "FFmpeg stream copy integration"
 msgstr ""
 
 #: src/window.py:154
