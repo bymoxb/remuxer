@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 Luis Fernando Illapa -->
+<component type="desktop-application">
+  <id>@APPID@</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+
+  <name>@NAME@</name>
+  <summary>Batch media muxing without quality loss</summary>
+
+  <description>
+    <p>
+      Remuxer is a batch media muxing tool. It allows you to effortlessly
+      copy audio tracks from one source to another set of high-quality video files
+      without the need for re-encoding.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Batch Media Muxing: Process entire directories simultaneously.</li>
+      <li>Zero Quality Loss: Uses FFmpeg stream copying for lightning-fast results.</li>
+      <li>Intuitive Mapping: Align source and destination files easily using a modern interface.</li>
+      <li>Native Linux Experience: Built with GTK4 and Libadwaita.</li>
+    </ul>
+  </description>
+
+  <developer id="dev.illapa">
+    <name translate="no">Luis Fernando Illapa</name>
+  </developer>
+
+  <!-- Required: Should be a link to the upstream homepage for the component -->
+  <url type="homepage">https://github.com/bymoxb/remuxer</url>
+  <!-- Recommended: It is highly recommended for open-source projects to display the source code repository -->
+  <url type="vcs-browser">https://github.com/bymoxb/remuxer</url>
+  <!-- Should point to the software's bug tracking system, for users to report new bugs -->
+  <url type="bugtracker">https://github.com/bymoxb/remuxer/issues</url>
+  <!-- URLs of this type should point to a webpage showing information on how to contribute to the described software project -->
+  <url type="contribute">https://github.com/bymoxb/remuxer</url>
+
+  <translation type="gettext">remuxer</translation>
+  <!-- All graphical applications having a desktop file must have this tag in the MetaInfo.
+     If this is present, appstreamcli compose will pull icons, keywords and categories from the desktop file. -->
+  <launchable type="desktop-id">@APPID@.desktop</launchable>
+  <!-- Use the OARS website (https://hughsie.github.io/oars/generate.html) to generate these and make sure to use oars-1.1 -->
+  <content_rating type="oars-1.1" />
+
+  <!-- Applications should set a brand color in both light and dark variants like so -->
+  <branding>
+    <color type="primary" scheme_preference="light">#fafafb</color>
+    <color type="primary" scheme_preference="dark">#222226</color>
+  </branding>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-dark.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-light.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-side-by-side.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-diagonal.png</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="0.1.0" date="2024-07-29">
+      <description>
+        <p>Initial release of Remuxer</p>
+        <ul>
+          <li>Batch processing of video and audio files</li>
+          <li>GTK4/Libadwaita interface</li>
+          <li>FFmpeg stream copy integration</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>

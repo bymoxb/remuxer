@@ -1,225 +1,25 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-import os
-import gettext
-import locale
-import gi
-import threading
-import subprocess
-import time
-from pathlib import Path
-import requests
-from packaging import version
 import logging
-from abc import ABC, abstractmethod
+import threading
 
-# Configuración profesional del logger
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
-    datefmt='%H:%M:%S'
-)
+from gettext import gettext as _
 
-logger = logging.getLogger("RemuxerApp")
+from gi.repository import Adw, Gtk, Gio, Pango, GLib, GObject
 
-# --- CONSTANTES Y CONFIGURACIÓN ---
-APP_NAME = "remuxer"
-APP_ID = "com.github.bymoxb.remuxer"
-APP_VERSION = "0.1.0-dev"
-APP_GITHUB = "https://github.com/bymoxb/remuxer"
-APP_GITHUB_RELEASES = "https://api.github.com/repos/bymoxb/remuxer/releases/latest"
-VIDEO_EXTENSIONS = {".mp4", ".mkv"}
-LOCALE_DIR = os.path.join(os.path.dirname(__file__), 'locale')
+from .models.column_view_row import ColumnViewRow
+from .models.view_item import VideoItem
+from .services.ffmpeg import FFmpegRunner
+from .services.file_service import FileService
+from .services.remux_service import RemuxService
+from .services.update_service import UpdateService
 
-# Localización
-try:
-    locale.setlocale(locale.LC_ALL, '')
-    locale.bindtextdomain(APP_NAME, LOCALE_DIR)
-    locale.textdomain(APP_NAME)
-except:
-    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-
-gettext.bindtextdomain(APP_NAME, LOCALE_DIR)
-gettext.textdomain(APP_NAME)
+from remuxer import const
 
 
-_ = gettext.gettext
-
-# Configuración de GTK
-gi.require_version('Gtk', '4.0')
-gi.require_version('Adw', '1')
-gi.require_version('Pango', '1.0')
-
-from gi.repository import Gtk, Gio, GObject, Pango, Adw, GLib
-
-logger.info(f"Current version: {APP_VERSION}")
-logger.info(f"Current language: {os.environ.get('LANGUAGE')}")
-logger.info(f"Translation search path: {LOCALE_DIR}")
-
-
-# --- 1. MODELOS DE DATOS ---
-class CommandRunner(ABC):
-
-    @abstractmethod
-    def start(
-        self,
-        video: str,
-        audio: str,
-        destination: str
-    ) -> subprocess.Popen:
-        ...
-
-
-class VideoItem(GObject.Object):
-    name = GObject.Property(type=str)
-    path = GObject.Property(type=str)
-    abs_path = GObject.Property(type=str)
-    order = GObject.Property(type=int)
-    is_deleted = GObject.Property(type=bool, default=False)
-
-    def __init__(self, name, path, abs_path, order):
-        super().__init__()
-        self.name = name
-        self.path = path
-        self.abs_path = abs_path
-        self.order = order
-
-
-class ColumnViewRow(GObject.Object):
-    video = GObject.Property(type=VideoItem)
-    audio = GObject.Property(type=VideoItem)
-    status = GObject.Property(type=str, default="pending")
-    selected = GObject.Property(type=bool, default=True)
-
-    def __init__(self, video, audio):
-        super().__init__()
-        self.video = video
-        self.audio = audio
-
-# --- 2. SERVICIOS (LÓGICA DE NEGOCIO Y DATOS) ---
-
-
-class UpdateService:
-    def __init__(self):
-        self.logger = logging.getLogger("RemuxerApp.UpdateService")
-
-    """Encargado de verificar actualizaciones en GitHub"""
-
-    def check_for_updates(self, current_version):
-        try:
-            response = requests.get(APP_GITHUB_RELEASES, timeout=2)
-            response.raise_for_status()
-            data = response.json()
-            tag = data.get("tag_name", "").lstrip("v")
-
-            if tag and version.parse(tag) > version.parse(current_version):
-                self.logger.info(f"New version available {tag}")
-                return tag
-        except Exception as e:
-            self.logger.error(f"Update check failed: {e}")
-        return None
-
-
-class FileService:
-    def __init__(self):
-        self.logger = logging.getLogger("RemuxerApp.FileService")
-
-    """Encargado de interactuar con el sistema de archivos"""
-
-    def list_videos(self, path):
-        videos = []
-        try:
-            files = sorted(os.listdir(path))
-            for i, f in enumerate(files):
-                if Path(f).suffix.lower() in VIDEO_EXTENSIONS:
-                    videos.append({
-                        "name": f,
-                        "path": path,
-                        "abs_path": os.path.join(path, f),
-                        "order": i
-                    })
-            self.logger.debug(f"{len(videos)} found in {path}")
-        except Exception as e:
-            self.logger.error(f"Error listando archivos: {e}")
-        return videos
-
-
-class FFmpegRunner(CommandRunner):
-    def start(self, video, audio, destination):
-        cmd = [
-            "ffmpeg",
-            "-y",
-            "-nostdin",
-            "-hide_banner",
-            "-loglevel", "error",
-            "-i", video,
-            "-i", audio,
-            "-map", "0",
-            "-map", "1:a:0",
-            "-map_metadata", "0",
-            "-c", "copy",
-            destination,
-        ]
-
-        return subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-
-
-class RemuxService:
-    """Encargado de la lógica pesada de FFmpeg y procesos"""
-
-    def __init__(self, runner: CommandRunner):
-        self.runner = runner
-        self.current_process = None
-        self.cancel_event = threading.Event()
-        self.logger = logging.getLogger("RemuxerApp.RemuxService")
-
-    def cancel(self):
-        self.cancel_event.set()
-        if self.current_process:
-            self.current_process.terminate()
-
-    def prepare_output_path(self, video_path, audio_path, output_dir, naming_mode):
-        dest_path = Path(output_dir)
-        dest_path.mkdir(parents=True, exist_ok=True)
-
-        file_ref = Path(
-            video_path) if naming_mode == "source" else Path(audio_path)
-        return str(dest_path / file_ref.name)
-
-    def execute(self, video, audio, destination):
-        try:
-            new_file = Path(destination)
-            self.logger.debug(f"Running process for: {new_file.name}")
-            self.current_process = self.runner.start(
-                video,
-                audio,
-                destination,
-            )
-            while self.current_process.poll() is None:
-                if self.cancel_event.is_set():
-                    self.logger.warning(
-                        f"Process canelled on: {new_file.name}")
-                    self.current_process.terminate()
-                    return False
-                time.sleep(1)
-            return self.current_process.returncode == 0
-        except Exception as e:
-            self.logger.error(f"Execution failed: {e}")
-            return False
-        finally:
-            self.current_process = None
-
-# --- 3. VISTA (INTERFAZ DE USUARIO) ---
-
-
-@Gtk.Template(filename="ui/main.ui")
-class MainWindow(Adw.ApplicationWindow):
-    __gtype_name__ = "MainWindow"
+@Gtk.Template(resource_path='/dev/illapa/Remuxer/window.ui')
+class RemuxerWindow(Adw.ApplicationWindow):
+    __gtype_name__ = 'RemuxerWindow'
 
     # Widgets de la plantilla
     cv_files = Gtk.Template.Child()
@@ -259,7 +59,8 @@ class MainWindow(Adw.ApplicationWindow):
 
         # Inicializar Servicios
         self.remux_service = RemuxService(FFmpegRunner())
-        self.update_service = UpdateService()
+        self.update_service = UpdateService(
+            target_url=const.APP_GITHUB_RELEASES, current_version=const.VERSION)
         self.file_service = FileService()
         self.video_data_cache = {"videos": [], "audios": []}
 
@@ -350,7 +151,7 @@ class MainWindow(Adw.ApplicationWindow):
             if status == "processing":
                 stack.set_visible_child_name("spinner")
                 spinner.start()
-                label.set_text(_("Processing…"))
+                label.set_text(_("Processing..."))
             else:
                 spinner.stop()
                 stack.set_visible_child_name("icon")
@@ -461,7 +262,10 @@ class MainWindow(Adw.ApplicationWindow):
     # --- Lógica de Interfaz ---
 
     def _check_updates_async(self):
-        new_version = self.update_service.check_for_updates(APP_VERSION)
+        if const.IS_DEVEL:
+            self.logger.debug("Development mode: skipping update check")
+            return
+        new_version = self.update_service.check_for_updates()
         if new_version:
             GLib.idle_add(self._show_update_banner, new_version)
 
@@ -626,42 +430,3 @@ class MainWindow(Adw.ApplicationWindow):
         if response == "confirm":
             self.remux_service.cancel()
             self.logger.info("Cancelling...")
-
-
-# --- 4. APLICACIÓN ---
-
-class AudioRemuxApp(Adw.Application):
-    def __init__(self):
-        super().__init__(application_id=APP_ID,
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
-
-    def do_activate(self):
-        win = self.get_active_window()
-        if not win:
-            win = MainWindow(application=self)
-        win.present()
-
-    def do_startup(self):
-        Adw.Application.do_startup(self)
-        self._setup_actions()
-
-    def _setup_actions(self):
-        about_action = Gio.SimpleAction.new("about", None)
-        about_action.connect("activate", self.on_about_activated)
-        self.add_action(about_action)
-
-    def on_about_activated(self, action, parameter):
-        about = Adw.AboutWindow(
-            transient_for=self.get_active_window(),
-            version=APP_VERSION,
-            application_name=APP_NAME,
-            application_icon=APP_ID,
-            website=APP_GITHUB,
-            developer_name="bymoxb"
-        )
-        about.present()
-
-
-if __name__ == "__main__":
-    app = AudioRemuxApp()
-    app.run(None)

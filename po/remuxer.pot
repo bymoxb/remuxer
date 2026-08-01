@@ -1,172 +1,234 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the remuxer package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: remuxer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 19:30-0500\n"
+"POT-Creation-Date: 2026-08-01 14:29-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:351
-msgid "Processing…"
+#: data/dev.illapa.Remuxer.desktop.in:2 src/window.ui:42 src/window.ui:50
+msgid "Remuxer"
 msgstr ""
 
-#: main.py:359
+#: data/dev.illapa.Remuxer.desktop.in:3
+msgid "Batch media muxing tool for Linux"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.desktop.in:9
+msgid "remuxer;remux;video;audio"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:7
+msgid "@NAME@"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:8
+msgid "Batch media muxing without quality loss"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:11
+msgid ""
+"Remuxer is a batch media muxing tool. It allows you to effortlessly copy "
+"audio tracks from one source to another set of high-quality video files "
+"without the need for re-encoding."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:16
+msgid "Features:"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:18
+msgid "Batch Media Muxing: Process entire directories simultaneously."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:19
+msgid ""
+"Zero Quality Loss: Uses FFmpeg stream copying for lightning-fast results."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:20
+msgid ""
+"Intuitive Mapping: Align source and destination files easily using a modern "
+"interface."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:21
+msgid "Native Linux Experience: Built with GTK4 and Libadwaita."
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:63
+msgid "Initial release of Remuxer"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:65
+msgid "Batch processing of video and audio files"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:66
+msgid "GTK4/Libadwaita interface"
+msgstr ""
+
+#: data/dev.illapa.Remuxer.metainfo.xml.in:67
+msgid "FFmpeg stream copy integration"
+msgstr ""
+
+#: src/window.py:154
+msgid "Processing..."
+msgstr ""
+
+#: src/window.py:162
 msgid "Done"
 msgstr ""
 
-#: main.py:363
+#: src/window.py:166
 msgid "Error"
 msgstr ""
 
-#: main.py:471
+#: src/window.py:281
 msgid "Select Folder"
 msgstr ""
 
-#: ui/main.ui:11
+#: src/window.ui:13
 msgid "Select All"
 msgstr ""
 
-#: ui/main.ui:15
+#: src/window.ui:17
 msgid "Deselect All"
 msgstr ""
 
-#: ui/main.ui:22
+#: src/window.ui:24
 msgid "About"
 msgstr ""
 
-#: ui/main.ui:28
+#: src/window.ui:30
 msgid "Cancel process?"
 msgstr ""
 
-#: ui/main.ui:29
+#: src/window.ui:31
 msgid ""
 "If you cancel now, the current progress will be lost and the file may be "
 "left incomplete."
 msgstr ""
 
-#: ui/main.ui:33
+#: src/window.ui:35
 msgid "Continue processing"
 msgstr ""
 
-#: ui/main.ui:34
+#: src/window.ui:36
 msgid "Stop processing"
 msgstr ""
 
-#: ui/main.ui:40 ui/main.ui:48
-msgid "Remuxer"
-msgstr ""
-
-#: ui/main.ui:47
+#: src/window.ui:49
 msgid "Episode Processor"
 msgstr ""
 
-#: ui/main.ui:55
+#: src/window.ui:57
 msgid "Main Menu"
 msgstr ""
 
-#: ui/main.ui:76
+#: src/window.ui:78
 msgid "A new version {0} is available"
 msgstr ""
 
-#: ui/main.ui:77
+#: src/window.ui:79
 msgid "Close"
 msgstr ""
 
-#: ui/main.ui:98
+#: src/window.ui:96
 msgid "Media Sources"
 msgstr ""
 
-#: ui/main.ui:101
+#: src/window.ui:99
 msgid "Video Folder"
 msgstr ""
 
-#: ui/main.ui:141
+#: src/window.ui:139
 msgid "Audio Folder"
 msgstr ""
 
-#: ui/main.ui:192
+#: src/window.ui:190
 msgid "Episode Alignment"
 msgstr ""
 
-#: ui/main.ui:206
+#: src/window.ui:204
 msgid "Video:"
 msgstr ""
 
-#: ui/main.ui:220 ui/main.ui:260
+#: src/window.ui:218 src/window.ui:258
 msgid "Move Up"
 msgstr ""
 
-#: ui/main.ui:226 ui/main.ui:266
+#: src/window.ui:224 src/window.ui:264
 msgid "Move Down"
 msgstr ""
 
-#: ui/main.ui:246
+#: src/window.ui:244
 msgid "Audio:"
 msgstr ""
 
-#: ui/main.ui:286
+#: src/window.ui:284
 msgid "Sel"
 msgstr ""
 
-#: ui/main.ui:296
+#: src/window.ui:294
 msgid "Source Video"
 msgstr ""
 
-#: ui/main.ui:305
+#: src/window.ui:303
 msgid "Source Audio"
 msgstr ""
 
-#: ui/main.ui:314
+#: src/window.ui:312
 msgid "Status"
 msgstr ""
 
-#: ui/main.ui:331
+#: src/window.ui:329
 msgid "Output Settings"
 msgstr ""
 
-#: ui/main.ui:334
+#: src/window.ui:332
 msgid "Output Folder"
 msgstr ""
 
-#: ui/main.ui:374
+#: src/window.ui:372
 msgid "Output Naming"
 msgstr ""
 
-#: ui/main.ui:377
+#: src/window.ui:375
 msgid "Keep Source Video Name"
 msgstr ""
 
-#: ui/main.ui:378
+#: src/window.ui:376
 msgid "The output file will use the original source video filename."
 msgstr ""
 
-#: ui/main.ui:389
+#: src/window.ui:387
 msgid "Keep Source Audio Name"
 msgstr ""
 
-#: ui/main.ui:390
+#: src/window.ui:388
 msgid "The output file will use the original source audio filename."
 msgstr ""
 
-#: ui/main.ui:419
+#: src/window.ui:415
 msgid "Analyze"
 msgstr ""
 
-#: ui/main.ui:435
+#: src/window.ui:431
 msgid "Start Processing"
 msgstr ""
 
-#: ui/main.ui:452
+#: src/window.ui:448
 msgid "Cancel"
 msgstr ""

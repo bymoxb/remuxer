@@ -1,0 +1,8 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+data/dev.illapa.Remuxer.desktop.in
+data/dev.illapa.Remuxer.metainfo.xml.in
+data/dev.illapa.Remuxer.gschema.xml.in
+src/main.py
+src/window.py
+src/window.ui
