@@ -7,10 +7,10 @@ desktop_conf.set('ICON', application_id)
 desktop_file = i18n.merge_file(
         input: configure_file(
                   input: 'dev.illapa.Remuxer.desktop.in',
-                 output: 'dev.illapa.Remuxer.desktop.in',
+                 output: '@0@.desktop.in'.format(application_id),
           configuration: desktop_conf,
         ),
-       output: 'dev.illapa.Remuxer.desktop',
+       output: '@0@.desktop'.format(application_id),
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -63,10 +63,11 @@ test('Validate schema file',
 
 #
 service_conf = configuration_data()
+service_conf.set('APP_ID', application_id)
 service_conf.set('bindir', get_option('prefix') / get_option('bindir'))
 configure_file(
   input: 'dev.illapa.Remuxer.service.in',
-  output: 'dev.illapa.Remuxer.service',
+  output: '@0@.service'.format(application_id),
   configuration: service_conf,
   install_dir: get_option('datadir') / 'dbus-1' / 'services'
 )
