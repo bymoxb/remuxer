@@ -34,8 +34,8 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/bymoxb/remuxer.git"
+                    "type": "dir",
+                    "path": "./"
                 }
             ]
         }
