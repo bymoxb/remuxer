@@ -1,17 +1,17 @@
 {
-    "id" : "dev.illapa.Remuxer",
-    "runtime" : "org.gnome.Platform",
-    "runtime-version" : "50",
-    "sdk" : "org.gnome.Sdk",
-    "command" : "remuxer",
-    "finish-args" : [
+    "id": "dev.illapa.Remuxer.Devel",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "50",
+    "sdk": "org.gnome.Sdk",
+    "command": "remuxer",
+    "finish-args": [
         "--share=network",
         "--share=ipc",
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland"
     ],
-    "cleanup" : [
+    "cleanup": [
         "/include",
         "/lib/pkgconfig",
         "/man",
@@ -22,22 +22,26 @@
         "*.la",
         "*.a"
     ],
-    "modules" : [
+    "modules": [
         "ffmpeg.yaml",
-    	"python3-requirements.json",
+        "python3-requirements.json",
         {
-            "name" : "remuxer",
-            "builddir" : true,
-            "buildsystem" : "meson",
+            "name": "remuxer",
+            "builddir": true,
+            "buildsystem": "meson",
             "config-opts": [
-                "-Dprofile=development"
+                "-Dprofile=development",
+                "--libdir=lib"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "git",
-                    "url" : "https://github.com/bymoxb/remuxer.git"
+                    "type": "git",
+                    "url": "https://github.com/bymoxb/remuxer.git"
                 }
             ]
         }
-    ]
+    ],
+    "build-options": {
+        "env": {}
+    }
 }
