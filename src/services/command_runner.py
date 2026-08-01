@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 from abc import ABC, abstractmethod
 import subprocess
 

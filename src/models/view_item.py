@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 from gi.repository import GObject
 
 class VideoItem(GObject.Object):

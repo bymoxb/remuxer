@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 from gi.repository import GObject
 
 from .view_item import VideoItem

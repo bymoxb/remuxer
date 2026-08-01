@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 import subprocess
 
 from .command_runner import CommandRunner
