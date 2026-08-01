@@ -52,28 +52,35 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-dark.png</image>
+      <caption>Main window in dark mode</caption>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-light.png</image>
+      <caption>Main window in light mode</caption>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-side-by-side.png</image>
+      <caption>Side-by-side media comparison view</caption>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-diagonal.png</image>
+      <caption>Media processing interface overview</caption>
     </screenshot>
   </screenshots>
 
   <releases>
-    <release version="0.1.0" date="2024-07-29">
-      <description>
-        <p>Initial release of Remuxer</p>
-        <ul>
-          <li>Batch processing of video and audio files</li>
-          <li>GTK4/Libadwaita interface</li>
-          <li>FFmpeg stream copy integration</li>
-        </ul>
-      </description>
-    </release>
+    <releases>
+      <release version="1.0.0" date="2026-08-01">
+        <url type="details">https://github.com/bymoxb/remuxer/releases/tag/v1.0.0</url>
+        <description>
+          <p>Initial stable release of Remuxer.</p>
+          <ul>
+            <li>Batch remuxing of audio and video files without quality loss.</li>
+            <li>FFmpeg-based stream copy processing for fast container conversion.</li>
+            <li>Support for processing multiple media files in a single operation.</li>
+          </ul>
+        </description>
+      </release>
+    </releases>
   </releases>
 </component>
