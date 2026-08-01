@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: remuxer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-01 13:58-0500\n"
+"POT-Creation-Date: 2026-08-01 14:29-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,9 +39,9 @@ msgstr ""
 
 #: data/dev.illapa.Remuxer.metainfo.xml.in:11
 msgid ""
-"Remuxer is a batch media muxing tool. It allows you to "
-"effortlessly copy audio tracks from one source to another set of high-"
-"quality video files without the need for re-encoding."
+"Remuxer is a batch media muxing tool. It allows you to effortlessly copy "
+"audio tracks from one source to another set of high-quality video files "
+"without the need for re-encoding."
 msgstr ""
 
 #: data/dev.illapa.Remuxer.metainfo.xml.in:16
