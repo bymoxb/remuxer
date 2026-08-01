@@ -30,8 +30,7 @@
             "builddir": true,
             "buildsystem": "meson",
             "config-opts": [
-                "-Dprofile=development",
-                "--libdir=lib"
+                "-Dprofile=development"
             ],
             "sources": [
                 {
