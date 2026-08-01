@@ -16,8 +16,10 @@ app_github_api = 'https://api.github.com/repos/bymoxb/remuxer/releases/latest'
 application_id = project_id
 if get_option('profile') == 'development'
   profile = 'Devel'
+  application_id = '@0@.Devel'.format(application_id)
 else
   profile = ''
+  version = meson.project_version()
 endif
 
 subdir('data')

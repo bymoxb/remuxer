@@ -14,7 +14,7 @@ python = import('python')
 const_conf = configuration_data()
 
 const_conf.set('APP_NAME', project_name)
-const_conf.set('APP_ID', project_id)
+const_conf.set('APP_ID', application_id)
 const_conf.set('VERSION', meson.project_version())
 const_conf.set('APP_GITHUB', app_github)
 const_conf.set('APP_GITHUB_RELEASES', app_github_api)

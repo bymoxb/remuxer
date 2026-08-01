@@ -1,10 +1,11 @@
 [Desktop Entry]
 Name=Remuxer
+Comment=Batch media muxing tool for Linux
 Exec=remuxer
-Icon=dev.illapa.Remuxer
+Icon=@ICON@
 Terminal=false
 Type=Application
 Categories=Utility;
-Keywords=GTK;
+Keywords=remuxer;remux;video;audio
 StartupNotify=true
 DBusActivatable=true
