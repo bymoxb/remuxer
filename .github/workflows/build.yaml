@@ -1,0 +1,40 @@
+name: Build release tarball
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to build"
+        required: true
+        type: string
+
+jobs:
+  tarball:
+    name: Create tarball
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            meson \
+            ninja-build
+
+      - name: Setup build
+        run: meson setup build
+
+      - name: Build dist tarball
+        run: meson dist -C build --no-tests
+
+      - name: Upload tarball artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: source-tarball
+          path: build/meson-dist/*.tar.xz

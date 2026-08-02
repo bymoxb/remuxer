@@ -25,48 +25,16 @@ Instead of spending hours processing files individually, Remuxer reduces the ent
 - **Intuitive Mapping:** Align source and destination files easily using a modern GTK4 ColumnView.
 - **Linux Native:** Beautifully integrated with the GNOME ecosystem using Libadwaita.
 
-## 🛠️ Tech Stack
+## Build it yourself
 
-- **Language:** Python 3
-- **UI Framework:** GTK4 & Libadwaita (via Blueprint)
-- **Processing Engine:** FFmpeg
+### Prerequisites
 
-## 📌 Prerequisites
-
-You must have **FFmpeg** installed on your system.
-
-- **Official Website:** [ffmpeg.org/download.html](https://ffmpeg.org/download.html)
-- **Fedora:** `sudo dnf install ffmpeg`
-- **Ubuntu/Debian:** `sudo apt install ffmpeg`
-
-## ⚙️ Installation & Running
-
-Follow these steps to clone the repository and run the application in a local environment:
-
-1. **Clone the repository:**
-
-```bash
+```
 git clone https://github.com/bymoxb/remuxer.git
 cd remuxer
+flatpak --user install org.gnome.{Platform,Sdk}//50
+flatpak-builder --user --force-clean --install build dev.illapa.Remuxer.Devel.json
+flatpak --user run --branch=master dev.illapa.Remuxer.Devel
 ```
 
-2. **Set up a virtual environment:**
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Linux
-pip install -r requirements.txt
-```
-
-3. **Compile Assets (UI & Translations):**
-   This project uses Blueprint for the UI and Gettext for translations. Use the provided automation script to generate the necessary files:
-
-```bash
-./update-assets.sh
-```
-
-4. **Run the application:**
-
-```bash
-python main.py
-```
+Or just use [Builder](https://flathub.org/apps/details/org.gnome.Builder)
