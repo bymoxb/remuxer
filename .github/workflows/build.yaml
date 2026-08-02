@@ -25,6 +25,7 @@ jobs:
         run: |
           version="${{ inputs.tag }}"
           version="${version#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Upgrade meson
         run: pip install meson
