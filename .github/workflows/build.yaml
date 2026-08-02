@@ -73,7 +73,7 @@ jobs:
     runs-on: ${{ matrix.platform.runs-on }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
-      # options: --privileged
+      options: --privileged
     name: "Flatpak ${{ matrix.platform.name }}"
     steps:
       - name: Fetch dist
