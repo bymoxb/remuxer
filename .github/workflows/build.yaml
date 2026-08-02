@@ -20,6 +20,12 @@ jobs:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
 
+      - name: Extract version
+        id: version-code
+        run: |
+          version="${{ inputs.tag }}"
+          version="${version#v}"
+
       - name: Upgrade meson
         run: pip install meson
 
@@ -41,7 +47,54 @@ jobs:
         run: meson dist -C build --no-tests
 
       - name: Upload tarball artifact
+        id: upload-dist
         uses: actions/upload-artifact@v6
         with:
           name: source-tarball
           path: build/meson-dist/*.tar.xz
+          compression-level: 0
+
+    outputs:
+      version: ${{ steps.version-code.outputs.version }}
+      dist: remuxer-${{ steps.version-code.outputs.version }}.tar.xz
+      artifact-id: ${{ steps.upload-dist.outputs.artifact-id }}
+
+  flatpak:
+    needs: [tarball]
+    strategy:
+      matrix:
+        platform:
+          - runs-on: ubuntu-latest
+            name: x86_64
+          # - runs-on: ubuntu-24.04-arm
+          #   name: aarch64
+      fail-fast: false
+    runs-on: ${{ matrix.platform.runs-on }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      # options: --privileged
+    name: "Flatpak ${{ matrix.platform.name }}"
+    steps:
+      - name: Fetch dist
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.tarball.outputs.artifact-id }}
+
+      - name: Extract dist
+        run: tar -xf ${{ needs.tarball.outputs.dist }} --strip-components=1
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: Remuxer-${{ needs.tarball.outputs.version }}-${{ matrix.platform.name }}.flatpak
+          manifest-path: dev.illapa.Remuxer.Devel.json
+          cache-key: flatpak-builder-${{ github.sha }}-${{ matrix.platform.name }}
+          build-bundle: true
+          arch: ${{ matrix.platform.name }}
+          upload-artifact: false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: flatpak-${{ matrix.platform.name }}
+          path: Remuxer-*.flatpak
