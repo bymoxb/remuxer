@@ -186,10 +186,6 @@ class RemuxerWindow(Adw.ApplicationWindow):
         row = list_item.get_item()
         check = list_item.get_child()
 
-        # Creamos un binding bidireccional entre la propiedad 'selected' del objeto
-        # y la propiedad 'active' del CheckButton
-        # GObject.BindingFlags.BIDIRECTIONAL: si uno cambia, el otro también
-        # GObject.BindingFlags.SYNC_CREATE: sincroniza el valor inmediatamente al crear el vínculo
         bind = row.bind_property(
             "selected",
             check,
@@ -197,12 +193,9 @@ class RemuxerWindow(Adw.ApplicationWindow):
             GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
         )
 
-        # Guardamos la referencia del binding para poder desvincularlo luego
         list_item.selection_binding = bind
 
     def _on_unbind_selection_column(self, factory, list_item):
-        # Limpiar el binding al reciclar el widget
-        # bind = getattr(list_item, "selection_binding", None)
         bind = list_item.get_data("selection-binding")
         if bind:
             bind.unbind()
@@ -249,7 +242,6 @@ class RemuxerWindow(Adw.ApplicationWindow):
         self.updates_banner.connect(
             "button-clicked", self._on_close_updates_banner)
 
-        # Movimientos
         self.btn_video_subir.connect(
             "clicked", lambda _: self.handle_reorder("VIDEO", "UP"))
         self.btn_video_bajar.connect(
@@ -331,14 +323,12 @@ class RemuxerWindow(Adw.ApplicationWindow):
         obj_target = row_target.video if type == "VIDEO" else row_target.audio
 
         if obj_curr and obj_target:
-            # Intercambio de datos (Property Swap)
             self._swap_video_props(obj_curr, obj_target)
             self.selection_model.set_selected(target)
 
     def _swap_video_props(self, a, b):
         a.name, b.name = b.name, a.name
         a.abs_path, b.abs_path = b.abs_path, a.abs_path
-        # ... puedes swappear más si es necesario
 
     def _change_button_status(self, disabled: bool = True):
         self.btn_analizar.set_sensitive(disabled is not True)
