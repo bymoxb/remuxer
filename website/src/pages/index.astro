@@ -1,0 +1,358 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Remuxer | Batch Media Muxing</title>
+
+		<meta
+			name="title"
+			content="Remuxer — Batch media muxing without quality loss"
+		/>
+		<meta
+			name="description"
+			content="High-performance batch media muxing tool for Linux. Copy audio tracks without re-encoding using FFmpeg stream copying. Built with GTK4 and Libadwaita."
+		/>
+		<meta
+			name="keywords"
+			content="Remuxer, Linux, GTK4, Libadwaita, FFmpeg, Muxing, Batch Video, Open Source, Flathub"
+		/>
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://github.com/bymoxb/remuxer" />
+		<meta
+			property="og:title"
+			content="Remuxer — Batch media muxing without quality loss"
+		/>
+		<meta
+			property="og:description"
+			content="Effortlessly copy audio tracks from one source to another set of high-quality video files without the need for re-encoding."
+		/>
+		<meta
+			property="og:image"
+			content="https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-side-by-side.png"
+		/>
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta
+			property="twitter:url"
+			content="https://github.com/bymoxb/remuxer"
+		/>
+		<meta
+			property="twitter:title"
+			content="Remuxer — Batch media muxing without quality loss"
+		/>
+		<meta
+			property="twitter:description"
+			content="High-performance tool for Linux. Batch processing with zero quality loss using FFmpeg."
+		/>
+		<meta
+			property="twitter:image"
+			content="https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-side-by-side.png"
+		/>
+
+		<!-- Theme Color for browsers -->
+		<meta name="theme-color" content="#9d72ff" />
+		<meta name="color-scheme" content="dark" />
+
+		<style>
+			:root {
+				/* UX Palette: Deep Amethyst */
+				--bg: #0d0b14;
+				--surface: #1a1625;
+				--accent: #9d72ff; /* Lila / Purple */
+				--accent-hover: #b794ff;
+				--text-primary: #f3f0ff;
+				--text-secondary: #a39eb5;
+				--border: #2d283d;
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family:
+					"Inter",
+					system-ui,
+					-apple-system,
+					sans-serif;
+				background-color: var(--bg);
+				color: var(--text-primary);
+				height: 100vh;
+				width: 100vw;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				overflow: hidden; /* No scroll guaranteed */
+				background-image: radial-gradient(
+					circle at 10% 20%,
+					rgba(157, 114, 255, 0.05) 0%,
+					transparent 40%
+				);
+			}
+
+			.container {
+				width: 100%;
+				max-width: 1200px;
+				padding: 0 4rem;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 5rem;
+				align-items: center;
+			}
+
+			/* Left Content */
+			.badge {
+				display: inline-flex;
+				align-items: center;
+				background: var(--surface);
+				border: 1px solid var(--border);
+				color: var(--accent);
+				padding: 6px 14px;
+				border-radius: 99px;
+				font-size: 0.75rem;
+				font-weight: 600;
+				letter-spacing: 0.05em;
+				margin-bottom: 1.5rem;
+			}
+
+			h1 {
+				font-size: 4.5rem;
+				font-weight: 800;
+				line-height: 1.1;
+				margin-bottom: 1rem;
+				background: linear-gradient(
+					to bottom right,
+					#fff 50%,
+					var(--accent)
+				);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+
+			.tagline {
+				font-size: 1.25rem;
+				color: var(--text-primary);
+				font-weight: 500;
+				margin-bottom: 1.5rem;
+			}
+
+			.description {
+				font-size: 1rem;
+				line-height: 1.6;
+				color: var(--text-secondary);
+				margin-bottom: 2rem;
+				max-width: 480px;
+			}
+
+			.feature-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1.2rem;
+				margin-bottom: 2.5rem;
+			}
+
+			.feature-item {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				font-size: 0.9rem;
+				color: var(--text-secondary);
+			}
+
+			.feature-item svg {
+				color: var(--accent);
+				flex-shrink: 0;
+			}
+
+			.actions {
+				display: flex;
+				gap: 1.2rem;
+			}
+
+			.btn {
+				padding: 14px 28px;
+				border-radius: 12px;
+				font-weight: 600;
+				text-decoration: none;
+				font-size: 0.95rem;
+				transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+
+			.btn-primary {
+				background: var(--accent);
+				color: #000;
+			}
+
+			.btn-primary:hover {
+				background: var(--accent-hover);
+				transform: translateY(-2px);
+				box-shadow: 0 8px 20px rgba(157, 114, 255, 0.3);
+			}
+
+			.btn-secondary {
+				background: transparent;
+				color: var(--text-primary);
+				border: 1px solid var(--border);
+			}
+
+			.btn-secondary:hover {
+				background: var(--surface);
+				border-color: var(--text-secondary);
+			}
+
+			/* Right Preview */
+			.preview {
+				position: relative;
+			}
+
+			.preview::after {
+				content: "";
+				position: absolute;
+				inset: -20px;
+				background: var(--accent);
+				filter: blur(80px);
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			.app-screenshot {
+				width: 100%;
+				border-radius: 16px;
+				border: 1px solid var(--border);
+				box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+				display: block;
+			}
+
+			/* Media Queries for sizing */
+			@media (max-height: 700px) {
+				.container {
+					transform: scale(0.9);
+				}
+			}
+
+			@media (max-width: 1024px) {
+				.container {
+					grid-template-columns: 1fr;
+					text-align: center;
+					gap: 3rem;
+					overflow-y: auto;
+				}
+				body {
+					overflow: auto;
+					height: auto;
+					padding: 4rem 0;
+				}
+				.description {
+					margin: 0 auto 2rem auto;
+				}
+				.feature-grid {
+					justify-content: center;
+					max-width: 500px;
+					margin: 0 auto 2.5rem auto;
+				}
+				.actions {
+					justify-content: center;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="container">
+			<section class="content">
+				<!-- <div class="badge">V0.1.0 NOW ON FLATHUB</div> -->
+				<h1>Remuxer</h1>
+				<p class="tagline">Batch media muxing without quality loss.</p>
+
+				<p class="description">
+					A high-performance tool built for Linux. Effortsly copy
+					audio tracks between high-quality video containers without
+					the need for re-encoding.
+				</p>
+
+				<div class="feature-grid">
+					<div class="feature-item">
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="3"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><polyline points="20 6 9 17 4 12"></polyline></svg
+						>
+						Batch Muxing
+					</div>
+					<div class="feature-item">
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="3"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><polyline points="20 6 9 17 4 12"></polyline></svg
+						>
+						Zero Quality Loss
+					</div>
+					<div class="feature-item">
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="3"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><polyline points="20 6 9 17 4 12"></polyline></svg
+						>
+						GTK4 / Libadwaita
+					</div>
+					<div class="feature-item">
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="3"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><polyline points="20 6 9 17 4 12"></polyline></svg
+						>
+						FFmpeg Native
+					</div>
+				</div>
+
+				<div class="actions">
+					<!-- <a href="https://github.com/bymoxb/remuxer" class="btn btn-primary">Install on Flathub</a> -->
+					<a
+						href="https://github.com/bymoxb/remuxer"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="btn btn-secondary">View Source</a
+					>
+				</div>
+			</section>
+
+			<section class="preview">
+				<img
+					src="https://raw.githubusercontent.com/bymoxb/remuxer/main/screenshots/screenshot-diagonal.png"
+					alt="Remuxer Screenshot"
+					class="app-screenshot"
+				/>
+			</section>
+		</main>
+	</body>
+</html>
