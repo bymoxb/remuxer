@@ -99,3 +99,35 @@ jobs:
         with:
           name: flatpak-${{ matrix.platform.name }}
           path: Remuxer-*.flatpak
+
+  publish-release:
+    name: Publish release assets
+    needs:
+      - tarball
+      - flatpak
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Fetch dist
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.tarball.outputs.artifact-id }}
+
+      - name: Download Flatpaks
+        uses: actions/download-artifact@v7
+        with:
+          pattern: linux-flatpak-*
+          merge-multiple: true
+
+      - name: Upload assets to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload \
+            "${{ inputs.tag }}" \
+            *.tar.xz \
+            *.flatpak
