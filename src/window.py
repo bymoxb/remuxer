@@ -69,13 +69,13 @@ class RemuxerWindow(Adw.ApplicationWindow):
         self.video_data_cache = {"videos": [], "audios": []}
 
         # Estado de la UI
-        self.store = Gio.ListStore(item_type=GObject.Object)
-        self.selection_model = Gtk.SingleSelection(model=self.store)
+        self.cv_store = Gio.ListStore(item_type=GObject.Object)
+        self.cv_selection_model = Gtk.SingleSelection(model=self.cv_store)
 
         #
-        self.stream_store = Gio.ListStore.new(StreamItem)
-        self.stream_selection_model = Gtk.SingleSelection(
-            model=self.stream_store)
+        self.cr_stream_store = Gio.ListStore.new(StreamItem)
+        self.cr_audio_stream_selection_model = Gtk.SingleSelection(
+            model=self.cr_stream_store)
 
         #
         self.setup_ui()
@@ -87,9 +87,9 @@ class RemuxerWindow(Adw.ApplicationWindow):
 
     def connect_selection_model(self):
 
-        self.pg_cr_audio_tracks.set_model(self.stream_selection_model)
+        self.pg_cr_audio_tracks.set_model(self.cr_audio_stream_selection_model)
 
-        self.selection_model.connect(
+        self.cv_selection_model.connect(
             "notify::selected-item",
             self._on_column_row_selected
         )
@@ -111,7 +111,7 @@ class RemuxerWindow(Adw.ApplicationWindow):
 
         self.logger.debug(f"combo_changed: {stream}")
 
-        current_column_row = self.selection_model.get_selected_item()
+        current_column_row = self.cv_selection_model.get_selected_item()
 
         if current_column_row and current_column_row.audio:
             self.logger.debug(
@@ -128,23 +128,23 @@ class RemuxerWindow(Adw.ApplicationWindow):
         # BLOQUEO: Evitamos que el proceso de carga dispare on_combo_selection_changed
         self._updating_combo = True
 
-        self.stream_store.remove_all()
+        self.cr_stream_store.remove_all()
 
         target_index = 0
         streams = item.audio.get_audio_streams()
 
         for index, stream in enumerate(streams):
-            self.stream_store.append(stream)
+            self.cr_stream_store.append(stream)
             if stream.index == item.audio.audio_stream_index_selected:
                 target_index = index
 
-        self.stream_selection_model.set_selected(target_index)
+        self.cr_audio_stream_selection_model.set_selected(target_index)
         self.pg_cr_audio_tracks.set_selected(target_index)
 
         self._updating_combo = False
 
     def setup_ui(self):
-        self.cv_files.set_model(self.selection_model)
+        self.cv_files.set_model(self.cv_selection_model)
         self._setup_selection_factory()
         self._setup_label_factory(
             self.cv_video_factory, self._on_bind_video_column)
@@ -298,12 +298,12 @@ class RemuxerWindow(Adw.ApplicationWindow):
             list_item.selection_binding = None
 
     def _on_select_all_activated(self, action, parameter):
-        for i in range(self.store.get_n_items()):
-            self.store.get_item(i).selected = True
+        for i in range(self.cv_store.get_n_items()):
+            self.cv_store.get_item(i).selected = True
 
     def _on_unselect_all_activated(self, action, parameter):
-        for i in range(self.store.get_n_items()):
-            self.store.get_item(i).selected = False
+        for i in range(self.cv_store.get_n_items()):
+            self.cv_store.get_item(i).selected = False
 
     # --- Handlers de UI ---
 
@@ -430,7 +430,7 @@ class RemuxerWindow(Adw.ApplicationWindow):
                 ]
                 a_obj.set_streams(a_streams)
 
-            GLib.idle_add(self.store.append, ColumnViewRow(
+            GLib.idle_add(self.cv_store.append, ColumnViewRow(
                 video=v_obj, audio=a_obj))
             size += 1
 
@@ -441,7 +441,7 @@ class RemuxerWindow(Adw.ApplicationWindow):
         GLib.idle_add(self.btn_procesar.set_sensitive, size > 0)
 
     def on_analyze_clicked(self, btn):
-        self.store.remove_all()
+        self.cv_store.remove_all()
 
         v_list = self.video_data_cache["videos"]
         a_list = self.video_data_cache["audios"]
@@ -457,22 +457,22 @@ class RemuxerWindow(Adw.ApplicationWindow):
         self.btn_analizar.set_sensitive(False)
 
     def handle_reorder(self, type, direction):
-        pos = self.selection_model.get_selected()
-        n = self.store.get_n_items()
+        pos = self.cv_selection_model.get_selected()
+        n = self.cv_store.get_n_items()
         target = pos - 1 if direction == "UP" else pos + 1
 
         if pos == Gtk.INVALID_LIST_POSITION or target < 0 or target >= n:
             return
 
-        row_curr = self.store.get_item(pos)
-        row_target = self.store.get_item(target)
+        row_curr = self.cv_store.get_item(pos)
+        row_target = self.cv_store.get_item(target)
 
         obj_curr = row_curr.video if type == "VIDEO" else row_curr.audio
         obj_target = row_target.video if type == "VIDEO" else row_target.audio
 
         if obj_curr and obj_target:
             self._swap_video_props(obj_curr, obj_target)
-            self.selection_model.set_selected(target)
+            self.cv_selection_model.set_selected(target)
 
     def _swap_video_props(self, a, b):
         a.name, b.name = b.name, a.name
@@ -495,8 +495,8 @@ class RemuxerWindow(Adw.ApplicationWindow):
             return
 
         items_to_process = []
-        for i in range(self.store.get_n_items()):
-            row = self.store.get_item(i)
+        for i in range(self.cv_store.get_n_items()):
+            row = self.cv_store.get_item(i)
             if row.video and row.audio and row.selected:
                 items_to_process.append(row)
 
