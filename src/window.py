@@ -171,7 +171,7 @@ class RemuxerWindow(Adw.ApplicationWindow):
 
     def _on_unbind_status_column(self, factory, list_item):
         row = list_item.get_item()
-        handler_id = list_item.get_data("handler-id")
+        handler_id = getattr(list_item, "handler_id", None)
         if row and handler_id:
             row.disconnect(handler_id)
             list_item.handler_id = None
@@ -196,11 +196,10 @@ class RemuxerWindow(Adw.ApplicationWindow):
         list_item.selection_binding = bind
 
     def _on_unbind_selection_column(self, factory, list_item):
-        bind = list_item.get_data("selection-binding")
+        bind = getattr(list_item, "selection_binding", None)
         if bind:
             bind.unbind()
-
-        list_item.set_data("selection-binding", None)
+            list_item.selection_binding = None
 
     def _on_select_all_activated(self, action, parameter):
         for i in range(self.store.get_n_items()):
