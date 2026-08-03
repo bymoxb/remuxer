@@ -52,3 +52,6 @@ class RemuxService:
             return False
         finally:
             self.current_process = None
+
+    def extract_tracks_info(self, path):
+        return self.runner.extract_tracks_info(path)
