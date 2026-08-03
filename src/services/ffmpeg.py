@@ -46,6 +46,51 @@ class FFmpegRunner(CommandRunner):
         except (ValueError, ZeroDivisionError):
             return 0
 
+    def _parse_duration_in_seconds(self, stream):
+        duration = stream.get("tags", {}).get("DURATION")
+
+        if not duration:
+            duration = stream.get("duration", "0")
+
+        if not duration:
+            return 0.0
+
+        try:
+            if ":" in duration:
+                parts = duration.split(":")
+                if len(parts) != 3:
+                    self.logger.error(f"Invalid duration format: {duration}")
+                    return 0.0
+
+                h, m, s = parts
+
+                return timedelta(
+                    hours=int(h),
+                    minutes=int(m),
+                    seconds=float(s)
+                ).total_seconds()
+
+            return float(duration)
+
+        except (ValueError, TypeError) as e:
+            self.logger.error(f"Invalid duration value '{duration}': {e}")
+            return 0.0
+
+    def _parse_duration_str(self, stream):
+        duration = stream.get("tags", {}).get("DURATION")
+
+        if duration and ":" in duration:
+            return duration
+
+        try:
+            total_seconds = float(stream.get("duration", 0))
+            return str(timedelta(seconds=total_seconds))
+
+        except (ValueError, TypeError) as e:
+            self.logger.error(f"Invalid duration value in stream: {e}")
+            return "0:00:00"
+
+
     def extract_tracks_info(self, path) -> list[StreamInfo]:
         cmd = [
             "ffprobe",
@@ -64,22 +109,23 @@ class FFmpegRunner(CommandRunner):
 
         try:
             data = json.loads(result.stdout)
+        except json.JSONDecodeError as e:
+            self.logger.error(f"Invalid JSON returned by ffprobe: {e}")
+            return []
 
-            streams = []
-            for stream in data["streams"]:
+        streams = []
+        for stream in data.get("streams", []):
+            try:
                 if stream["codec_type"] not in ["video", "audio"]:
+                    # skipping subtitle and other streams
                     continue
 
-                duration = stream.get("tags", {}).get(
-                    "DURATION", stream.get("duration", "0:0:0"))
+                if stream.get("disposition", {}).get("attached_pic", 0) == 1:
+                    # skipping attached pictures
+                    continue
 
-                h, m, s = duration.split(":")
-
-                total_seconds = timedelta(
-                    hours=int(h),
-                    minutes=int(m),
-                    seconds=float(s)
-                ).total_seconds()
+                duration_str = self._parse_duration_str(stream)
+                total_seconds = self._parse_duration_in_seconds(stream)
 
                 avg_frame_rate = stream.get("avg_frame_rate")
 
@@ -89,14 +135,15 @@ class FFmpegRunner(CommandRunner):
                     codec_name=stream.get("codec_name", ""),
                     avg_frame_rate=self._parse_fps(avg_frame_rate),
                     duration_in_seconds=total_seconds,
-                    duration_text=duration,
+                    duration_text=duration_str,
                     title=stream.get("tags", {}).get("title", ""),
                     language=stream.get("tags", {}).get("language", ""),
                     is_default=stream.get("disposition", {}).get(
                         "default", 0) == 1,
                 ))
+            except Exception as e:
+                self.logger.error(f"Error parsing stream info: {e}")
+                self.logger.error(f"Failed Stream data: {stream}")
+                continue
 
-            return streams
-        except Exception as e:
-            self.logger.error(f"Invalid JSON returned by ffprobe: {e}")
-            return []
+        return streams
