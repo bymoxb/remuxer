@@ -10,8 +10,11 @@ class StreamItem(GObject.Object):
     avg_frame_rate = GObject.Property(type=str)
     duration_in_seconds = GObject.Property(type=float)
     duration_text = GObject.Property(type=str)
+    is_default = GObject.Property(type=bool, default=False)
+    title = GObject.Property(type=str)
+    language = GObject.Property(type=str)
 
-    def __init__(self, index, codec_type, codec_name, avg_frame_rate, duration_in_seconds, duration_text):
+    def __init__(self, index, codec_type, codec_name, avg_frame_rate, duration_in_seconds, duration_text, language, title, is_default=False):
         super().__init__()
         self.index = index
         self.codec_type = codec_type
@@ -19,6 +22,9 @@ class StreamItem(GObject.Object):
         self.avg_frame_rate = avg_frame_rate
         self.duration_in_seconds = duration_in_seconds
         self.duration_text = duration_text
+        self.is_default = is_default
+        self.language = language
+        self.title = title
 
 class VideoItem(GObject.Object):
     name = GObject.Property(type=str)

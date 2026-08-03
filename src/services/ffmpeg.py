@@ -89,7 +89,11 @@ class FFmpegRunner(CommandRunner):
                     codec_name=stream.get("codec_name", ""),
                     avg_frame_rate=self._parse_fps(avg_frame_rate),
                     duration_in_seconds=total_seconds,
-                    duration_text=duration
+                    duration_text=duration,
+                    title=stream.get("tags", {}).get("title", ""),
+                    language=stream.get("tags", {}).get("language", ""),
+                    is_default=stream.get("disposition", {}).get(
+                        "default", 0) == 1,
                 ))
 
             return streams
