@@ -20,12 +20,26 @@ jobs:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
 
+      - name: Extract version
+        id: version-code
+        run: |
+          version="${{ inputs.tag }}"
+          version="${version#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Upgrade meson
+        run: pip install meson
+
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y \
-            meson \
-            ninja-build
+          sudo apt install --no-install-recommends -y \
+            desktop-file-utils \
+            gettext \
+            libadwaita-1-dev \
+            libgtk-4-dev \
+            libgtksourceview-5-dev \
+            meson
 
       - name: Setup build
         run: meson setup build
@@ -34,7 +48,87 @@ jobs:
         run: meson dist -C build --no-tests
 
       - name: Upload tarball artifact
+        id: upload-dist
         uses: actions/upload-artifact@v6
         with:
           name: source-tarball
           path: build/meson-dist/*.tar.xz
+          compression-level: 0
+
+    outputs:
+      version: ${{ steps.version-code.outputs.version }}
+      dist: remuxer-${{ steps.version-code.outputs.version }}.tar.xz
+      artifact-id: ${{ steps.upload-dist.outputs.artifact-id }}
+
+  flatpak:
+    needs: [tarball]
+    strategy:
+      matrix:
+        platform:
+          - runs-on: ubuntu-latest
+            name: x86_64
+          # - runs-on: ubuntu-24.04-arm
+          #   name: aarch64
+      fail-fast: false
+    runs-on: ${{ matrix.platform.runs-on }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    name: "Flatpak ${{ matrix.platform.name }}"
+    steps:
+      - name: Fetch dist
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.tarball.outputs.artifact-id }}
+
+      - name: Extract dist
+        run: tar -xf ${{ needs.tarball.outputs.dist }} --strip-components=1
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: Remuxer-${{ needs.tarball.outputs.version }}-${{ matrix.platform.name }}.flatpak
+          manifest-path: dev.illapa.Remuxer.json
+          cache-key: flatpak-builder-${{ github.sha }}-${{ matrix.platform.name }}
+          build-bundle: true
+          arch: ${{ matrix.platform.name }}
+          upload-artifact: false
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: flatpak-${{ matrix.platform.name }}
+          path: Remuxer-*.flatpak
+
+  publish-release:
+    name: Publish release assets
+    needs:
+      - tarball
+      - flatpak
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Fetch dist
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ needs.tarball.outputs.artifact-id }}
+
+      - name: Download Flatpaks
+        uses: actions/download-artifact@v7
+        with:
+          pattern: flatpak-*
+          merge-multiple: true
+
+      - name: Upload assets to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload \
+            "${{ inputs.tag }}" \
+            *.tar.xz \
+            *.flatpak \
+            --repo "${{ github.repository }}"

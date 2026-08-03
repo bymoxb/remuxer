@@ -33,8 +33,8 @@ Instead of spending hours processing files individually, Remuxer reduces the ent
 git clone https://github.com/bymoxb/remuxer.git
 cd remuxer
 flatpak --user install org.gnome.{Platform,Sdk}//50
-flatpak-builder --user --force-clean --install build dev.illapa.Remuxer.Devel.json
-flatpak --user run --branch=master dev.illapa.Remuxer.Devel
+flatpak-builder --user --force-clean --install build dev.illapa.Remuxer.json
+flatpak --user run dev.illapa.Remuxer
 ```
 
 Or just use [Builder](https://flathub.org/apps/details/org.gnome.Builder)
