@@ -130,4 +130,5 @@ jobs:
           gh release upload \
             "${{ inputs.tag }}" \
             *.tar.xz \
-            *.flatpak
+            *.flatpak \
+            --repo "${{ github.repository }}"
