@@ -8,7 +8,7 @@ from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, Pango, GLib, GObject
 
 from .models.column_view_row import ColumnViewRow, StatusViewRow
-from .models.view_item import VideoItem
+from .models.view_item import VideoItem, StreamItem
 from .services.ffmpeg import FFmpegRunner
 from .services.file_service import FileService
 from .services.remux_service import RemuxService
@@ -45,12 +45,16 @@ class RemuxerWindow(Adw.ApplicationWindow):
     btn_menu = Gtk.Template.Child()
     updates_banner = Gtk.Template.Child()
     dialog_confirmar_cancelacion = Gtk.Template.Child()
+    pg_cr_audio_tracks = Gtk.Template.Child()
 
     # Factories
     cv_selection_factory = Gtk.Template.Child()
     cv_video_factory = Gtk.Template.Child()
     cv_audio_factory = Gtk.Template.Child()
     cv_status_factory = Gtk.Template.Child()
+
+    current_column_row_index = None
+    current_column_row = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -68,12 +72,76 @@ class RemuxerWindow(Adw.ApplicationWindow):
         self.store = Gio.ListStore(item_type=GObject.Object)
         self.selection_model = Gtk.SingleSelection(model=self.store)
 
+        #
+        self.stream_store = Gio.ListStore.new(StreamItem)
+        self.stream_selection_model = Gtk.SingleSelection(
+            model=self.stream_store)
+
+        #
         self.setup_ui()
         self.connect_signals()
         self.setup_cv_actions()
 
         # Tarea de red en segundo plano
         threading.Thread(target=self._check_updates_async, daemon=True).start()
+
+    def connect_selection_model(self):
+
+        self.pg_cr_audio_tracks.set_model(self.stream_selection_model)
+
+        self.selection_model.connect(
+            "notify::selected-item",
+            self._on_column_row_selected
+        )
+
+        self.pg_cr_audio_tracks.connect(
+            "notify::selected-item",
+            self.on_combo_changed
+        )
+
+    def on_combo_changed(self, selection_model, _):
+
+        if self._updating_combo:
+            return
+
+        stream = selection_model.get_selected_item()
+
+        if stream is None:
+            return
+
+        self.logger.debug(f"combo_changed: {stream}")
+
+        current_column_row = self.selection_model.get_selected_item()
+
+        if current_column_row and current_column_row.audio:
+            self.logger.debug(
+                f"combo_changed.change_audio_stream: source_audio_track: {current_column_row.audio.audio_stream_index_selected} -> {stream.index}\n")
+            current_column_row.audio.audio_stream_index_selected = stream.index
+
+    def _on_column_row_selected(self, selection_model, _param):
+        item = selection_model.get_selected_item()  # item es ColumnViewRow
+        if not item or not item.audio:
+            return
+
+        self.logger.debug(f"on_column_row_selected: {item}")
+
+        # BLOQUEO: Evitamos que el proceso de carga dispare on_combo_selection_changed
+        self._updating_combo = True
+
+        self.stream_store.remove_all()
+
+        target_index = 0
+        streams = item.audio.get_audio_streams()
+
+        for index, stream in enumerate(streams):
+            self.stream_store.append(stream)
+            if stream.index == item.audio.audio_stream_index_selected:
+                target_index = index
+
+        self.stream_selection_model.set_selected(target_index)
+        self.pg_cr_audio_tracks.set_selected(target_index)
+
+        self._updating_combo = False
 
     def setup_ui(self):
         self.cv_files.set_model(self.selection_model)
@@ -83,6 +151,30 @@ class RemuxerWindow(Adw.ApplicationWindow):
         self._setup_label_factory(
             self.cv_audio_factory, self._on_bind_audio_column)
         self._setup_status_factory()
+        self._setup_preferences()
+        self.connect_selection_model()
+
+    def _setup_preferences(self):
+        factory = Gtk.SignalListItemFactory()
+
+        factory.connect("setup", self._on_setup_pg_audio_track)
+        factory.connect("bind", self._on_bind_pg_audio_track)
+
+        self.pg_cr_audio_tracks.set_factory(factory)
+
+    def _on_setup_pg_audio_track(self, factory, list_item):
+        label = Gtk.Label(xalign=0)
+        label.set_ellipsize(Pango.EllipsizeMode.END)
+
+        list_item.set_child(label)
+
+    def _on_bind_pg_audio_track(self, factory, list_item):
+
+        label = list_item.get_child()
+        stream = list_item.get_item()
+
+        label.set_text(stream.get_display_name())
+
 
     def _setup_selection_factory(self):
         self.cv_selection_factory.connect(
@@ -299,17 +391,70 @@ class RemuxerWindow(Adw.ApplicationWindow):
         except Exception:
             pass
 
-    def on_analyze_clicked(self, btn):
-        self.store.remove_all()
+    def _worker_thread_analyze(self, v_list, a_list):
+        self.logger.info("Analyzing files...")
+        self.remux_service.cancel_event.clear()
         v_list = self.video_data_cache["videos"]
         a_list = self.video_data_cache["audios"]
 
-        for i in range(max(len(v_list), len(a_list))):
-            v_obj = VideoItem(**v_list[i]) if i < len(v_list) else None
-            a_obj = VideoItem(**a_list[i]) if i < len(a_list) else None
-            self.store.append(ColumnViewRow(video=v_obj, audio=a_obj))
+        total = max(len(v_list), len(a_list))
+        total_steps = total * 2
 
-        self.btn_procesar.set_sensitive(self.store.get_n_items() > 0)
+        size = 0
+
+        for i in range(max(len(v_list), len(a_list))):
+
+            if self.remux_service.cancel_event.is_set():
+                break
+
+            micro_step_start = (i * 2) + 1
+            progress_start = micro_step_start / total_steps
+
+            GLib.idle_add(self._update_progress, progress_start)
+
+            v_obj = None
+            if i < len(v_list):
+                v_obj = VideoItem(**v_list[i])
+                v_streams = [
+                    StreamItem(**s.to_dict())
+                    for s in self.remux_service.extract_tracks_info(v_list[i]["abs_path"])
+                ]
+                v_obj.set_streams(v_streams)
+
+            a_obj = None
+            if i < len(a_list):
+                a_obj = VideoItem(**a_list[i])
+                a_streams = [
+                    StreamItem(**s.to_dict())
+                    for s in self.remux_service.extract_tracks_info(a_list[i]["abs_path"])
+                ]
+                a_obj.set_streams(a_streams)
+
+            GLib.idle_add(self.store.append, ColumnViewRow(
+                video=v_obj, audio=a_obj))
+            size += 1
+
+        self.logger.info("Analysis completed")
+
+        GLib.idle_add(self.pro_bar.set_visible, False)
+        GLib.idle_add(self.btn_analizar.set_sensitive, True)
+        GLib.idle_add(self.btn_procesar.set_sensitive, size > 0)
+
+    def on_analyze_clicked(self, btn):
+        self.store.remove_all()
+
+        v_list = self.video_data_cache["videos"]
+        a_list = self.video_data_cache["audios"]
+
+        self.pro_bar.set_visible(True)
+        self.pro_bar.set_fraction(0.0)
+
+        threading.Thread(target=self._worker_thread_analyze,
+                         args=(v_list, a_list),
+                         daemon=True).start()
+
+        self.btn_procesar.set_sensitive(False)
+        self.btn_analizar.set_sensitive(False)
 
     def handle_reorder(self, type, direction):
         pos = self.selection_model.get_selected()
