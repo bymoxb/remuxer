@@ -12,6 +12,9 @@ jobs:
   tarball:
     name: Create tarball
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
 
     steps:
       - name: Checkout tag
@@ -62,6 +65,9 @@ jobs:
 
   flatpak:
     needs: [tarball]
+    permissions:
+      contents: read
+      actions: write
     strategy:
       matrix:
         platform:
