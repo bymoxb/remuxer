@@ -69,6 +69,12 @@
   </screenshots>
 
   <releases>
+    <release version="1.0.1" date="2026-08-02">
+      <url type="details">https://github.com/bymoxb/remuxer/releases/tag/v1.0.1</url>
+      <description>
+        <p>Updated the deployment infrastructure with configuration improvements and release process enhancements.</p>
+      </description>
+    </release>
     <release version="1.0.0" date="2026-08-01">
       <url type="details">https://github.com/bymoxb/remuxer/releases/tag/v1.0.0</url>
       <description>
