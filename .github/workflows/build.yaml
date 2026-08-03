@@ -120,7 +120,7 @@ jobs:
       - name: Download Flatpaks
         uses: actions/download-artifact@v7
         with:
-          pattern: linux-flatpak-*
+          pattern: flatpak-*
           merge-multiple: true
 
       - name: Upload assets to release
