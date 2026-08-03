@@ -14,3 +14,6 @@ class ColumnViewRow(GObject.Object):
         super().__init__()
         self.video = video
         self.audio = audio
+
+        self.status = "warning" if (
+            audio and audio.has_multiple_audio_streams()) else "pending"
