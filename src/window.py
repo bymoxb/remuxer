@@ -7,7 +7,7 @@ from gettext import gettext as _
 
 from gi.repository import Adw, Gtk, Gio, Pango, GLib, GObject
 
-from .models.column_view_row import ColumnViewRow
+from .models.column_view_row import ColumnViewRow, StatusViewRow
 from .models.view_item import VideoItem
 from .services.ffmpeg import FFmpegRunner
 from .services.file_service import FileService
@@ -143,12 +143,12 @@ class RemuxerWindow(Adw.ApplicationWindow):
         def update_ui(*args):
             status = row.status
 
-            for cls in ["success", "error", "accent"]:
+            for cls in ["success", "error", "accent", "warning"]:
                 icon.remove_css_class(cls)
 
             label.remove_css_class("dim-label")
 
-            if status == "processing":
+            if status == StatusViewRow.PROCESSING.value:
                 stack.set_visible_child_name("spinner")
                 spinner.start()
                 label.set_text(_("Processing..."))
@@ -156,14 +156,18 @@ class RemuxerWindow(Adw.ApplicationWindow):
                 spinner.stop()
                 stack.set_visible_child_name("icon")
 
-                if status == "completed":
+                if status == StatusViewRow.COMPLETED.value:
                     icon.set_from_icon_name("object-select-symbolic")
                     icon.add_css_class("success")
                     label.set_text(_("Done"))
-                elif status == "error":
+                elif status == StatusViewRow.ERROR.value:
                     icon.set_from_icon_name("dialog-error-symbolic")
                     icon.add_css_class("error")
                     label.set_text(_("Error"))
+                elif status == StatusViewRow.WARNING.value:
+                    icon.set_from_icon_name("dialog-warning")
+                    icon.add_css_class("warning")
+                    label.set_text(_("Needs Review"))
 
         list_item.handler_id = row.connect("notify::status", update_ui)
 
@@ -382,7 +386,8 @@ class RemuxerWindow(Adw.ApplicationWindow):
             micro_step_start = (index * 2) + 1
             progress_start = micro_step_start / total_steps
 
-            GLib.idle_add(setattr, row, "status", "processing")
+            GLib.idle_add(setattr, row, "status",
+                          StatusViewRow.PROCESSING.value)
             GLib.idle_add(self._update_progress, progress_start)
 
             output_file = self.remux_service.prepare_output_path(
@@ -392,7 +397,7 @@ class RemuxerWindow(Adw.ApplicationWindow):
             is_success = self.remux_service.execute(
                 row.video.abs_path, row.audio.abs_path, output_file)
 
-            final_status = "completed" if is_success == True else "error"
+            final_status = StatusViewRow.COMPLETED.value if is_success == True else StatusViewRow.ERROR.value
             GLib.idle_add(setattr, row, "status", final_status)
 
         self.logger.info("Processing finished")

@@ -1,13 +1,23 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
+from enum import Enum
 from gi.repository import GObject
 
 from .view_item import VideoItem
 
+
+class StatusViewRow(Enum):
+    PENDING = "pending"
+    WARNING = "warning"
+    SUCCESS = "success"
+    ERROR = "error"
+    COMPLETED = "completed"
+    PROCESSING = "processing"
+
 class ColumnViewRow(GObject.Object):
     video = GObject.Property(type=VideoItem)
     audio = GObject.Property(type=VideoItem)
-    status = GObject.Property(type=str, default="pending")
+    status = GObject.Property(type=str, default=StatusViewRow.PENDING.value)
     selected = GObject.Property(type=bool, default=True)
 
     def __init__(self, video, audio):
@@ -15,5 +25,5 @@ class ColumnViewRow(GObject.Object):
         self.video = video
         self.audio = audio
 
-        self.status = "warning" if (
-            audio and audio.has_multiple_audio_streams()) else "pending"
+        self.status = StatusViewRow.WARNING.value if (
+            audio and audio.has_multiple_audio_streams()) else StatusViewRow.PENDING.value
