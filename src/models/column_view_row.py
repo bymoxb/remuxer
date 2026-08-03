@@ -27,3 +27,6 @@ class ColumnViewRow(GObject.Object):
 
         self.status = StatusViewRow.WARNING.value if (
             audio and audio.has_multiple_audio_streams()) else StatusViewRow.PENDING.value
+
+    def __str__(self):
+        return f"ColumnViewRow{{ source_video_name: {self.video.name}; source_audio_name: {self.audio.name}; status: {self.status}; selected: {self.selected} }}"

@@ -26,10 +26,23 @@ class StreamItem(GObject.Object):
         self.language = language
         self.title = title
 
+    def get_display_name(self):
+        return f"index: {self.index}, lang: {self.language}, is_default: {self.is_default}, title: {self.title}"
+
+    def is_audio(self):
+        return self.codec_type == "audio"
+
+    def is_video(self):
+        return self.codec_type == "video"
+
+    def __str__(self):
+        return f"StreamItem{{ index: {self.index}; lang: {self.language}; is_default: {self.is_default}; title: {self.title} }}"
+
 class VideoItem(GObject.Object):
     name = GObject.Property(type=str)
     abs_path = GObject.Property(type=str)
     streams = GObject.Property(type=object)
+    audio_stream_index_selected = GObject.Property(type=int, default=1)
 
     def __init__(self, name, path, abs_path, order):
         super().__init__()
@@ -41,8 +54,20 @@ class VideoItem(GObject.Object):
     def set_streams(self, streams: list[StreamItem]):
         self.streams = streams
 
+        audio_streams = [s for s in streams if s.is_audio()]
+
+        self.audio_stream_index_selected = next(
+            (s.index for s in audio_streams if s.is_default),
+            audio_streams[0].index if len(audio_streams) > 0 else 1,
+        )
+
     def has_multiple_audio_streams(self):
         if not self.streams:
             return False
-        audio_streams = [s for s in self.streams if s.codec_type == "audio"]
-        return len(audio_streams) > 1
+        return len([s for s in self.streams if s.is_audio()]) > 1
+
+    def get_audio_streams(self):
+        return [s for s in self.streams if s.is_audio()]
+
+    def __str__(self):
+        return f"VideoItem{{ name: {self.name}; audio_index_selected: {self.audio_stream_index_selected} }}"
