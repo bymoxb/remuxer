@@ -6,8 +6,6 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
 -->
 <interface>
   <requires lib="gtk" version="4.0"/>
-  <requires lib="Adw" version="1.0"/>
-
   <menu id="cv_selection_menu">
     <item>
       <attribute name="label" translatable="yes">Select All</attribute>
@@ -37,7 +35,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     </responses>
   </object>
   <template class="RemuxerWindow" parent="AdwApplicationWindow">
-    <property name="default-width">1000</property>
+    <property name="default-width">1200</property>
     <property name="default-height">900</property>
     <property name="title" translatable="yes">Remuxer</property>
     <property name="content">
@@ -177,151 +175,200 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                       </object>
                     </child>
                     <child>
-                      <object class="GtkBox">
-                        <property name="orientation">1</property>
-                        <property name="spacing">12</property>
+                      <object class="GtkPaned">
+                        <property name="orientation">0</property>
+                        <property name="position">650</property>
+                        <property name="hexpand">true</property>
                         <property name="vexpand">true</property>
-                        <child>
+                        <property name="resize-start-child">true</property>
+                        <property name="resize-end-child">false</property>
+                        <property name="shrink-start-child">false</property>
+                        <property name="shrink-end-child">false</property>
+                        <property name="start-child">
                           <object class="GtkBox">
-                            <property name="orientation">0</property>
+                            <property name="orientation">1</property>
                             <property name="spacing">12</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="label" translatable="yes">Episode Alignment</property>
-                                <style>
-                                  <class name="heading"/>
-                                </style>
-                                <property name="hexpand">true</property>
-                                <property name="halign">1</property>
-                              </object>
-                            </child>
+                            <property name="vexpand">true</property>
                             <child>
                               <object class="GtkBox">
                                 <property name="orientation">0</property>
-                                <property name="spacing">6</property>
+                                <property name="spacing">12</property>
                                 <child>
                                   <object class="GtkLabel">
-                                    <property name="label" translatable="yes">Video:</property>
+                                    <property name="label" translatable="yes">Episode Alignment</property>
                                     <style>
-                                      <class name="caption"/>
+                                      <class name="heading"/>
                                     </style>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <style>
-                                      <class name="linked"/>
-                                    </style>
-                                    <child>
-                                      <object class="GtkButton" id="btn_video_subir">
-                                        <property name="icon-name">go-up-symbolic</property>
-                                        <property name="tooltip-text" translatable="yes">Move Up</property>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_video_bajar">
-                                        <property name="icon-name">go-down-symbolic</property>
-                                        <property name="tooltip-text" translatable="yes">Move Down</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkSeparator">
-                                <style>
-                                  <class name="spacer"/>
-                                </style>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="orientation">0</property>
-                                <property name="spacing">6</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="label" translatable="yes">Audio:</property>
-                                    <style>
-                                      <class name="caption"/>
-                                    </style>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <style>
-                                      <class name="linked"/>
-                                    </style>
-                                    <child>
-                                      <object class="GtkButton" id="btn_audio_subir">
-                                        <property name="icon-name">go-up-symbolic</property>
-                                        <property name="tooltip-text" translatable="yes">Move Up</property>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_audio_bajar">
-                                        <property name="icon-name">go-down-symbolic</property>
-                                        <property name="tooltip-text" translatable="yes">Move Down</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkFrame">
-                            <property name="child">
-                              <object class="GtkScrolledWindow">
-                                <property name="min-content-height">350</property>
-                                <property name="child">
-                                  <object class="GtkColumnView" id="cv_files">
                                     <property name="hexpand">true</property>
-                                    <property name="vexpand">true</property>
+                                    <property name="halign">1</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">0</property>
+                                    <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkColumnViewColumn">
-                                        <property name="title" translatable="yes">Sel</property>
-                                        <property name="fixed-width">40</property>
-                                        <property name="header-menu">cv_selection_menu</property>
-                                        <property name="factory">
-                                          <object class="GtkSignalListItemFactory" id="cv_selection_factory"></object>
-                                        </property>
+                                      <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Video:</property>
+                                        <style>
+                                          <class name="caption"/>
+                                        </style>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkColumnViewColumn">
-                                        <property name="title" translatable="yes">Source Video</property>
-                                        <property name="expand">true</property>
-                                        <property name="factory">
-                                          <object class="GtkSignalListItemFactory" id="cv_video_factory"></object>
-                                        </property>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="linked"/>
+                                        </style>
+                                        <child>
+                                          <object class="GtkButton" id="btn_video_subir">
+                                            <property name="icon-name">go-up-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Move Up</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_video_bajar">
+                                            <property name="icon-name">go-down-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Move Down</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <style>
+                                      <class name="spacer"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">0</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Audio:</property>
+                                        <style>
+                                          <class name="caption"/>
+                                        </style>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkColumnViewColumn">
-                                        <property name="title" translatable="yes">Source Audio</property>
-                                        <property name="expand">true</property>
-                                        <property name="factory">
-                                          <object class="GtkSignalListItemFactory" id="cv_audio_factory"></object>
-                                        </property>
+                                      <object class="GtkBox">
+                                        <style>
+                                          <class name="linked"/>
+                                        </style>
+                                        <child>
+                                          <object class="GtkButton" id="btn_audio_subir">
+                                            <property name="icon-name">go-up-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Move Up</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_audio_bajar">
+                                            <property name="icon-name">go-down-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Move Down</property>
+                                          </object>
+                                        </child>
                                       </object>
                                     </child>
-                                    <child>
-                                      <object class="GtkColumnViewColumn">
-                                        <property name="title" translatable="yes">Status</property>
-                                        <property name="fixed-width">150</property>
-                                        <property name="factory">
-                                          <object class="GtkSignalListItemFactory" id="cv_status_factory"></object>
-                                        </property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="child">
+                                  <object class="GtkScrolledWindow">
+                                    <property name="min-content-height">350</property>
+                                    <property name="child">
+                                      <object class="GtkColumnView" id="cv_files">
+                                        <property name="hexpand">true</property>
+                                        <property name="vexpand">true</property>
+                                        <child>
+                                          <object class="GtkColumnViewColumn">
+                                            <property name="title" translatable="yes">Sele</property>
+                                            <property name="fixed-width">40</property>
+                                            <property name="header-menu">cv_selection_menu</property>
+                                            <property name="factory">
+                                              <object class="GtkSignalListItemFactory" id="cv_selection_factory"></object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkColumnViewColumn">
+                                            <property name="title" translatable="yes">Source Video</property>
+                                            <property name="expand">true</property>
+                                            <property name="factory">
+                                              <object class="GtkSignalListItemFactory" id="cv_video_factory"></object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkColumnViewColumn">
+                                            <property name="title" translatable="yes">Source Audio</property>
+                                            <property name="expand">true</property>
+                                            <property name="factory">
+                                              <object class="GtkSignalListItemFactory" id="cv_audio_factory"></object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkColumnViewColumn">
+                                            <property name="title" translatable="yes">Status</property>
+                                            <property name="fixed-width">150</property>
+                                            <property name="factory">
+                                              <object class="GtkSignalListItemFactory" id="cv_status_factory"></object>
+                                            </property>
+                                          </object>
+                                        </child>
                                       </object>
-                                    </child>
+                                    </property>
                                   </object>
                                 </property>
                               </object>
-                            </property>
+                            </child>
                           </object>
-                        </child>
+                        </property>
+                        <property name="end-child">
+                          <object class="AdwPreferencesPage">
+                            <property name="width-request">380</property>
+                            <property name="hexpand">false</property>
+                            <property name="vexpand">true</property>
+                            <child>
+                              <object class="AdwPreferencesGroup">
+                                <property name="title" translatable="yes">Source Video Settings</property>
+                                <child>
+                                  <object class="AdwComboRow" id="pg_cr_video_duration">
+                                    <property name="title" translatable="yes">Video duration</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwComboRow" id="pg_cr_video_frame_rate">
+                                    <property name="title" translatable="yes">Video frame rate</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwPreferencesGroup">
+                                <property name="title" translatable="yes">Source Audio Settings</property>
+                                <child>
+                                  <object class="AdwComboRow" id="pg_cr_audio_tracks">
+                                    <property name="title" translatable="yes">Audio stream</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwComboRow" id="pg_cr_audio_duration">
+                                    <property name="title" translatable="yes">Audio duration</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
                       </object>
                     </child>
                     <child>

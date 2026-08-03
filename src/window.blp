@@ -160,134 +160,178 @@ template $RemuxerWindow: Adw.ApplicationWindow {
             }
           }
 
-          Gtk.Box {
-            orientation: vertical;
-            spacing: 12;
+          Gtk.Paned {
+            orientation: horizontal;
+            position: 650;
+            hexpand: true;
             vexpand: true;
+            resize-start-child: true;
+            resize-end-child: false;
+            shrink-start-child: false;
+            shrink-end-child: false;
 
-            Gtk.Box {
-              orientation: horizontal;
+            start-child: Gtk.Box {
+              orientation: vertical;
               spacing: 12;
-
-              Gtk.Label {
-                label: _("Episode Alignment");
-
-                styles [
-                  "heading",
-                ]
-
-                hexpand: true;
-                halign: start;
-              }
+              vexpand: true;
 
               Gtk.Box {
                 orientation: horizontal;
-                spacing: 6;
+                spacing: 12;
 
                 Gtk.Label {
-                  label: _("Video:");
+                  label: _("Episode Alignment");
 
                   styles [
-                    "caption",
-                  ]
-                }
-
-                Gtk.Box {
-                  styles [
-                    "linked",
+                    "heading",
                   ]
 
-                  Button btn_video_subir {
-                    icon-name: "go-up-symbolic";
-                    tooltip-text: _("Move Up");
-                  }
-
-                  Button btn_video_bajar {
-                    icon-name: "go-down-symbolic";
-                    tooltip-text: _("Move Down");
-                  }
-                }
-              }
-
-              Gtk.Separator {
-                styles [
-                  "spacer",
-                ]
-              }
-
-              Gtk.Box {
-                orientation: horizontal;
-                spacing: 6;
-
-                Gtk.Label {
-                  label: _("Audio:");
-
-                  styles [
-                    "caption",
-                  ]
-                }
-
-                Gtk.Box {
-                  styles [
-                    "linked",
-                  ]
-
-                  Button btn_audio_subir {
-                    icon-name: "go-up-symbolic";
-                    tooltip-text: _("Move Up");
-                  }
-
-                  Button btn_audio_bajar {
-                    icon-name: "go-down-symbolic";
-                    tooltip-text: _("Move Down");
-                  }
-                }
-              }
-            }
-
-            Gtk.Frame {
-              child: Gtk.ScrolledWindow {
-                min-content-height: 350;
-
-                child: Gtk.ColumnView cv_files {
                   hexpand: true;
-                  vexpand: true;
-                  // COLUMNA 1: Selección
-                  Gtk.ColumnViewColumn {
-                    title: _("Sel");
-                    fixed-width: 40;
-                    header-menu: cv_selection_menu;
+                  halign: start;
+                }
 
-                    factory: Gtk.SignalListItemFactory cv_selection_factory {};
+                Gtk.Box {
+                  orientation: horizontal;
+                  spacing: 6;
+
+                  Gtk.Label {
+                    label: _("Video:");
+
+                    styles [
+                      "caption",
+                    ]
                   }
 
-                  // COLUMNA 2: Source Video
-                  Gtk.ColumnViewColumn {
-                    title: _("Source Video");
-                    expand: true;
+                  Gtk.Box {
+                    styles [
+                      "linked",
+                    ]
 
-                    factory: Gtk.SignalListItemFactory cv_video_factory {};
+                    Button btn_video_subir {
+                      icon-name: "go-up-symbolic";
+                      tooltip-text: _("Move Up");
+                    }
+
+                    Button btn_video_bajar {
+                      icon-name: "go-down-symbolic";
+                      tooltip-text: _("Move Down");
+                    }
+                  }
+                }
+
+                Gtk.Separator {
+                  styles [
+                    "spacer",
+                  ]
+                }
+
+                Gtk.Box {
+                  orientation: horizontal;
+                  spacing: 6;
+
+                  Gtk.Label {
+                    label: _("Audio:");
+
+                    styles [
+                      "caption",
+                    ]
                   }
 
-                  // COLUMNA 3: Source Audio
-                  Gtk.ColumnViewColumn {
-                    title: _("Source Audio");
-                    expand: true;
+                  Gtk.Box {
+                    styles [
+                      "linked",
+                    ]
 
-                    factory: Gtk.SignalListItemFactory cv_audio_factory {};
+                    Button btn_audio_subir {
+                      icon-name: "go-up-symbolic";
+                      tooltip-text: _("Move Up");
+                    }
+
+                    Button btn_audio_bajar {
+                      icon-name: "go-down-symbolic";
+                      tooltip-text: _("Move Down");
+                    }
                   }
+                }
+              }
 
-                  // COLUMNA 4: Status
-                  Gtk.ColumnViewColumn {
-                    title: _("Status");
-                    fixed-width: 150;
+              Gtk.Frame {
+                child: Gtk.ScrolledWindow {
+                  min-content-height: 350;
 
-                    factory: Gtk.SignalListItemFactory cv_status_factory {};
-                  }
+                  child: Gtk.ColumnView cv_files {
+                    hexpand: true;
+                    vexpand: true;
+                    // COLUMNA 1: Selección
+                    Gtk.ColumnViewColumn {
+                      title: _("Sele");
+                      fixed-width: 40;
+                      header-menu: cv_selection_menu;
+
+                      factory: Gtk.SignalListItemFactory cv_selection_factory {};
+                    }
+
+                    // COLUMNA 2: Source Video
+                    Gtk.ColumnViewColumn {
+                      title: _("Source Video");
+                      expand: true;
+
+                      factory: Gtk.SignalListItemFactory cv_video_factory {};
+                    }
+
+                    // COLUMNA 3: Source Audio
+                    Gtk.ColumnViewColumn {
+                      title: _("Source Audio");
+                      expand: true;
+
+                      factory: Gtk.SignalListItemFactory cv_audio_factory {};
+                    }
+
+                    // COLUMNA 4: Status
+                    Gtk.ColumnViewColumn {
+                      title: _("Status");
+                      fixed-width: 150;
+
+                      factory: Gtk.SignalListItemFactory cv_status_factory {};
+                    }
+                  };
                 };
-              };
-            }
+              }
+            };
+
+            end-child: Adw.PreferencesPage {
+              width-request: 380;
+              hexpand: false;
+              vexpand: true;
+
+              Adw.PreferencesGroup {
+                title: _("Source Video Settings");
+
+                Adw.ComboRow pg_cr_video_duration {
+                  title: _("Video duration");
+                }
+
+                Adw.ComboRow pg_cr_video_frame_rate {
+                  title: _("Video frame rate");
+                }
+              }
+
+              Adw.PreferencesGroup {
+                title: _("Source Audio Settings");
+
+                Adw.ComboRow pg_cr_audio_tracks {
+                  title: _("Audio stream");
+                }
+
+                Adw.ComboRow pg_cr_audio_duration {
+                  title: _("Audio duration");
+                }
+
+              }
+            };
           }
+
+
 
           Adw.PreferencesGroup {
             title: _("Output Settings");
