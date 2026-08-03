@@ -165,7 +165,7 @@ class RemuxerWindow(Adw.ApplicationWindow):
                     icon.add_css_class("error")
                     label.set_text(_("Error"))
                 elif status == StatusViewRow.WARNING.value:
-                    icon.set_from_icon_name("dialog-warning")
+                    icon.set_from_icon_name("info-outline-symbolic")
                     icon.add_css_class("warning")
                     label.set_text(_("Needs Review"))
 
