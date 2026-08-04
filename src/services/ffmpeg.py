@@ -6,7 +6,6 @@ from datetime import timedelta
 import subprocess
 import logging
 import fnmatch
-from decimal import Decimal
 
 from .command_runner import CommandRunner, StreamInfo
 
@@ -47,11 +46,6 @@ class FFmpegRunner(CommandRunner):
                 return value
 
         return default
-
-    def _format_duration(self, duration: str) -> str:
-        hms, fraction = duration.split(".")
-        seconds = Decimal(f"0.{fraction}")
-        return f"{hms}{seconds:.2f}"[0:8] + f"{seconds:.2f}"[1:]
 
     def _parse_fps(self, value):
         if not value or value == "0/0":
@@ -98,11 +92,11 @@ class FFmpegRunner(CommandRunner):
             (stream.get("tags", {})), "DURATION*")
 
         if duration and ":" in duration:
-            return self._format_duration(duration)
+            return duration
 
         try:
             total_seconds = float(stream.get("duration", 0))
-            return self._format_duration(str(timedelta(seconds=total_seconds)))
+            return str(timedelta(seconds=total_seconds))
 
         except (ValueError, TypeError) as e:
             self.logger.error(f"Invalid duration value in stream: {e}")
