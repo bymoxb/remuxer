@@ -53,8 +53,10 @@ class RemuxerWindow(Adw.ApplicationWindow):
     cv_audio_factory = Gtk.Template.Child()
     cv_status_factory = Gtk.Template.Child()
 
-    current_column_row_index = None
-    current_column_row = None
+    # Preference
+    pg_ar_audio_duration = Gtk.Template.Child()
+    pg_ar_video_duration = Gtk.Template.Child()
+    pg_ar_video_frame_rate = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -101,13 +103,15 @@ class RemuxerWindow(Adw.ApplicationWindow):
 
     def on_combo_changed(self, selection_model, _):
 
-        if self._updating_combo:
-            return
+        # if self._updating_combo:
+        #     return
 
         stream = selection_model.get_selected_item()
 
         if stream is None:
             return
+
+        self.pg_ar_audio_duration.set_subtitle(stream.get_display_time())
 
         self.logger.debug(f"combo_changed: {stream}")
 
@@ -124,6 +128,11 @@ class RemuxerWindow(Adw.ApplicationWindow):
             return
 
         self.logger.debug(f"on_column_row_selected: {item}")
+
+        self.pg_ar_video_duration.set_subtitle(
+            item.video.get_video_stream().get_display_time())
+        self.pg_ar_video_frame_rate.set_subtitle(
+            item.video.get_video_stream().get_display_frame_rate())
 
         # BLOQUEO: Evitamos que el proceso de carga dispare on_combo_selection_changed
         self._updating_combo = True
