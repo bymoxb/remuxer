@@ -29,6 +29,9 @@ class StreamItem(GObject.Object):
     def get_display_name(self):
         return f"index: {self.index}, lang: {self.language}, is_default: {self.is_default}, title: {self.title}"
 
+    def get_display_time(self):
+        return f"{self.duration_text} | {self.duration_in_seconds} s"
+
     def is_audio(self):
         return self.codec_type == "audio"
 
@@ -36,7 +39,7 @@ class StreamItem(GObject.Object):
         return self.codec_type == "video"
 
     def __str__(self):
-        return f"StreamItem{{ index: {self.index}; lang: {self.language}; is_default: {self.is_default}; title: {self.title} }}"
+        return f"StreamItem{{ index: {self.index}; lang: {self.language}; is_default: {self.is_default}; title: {self.title}; duration_text={self.duration_text}; duration_in_seconds={self.duration_in_seconds} }}"
 
 class VideoItem(GObject.Object):
     name = GObject.Property(type=str)

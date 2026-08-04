@@ -5,6 +5,8 @@ from fractions import Fraction
 from datetime import timedelta
 import subprocess
 import logging
+import fnmatch
+from decimal import Decimal
 
 from .command_runner import CommandRunner, StreamInfo
 
@@ -37,6 +39,20 @@ class FFmpegRunner(CommandRunner):
             text=True,
         )
 
+    def _get_value_by_pattern(self, data: dict, pattern: str, default=None):
+        pattern = pattern.lower()
+
+        for key, value in data.items():
+            if fnmatch.fnmatch(key.lower(), pattern):
+                return value
+
+        return default
+
+    def _format_duration(self, duration: str) -> str:
+        hms, fraction = duration.split(".")
+        seconds = Decimal(f"0.{fraction}")
+        return f"{hms}{seconds:.2f}"[0:8] + f"{seconds:.2f}"[1:]
+
     def _parse_fps(self, value):
         if not value or value == "0/0":
             return 0
@@ -47,7 +63,8 @@ class FFmpegRunner(CommandRunner):
             return 0
 
     def _parse_duration_in_seconds(self, stream):
-        duration = stream.get("tags", {}).get("DURATION")
+        duration = self._get_value_by_pattern(
+            (stream.get("tags", {})), "DURATION*")
 
         if not duration:
             duration = stream.get("duration", "0")
@@ -77,14 +94,15 @@ class FFmpegRunner(CommandRunner):
             return 0.0
 
     def _parse_duration_str(self, stream):
-        duration = stream.get("tags", {}).get("DURATION")
+        duration = self._get_value_by_pattern(
+            (stream.get("tags", {})), "DURATION*")
 
         if duration and ":" in duration:
-            return duration
+            return self._format_duration(duration)
 
         try:
             total_seconds = float(stream.get("duration", 0))
-            return str(timedelta(seconds=total_seconds))
+            return self._format_duration(str(timedelta(seconds=total_seconds)))
 
         except (ValueError, TypeError) as e:
             self.logger.error(f"Invalid duration value in stream: {e}")
