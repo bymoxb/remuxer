@@ -341,12 +341,12 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                               <object class="AdwPreferencesGroup">
                                 <property name="title" translatable="yes">Source Video Settings</property>
                                 <child>
-                                  <object class="AdwComboRow" id="pg_cr_video_duration">
+                                  <object class="AdwActionRow" id="pg_ar_video_duration">
                                     <property name="title" translatable="yes">Video duration</property>
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="AdwComboRow" id="pg_cr_video_frame_rate">
+                                  <object class="AdwActionRow" id="pg_ar_video_frame_rate">
                                     <property name="title" translatable="yes">Video frame rate</property>
                                   </object>
                                 </child>
@@ -361,7 +361,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="AdwComboRow" id="pg_cr_audio_duration">
+                                  <object class="AdwActionRow" id="pg_ar_audio_duration">
                                     <property name="title" translatable="yes">Audio duration</property>
                                   </object>
                                 </child>
